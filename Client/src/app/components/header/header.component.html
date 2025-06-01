@@ -1,1 +1,55 @@
-<p>header works!</p>
+<header class="border-b shadow-md p-3 w-full max-h-20 fixed top-0 z-50 bg-gray-900">
+    <div class="flex items-center justify-between max-w-screen-2xl mx-auto">
+        <a routerLink="/" class="flex items-center text-white">
+            <span class="ml-2 text-2xl font-bold">Signs<span class="text-gold-400">&</span>Saints</span>
+        </a>
+
+        <nav class="hidden text-white md:flex gap-6 uppercase text-lg font-semibold">
+            <a routerLink="/" routerLinkActive="text-gold-400" class="hover:text-gold-300 transition">Home</a>
+            <a routerLink="/signs" routerLinkActive="text-gold-400" class="hover:text-gold-300 transition">Signs</a>
+            <a routerLink="/saints" routerLinkActive="text-gold-400" class="hover:text-gold-300 transition">Saints</a>
+            <a routerLink="/about" routerLinkActive="text-gold-400" class="hover:text-gold-300 transition">About Us</a>
+        </nav>
+
+        <div class="hidden md:flex gap-4 items-center">
+            <a routerLink="/account/register"
+                class="py-3 px-6 border border-gold-400 text-gold-400 rounded hover:bg-gold-300 hover:text-white transition text-lg font-semibold">
+                Create Account
+            </a>
+            <a routerLink="/account/login"
+                class="py-3 px-6 bg-gold-400 text-white rounded hover:bg-gold-300 transition text-lg font-semibold">
+                Login
+            </a>
+        </div>
+
+        <button mat-icon-button class="md:hidden text-gray-700 hover:text-gold-400 transition"
+            [matMenuTriggerFor]="mobileMenu" aria-label="Open menu">
+            <mat-icon>menu</mat-icon>
+        </button>
+    </div>
+
+    <mat-menu #mobileMenu="matMenu" class="w-48 bg-gray-900">
+        <button mat-menu-item routerLink="/" routerLinkActive="active" class="text-lg text-white font-semibold">
+            Home
+        </button>
+        <button mat-menu-item routerLink="/signs" routerLinkActive="active" class="text-lg text-white font-semibold">
+            Signs
+        </button>
+        <button mat-menu-item routerLink="/saints" routerLinkActive="active" class="text-lg text-white font-semibold">
+            Saints
+        </button>
+        <button mat-menu-item routerLink="/about" routerLinkActive="active" class="text-lg text-white font-semibold">
+            About Us
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item routerLink="/account/register"
+            class="text-lg font-semibold text-white hover:text-gold-300">
+            Create Account
+        </button>
+        <button mat-menu-item routerLink="/account/login"
+            class="text-lg font-semibold text-white rounded hover:bg-gold-300">
+            Login
+        </button>
+    </mat-menu>
+</header>
+  

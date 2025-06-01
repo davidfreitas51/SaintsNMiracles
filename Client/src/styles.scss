@@ -1,4 +1,55 @@
 @use '@angular/material' as mat;
 @import "tailwindcss" important;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+@theme {
+    --color-gold-300: #d9b200;
+    --color-gold-400: #b58900;
+    --color-gold-500: #a27508;
+    --color-gold-600: #8c6100;
+}
+
+.text-gold-300 {
+    color: var(--color-gold-300);
+}
+
+.text-gold-400 {
+    color: var(--color-gold-400);
+}
+
+.text-gold-500 {
+    color: var(--color-gold-500);
+}
+
+.text-gold-600 {
+    color: var(--color-gold-600);
+}
+
+.hover\:text-gold-300:hover {
+    color: var(--color-gold-300);
+}
+
+.hover\:text-gold-400:hover {
+    color: var(--color-gold-400);
+}
+
+.hover\:bg-gold-300:hover {
+    background-color: var(--color-gold-300);
+}
+
+.hover\:bg-gold-400:hover {
+    background-color: var(--color-gold-400);
+}
+
+.border-gold-400 {
+    border-color: var(--color-gold-400);
+}
+
+.bg-gold-400 {
+    background-color: var(--color-gold-400);
+}
