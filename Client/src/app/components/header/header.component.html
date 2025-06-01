@@ -1,15 +1,30 @@
-<header class="border-b shadow-md p-3 w-full max-h-20 fixed top-0 z-50 bg-gray-900">
+<header class="border-b shadow-md p-3 w-full max-h-20 pb-5 fixed top-0 z-50 bg-gray-900">
     <div class="flex items-center justify-between max-w-screen-2xl mx-auto">
         <a routerLink="/" class="flex items-center text-white">
             <span class="ml-2 text-2xl font-bold">Signs<span class="text-gold-400">&</span>Saints</span>
         </a>
 
         <nav class="hidden text-white md:flex gap-6 uppercase text-lg font-semibold">
-            <a routerLink="/" routerLinkActive="text-gold-400" class="hover:text-gold-300 transition">Home</a>
-            <a routerLink="/signs" routerLinkActive="text-gold-400" class="hover:text-gold-300 transition">Signs</a>
-            <a routerLink="/saints" routerLinkActive="text-gold-400" class="hover:text-gold-300 transition">Saints</a>
-            <a routerLink="/about" routerLinkActive="text-gold-400" class="hover:text-gold-300 transition">About Us</a>
-        </nav>
+            <a routerLink="/" routerLinkActive="text-gold-400" [routerLinkActiveOptions]="{ exact: true }"
+                class="hover:text-gold-300 transition">
+                Home
+            </a>
+        
+            <a routerLink="/saints" routerLinkActive="text-gold-400" [routerLinkActiveOptions]="{ exact: true }"
+                class="hover:text-gold-300 transition">
+                Saints
+            </a>
+        
+            <a routerLink="/signs" routerLinkActive="text-gold-400" [routerLinkActiveOptions]="{ exact: true }"
+                class="hover:text-gold-300 transition">
+                Signs
+            </a>
+        
+            <a routerLink="/about" routerLinkActive="text-gold-400" [routerLinkActiveOptions]="{ exact: true }"
+                class="hover:text-gold-300 transition">
+                About Us
+            </a>
+        </nav>          
 
         <div class="hidden md:flex gap-4 items-center">
             <a routerLink="/account/register"
@@ -52,4 +67,4 @@
         </button>
     </mat-menu>
 </header>
-  
+<div class="h-20"></div>
