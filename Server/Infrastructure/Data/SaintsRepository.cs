@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+using Core.DTOs;
 using Core.Interfaces;
 using Core.Models;
 using Microsoft.EntityFrameworkCore;
@@ -11,8 +13,15 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
         return await context.Saints.ToListAsync();
     }
 
-    public Task<Saint> GetSaintById(int id)
+    public async Task<Saint?> GetById(int id)
     {
-        throw new NotImplementedException();
+        return await context.Saints.FindAsync(id);
     }
+
+    public async Task<bool> CreateSaint(Saint newSaint)
+    {
+        await context.Saints.AddAsync(newSaint);
+        return await context.SaveChangesAsync() > 0;
+    }
+
 }

@@ -5,5 +5,6 @@ namespace Core.Interfaces;
 public interface ISaintsRepository
 {
     Task<IEnumerable<Saint>> GetAll();
-    Task<Saint> GetSaintById(int id);
+    Task<Saint?> GetById(int id);
+    Task<bool> CreateSaint(Saint saint);
 }
