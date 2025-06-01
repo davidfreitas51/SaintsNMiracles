@@ -26,6 +26,8 @@ builder.Services.AddDbContext<DataContext>(options =>
 
 var app = builder.Build();
 
+app.UseStaticFiles();
+
 app.MapControllers();
 
 try
@@ -33,6 +35,7 @@ try
     using var scope = app.Services.CreateScope();
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<DataContext>();
+    context.Database.Migrate();
     await context.Database.MigrateAsync();
     await SeedData.SeedAsync(context);
 }

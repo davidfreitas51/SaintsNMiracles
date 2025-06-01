@@ -1,32 +1,13 @@
 [
     {
-        "Name": "São Francisco de Assis",
-        "Country": "Itália",
+        "Id": 0,
+        "Name": "Saint Francis of Assisi",
+        "Country": "Italy",
         "Century": 12,
-        "Image": "https://example.com/images/sao-francisco.jpg",
-        "Description": "Fundador dos franciscanos, conhecido por sua humildade e amor à criação.",
-        "MarkdownContent": "# São Francisco de Assis\n\nSão Francisco nasceu em Assis, Itália, no século XII. Fundou a Ordem dos Frades Menores, conhecidos como franciscanos. Viveu uma vida de extrema pobreza e serviço aos pobres, pregando o amor à natureza e aos animais.\n\n## Legado\n\nSeu legado espiritual perdura até hoje, sendo um dos santos mais populares da Igreja Católica.",
-        "Slug": "sao-francisco-de-assis",
-        "CreatedAt": "2025-05-31T00:00:00Z"
-    },
-    {
-        "Name": "Santa Teresinha do Menino Jesus",
-        "Country": "França",
-        "Century": 19,
-        "Image": "https://example.com/images/santa-teresinha.jpg",
-        "Description": "Doutora da Igreja, conhecida por sua 'pequena via' de santidade.",
-        "MarkdownContent": "# Santa Teresinha do Menino Jesus\n\nTeresinha nasceu em Alençon, França, e entrou para o Carmelo de Lisieux aos 15 anos. Sua espiritualidade simples, baseada na confiança e no abandono a Deus, ficou conhecida como 'a pequena via'.\n\n## Escritos\n\nSeu diário, *História de uma Alma*, é um dos clássicos da espiritualidade cristã.",
-        "Slug": "santa-teresinha-do-menino-jesus",
-        "CreatedAt": "2025-05-31T00:00:00Z"
-    },
-    {
-        "Name": "São Padre Pio de Pietrelcina",
-        "Country": "Itália",
-        "Century": 20,
-        "Image": "https://example.com/images/padre-pio.jpg",
-        "Description": "Frade capuchinho estigmatizado, conhecido por seu dom de confissão e milagres.",
-        "MarkdownContent": "# São Padre Pio de Pietrelcina\n\nPadre Pio foi um sacerdote capuchinho italiano, famoso por portar os estigmas da Paixão de Cristo. Era procurado por milhares de fiéis por sua capacidade de aconselhar e confessar, além de relatos de milagres associados a ele.\n\n## Canonização\n\nFoi canonizado pelo Papa João Paulo II em 2002.",
-        "Slug": "sao-padre-pio-de-pietrelcina",
+        "Image": "/images/saints/francis.png",
+        "Description": "Founder of the Franciscans, known for his humility and love of creation.",
+        "MarkdownPath": "/markdown/saints/francis-of-assisi/francis-of-assisi.md",
+        "Slug": "saint-francis-of-assisi",
         "CreatedAt": "2025-05-31T00:00:00Z"
     }
 ]
