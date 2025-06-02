@@ -1,7 +1,23 @@
 <app-header></app-header>
 
-<h1 class="text-3xl font-bold underline">
-    Saints page!
-</h1>
+<h1 class="text-3xl font-bold underline text-center my-6">Saints Page</h1>
+
+<div class="grid gap-4 p-4 sm:grid-cols-2 lg:grid-cols-3">
+    @for (saint of saints; track saint.id) {
+    <mat-card (click)="redirectToSaintDetails(saint.slug)" class="flex cursor-pointer flex-row items-center space-x-4 p-4 rounded-2xl shadow-md hover:shadow-xl transition">
+        <img [src]="imageBaseUrl + saint.image" [alt]="saint.name"
+            class="w-20 h-20 object-cover rounded-full border border-gray-300" />
+
+        <div class="flex-1">
+            <h3 class="text-lg font-semibold">{{ saint.name }}</h3>
+            <p class="text-sm text-gray-600 line-clamp-3">{{ saint.description }}</p>
+            <a [routerLink]="['/saints', saint.slug]" class="text-blue-600 text-sm hover:underline mt-1 inline-block">
+                Read More
+            </a>
+        </div>
+    </mat-card>
+    }
+</div>
+  
 
 <app-footer></app-footer>
