@@ -14,11 +14,4 @@
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="SaintsMarkdown/" />
-    <Folder Include="wwwroot/" />
-    <Folder Include="wwwroot/images/" />
-    <Folder Include="wwwroot/images/saints/" />
-  </ItemGroup>
-
 </Project>
