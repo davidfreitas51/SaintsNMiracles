@@ -3,9 +3,13 @@ import { HeaderComponent } from "../../components/header/header.component";
 import { FooterComponent } from "../../components/footer/footer.component";
 import { SaintsService } from '../../services/saints.service';
 import { MatCardModule } from '@angular/material/card'
+import { MatSelectModule } from '@angular/material/select'
+import { MatInputModule } from '@angular/material/input'
+import { FormsModule } from '@angular/forms'
 import { Router, RouterLink } from '@angular/router';
 import { Saint } from '../../interfaces/saint';
 import { environment } from '../../../environments/environment';
+import { RomanPipe } from '../../pipes/roman.pipe';
 
 @Component({
   selector: 'app-saints-page',
@@ -15,6 +19,10 @@ import { environment } from '../../../environments/environment';
     FooterComponent,
     MatCardModule,
     RouterLink,
+    RomanPipe,
+    MatSelectModule,
+    MatInputModule,
+    FormsModule,
   ],
   templateUrl: './saints-page.component.html',
   styleUrl: './saints-page.component.scss'
