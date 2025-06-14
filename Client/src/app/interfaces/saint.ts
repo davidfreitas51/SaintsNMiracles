@@ -9,4 +9,3 @@ export interface Saint {
     slug: string
     createdAt: string
 }
-  

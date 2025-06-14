@@ -4,52 +4,120 @@
 @tailwind components;
 @tailwind utilities;
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-@theme {
-    --color-gold-300: #d9b200;
-    --color-gold-400: #b58900;
-    --color-gold-500: #a27508;
-    --color-gold-600: #8c6100;
+html,
+body {
+    height: 100%;
+    margin: 0;
+    font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
-.text-gold-300 {
-    color: var(--color-gold-300);
+:root {
+    --color-primary: #5A2A0C;
+    /* marrom avermelhado escuro */
+    --color-secondary: #E6D3B3;
+    /* bege claro suave */
+    --color-hover: #341705;
+    /* marrom escuro profundo */
+    --color-accent: #B8894C;
+    /* dourado queimado suave */
+    --color-accent-light: #D9A86C;
+    /* tom mais claro do accent */
+    --color-accent-dark: #8B5E30;
+    /* tom mais escuro do accent */
 }
 
-.text-gold-400 {
-    color: var(--color-gold-400);
+/* Backgrounds */
+.bg-primary {
+    background-color: var(--color-primary);
 }
 
-.text-gold-500 {
-    color: var(--color-gold-500);
+.bg-secondary {
+    background-color: var(--color-secondary);
 }
 
-.text-gold-600 {
-    color: var(--color-gold-600);
+.bg-hover {
+    background-color: var(--color-hover);
 }
 
-.hover\:text-gold-300:hover {
-    color: var(--color-gold-300);
+.hover\:bg-hover:hover {
+    background-color: var(--color-hover);
 }
 
-.hover\:text-gold-400:hover {
-    color: var(--color-gold-400);
+.bg-accent {
+    background-color: var(--color-accent);
 }
 
-.hover\:bg-gold-300:hover {
-    background-color: var(--color-gold-300);
+.bg-accent-light {
+    background-color: var(--color-accent-light);
 }
 
-.hover\:bg-gold-400:hover {
-    background-color: var(--color-gold-400);
+.bg-accent-dark {
+    background-color: var(--color-accent-dark);
 }
 
-.border-gold-400 {
-    border-color: var(--color-gold-400);
+/* Text */
+.text-primary {
+    color: var(--color-primary);
 }
 
-.bg-gold-400 {
-    background-color: var(--color-gold-400);
+.text-secondary {
+    color: var(--color-secondary);
+}
+
+.text-hover {
+    color: var(--color-hover);
+}
+
+.text-accent {
+    color: var(--color-accent);
+}
+
+.text-accent-light {
+    color: var(--color-accent-light);
+}
+
+.text-accent-dark {
+    color: var(--color-accent-dark);
+}
+
+.hover\:text-hover:hover {
+    color: var(--color-hover);
+}
+
+.hover\:text-accent:hover {
+    color: var(--color-accent);
+}
+
+.hover\:text-accent-light:hover {
+    color: var(--color-accent-light);
+}
+
+.hover\:darken:hover {
+    filter: brightness(75%);
+    transition: filter 0.2s ease;
+}
+
+/* Borders */
+.border-primary {
+    border-color: var(--color-primary);
+}
+
+.border-secondary {
+    border-color: var(--color-secondary);
+}
+
+.border-hover {
+    border-color: var(--color-hover);
+}
+
+.border-accent {
+    border-color: var(--color-accent);
+}
+
+.border-accent-light {
+    border-color: var(--color-accent-light);
+}
+
+.border-accent-dark {
+    border-color: var(--color-accent-dark);
 }

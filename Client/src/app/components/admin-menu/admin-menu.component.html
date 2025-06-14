@@ -1,1 +1,36 @@
-<p>admin-menu works!</p>
+<div class="min-h-screen bg-secondary text-primary">
+    <header class="bg-primary text-secondary px-6 py-4 shadow-md">
+        <div class="max-w-screen-xl mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-bold">Admin Dashboard</h1>
+            <a routerLink="/" class="text-secondary hover:text-hover text-sm font-medium transition">
+                Back to site
+            </a>
+        </div>
+    </header>
+
+    <main class="max-w-screen-xl mx-auto p-6">
+        <div class="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <a routerLink="/admin/saints"
+                class="bg-hover text-secondary rounded-2xl p-6 shadow-md hover:shadow-lg transition text-center font-semibold">
+                Manage Saints
+            </a>
+            <a routerLink="/admin/signs"
+                class="bg-hover text-secondary rounded-2xl p-6 shadow-md hover:shadow-lg transition text-center font-semibold">
+                Manage Signs
+            </a>
+            <a routerLink="/admin/users"
+                class="bg-hover text-secondary rounded-2xl p-6 shadow-md hover:shadow-lg transition text-center font-semibold">
+                Manage Users
+            </a>
+            <a routerLink="/admin/settings"
+                class="bg-hover text-secondary rounded-2xl p-6 shadow-md hover:shadow-lg transition text-center font-semibold">
+                Site Settings
+            </a>
+        </div>
+
+        <div class="mt-12 text-center text-sm text-primary/70">
+            Signs & Saints Admin Panel © 2025
+        </div>
+    </main>
+</div>
+  
