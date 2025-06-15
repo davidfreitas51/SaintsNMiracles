@@ -16,6 +16,10 @@ export const routes: Routes = [
         component: AdminPageComponent
     },
     {
+        path: 'admin/:object',
+        component: AdminPageComponent
+    },
+    {
         path: 'about',
         component:AboutUsPageComponent
     },

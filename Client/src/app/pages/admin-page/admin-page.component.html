@@ -1,7 +1,14 @@
-<app-admin-header></app-admin-header>
+<div>
+    <app-admin-header></app-admin-header>
 
-<app-admin-menu></app-admin-menu>
+    <app-admin-menu></app-admin-menu>
 
-<h1 class="text-3xl font-bold underline">
-    Hello admin!
-</h1>
+    <div class="max-w-4xl mx-auto px-4">
+        <button mat-fab extended class="mb-8">
+            <mat-icon>add</mat-icon>
+            Create new {{ object }}
+        </button>
+
+        <app-admin-content-table></app-admin-content-table>
+    </div>
+</div>
