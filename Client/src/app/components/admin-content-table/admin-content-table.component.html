@@ -1,30 +1,58 @@
-<div>
-    <table mat-table [dataSource]="dataSource" matSort class="">
-        @for (col of columns; track $index) {
-        <ng-container matColumnDef="{{ col }}">
-            <th mat-header-cell *matHeaderCellDef class="px-4 py-2 border-b bg-gray-100"
-                [mat-sort-header]="col !== 'actions' ? col : ''">
-                {{ col }}
-            </th>
-            <td mat-cell *matCellDef="let element" class="px-4 py-2 border-b">
-                @if (col !== 'actions') {
-                {{ element[col] }}
-                } @else {
-                <button (click)="editObject(element)" mat-icon-button class="mr-2">
-                    <mat-icon class="text-blue-500">edit</mat-icon>
-                </button>
-                <button (click)="deleteObject(element)" mat-icon-button>
-                    <mat-icon class="text-red-500">delete</mat-icon>
-                </button>
-                }
-            </td>
-        </ng-container>
-        }
+<mat-card class="shadow-lg p-6">
+  <div class="overflow-auto rounded-t-2xl">
+    <table
+      mat-table
+      [dataSource]="dataSource"
+      matSort
+      class="min-w-full border border-gray-200 rounded-t-2xl overflow-hidden"
+    >
+      @for (col of columns; track $index) {
+      <ng-container matColumnDef="{{ col }}">
+        <th
+          mat-header-cell
+          *matHeaderCellDef
+          [mat-sort-header]="col !== 'actions' ? col : ''"
+          class="text-center text-sm font-medium px-4 py-3 border-b"
+        >
+          {{ col }}
+        </th>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        <td
+          mat-cell
+          *matCellDef="let element"
+          class="text-sm text-gray-700 px-4 py-3 border-b"
+        >
+          @if (col !== 'actions') {
+          {{ element[col] }}
+          } @else {
+          <div class="flex gap-2">
+            <button
+              (click)="editObject(element)"
+              mat-icon-button
+              color="primary"
+              class="text-blue-500"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              (click)="deleteObject(element)"
+              mat-icon-button
+              class="text-red-500"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          }
+        </td>
+      </ng-container>
+      }
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
-
-    <mat-paginator [pageSizeOptions]="[10, 20, 50, 100]" showFirstLastButtons></mat-paginator>
-</div>
-  
+  </div>
+  <mat-paginator
+    [pageSizeOptions]="[10, 20, 50, 100]"
+    showFirstLastButtons
+    class="rounded-b-2xl"
+  ></mat-paginator>
+</mat-card>

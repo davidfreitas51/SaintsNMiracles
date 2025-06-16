@@ -4,6 +4,7 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-admin-content-table',
@@ -13,7 +14,8 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
     MatTableModule,
     MatPaginatorModule,
     MatIconModule,
-    MatSortModule
+    MatSortModule,
+    MatCardModule
   ]
 })
 export class AdminContentTableComponent implements OnInit {
