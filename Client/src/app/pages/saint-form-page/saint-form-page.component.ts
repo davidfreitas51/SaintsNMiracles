@@ -4,6 +4,7 @@ import {
   FormBuilder,
   FormControl,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -20,6 +21,7 @@ import { ActivatedRoute, Router } from '@angular/router';
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule,
+    FormsModule,
     LMarkdownEditorModule,
   ],
 })
@@ -27,6 +29,7 @@ export class SaintFormPageComponent implements OnInit {
   form!: FormGroup;
   isEditMode = false;
   saintId: string | null = null;
+  content: string = ''; 
 
   countries = ['Brazil', 'Italy', 'France', 'USA', 'Portugal'];
   centuries = Array.from({ length: 20 }, (_, i) => i + 1);
@@ -92,7 +95,7 @@ export class SaintFormPageComponent implements OnInit {
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
   }
-  
+
   get markdownPath(): FormControl {
     return this.form.get('markdownPath') as FormControl;
   }

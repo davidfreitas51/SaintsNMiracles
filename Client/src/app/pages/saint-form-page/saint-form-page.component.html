@@ -1,11 +1,7 @@
 <div
   class="flex flex-col gap-6 p-6 shadow rounded-lg bg-white max-w-4xl mx-auto"
 >
-  <form
-    [formGroup]="form"
-    class="flex flex-col gap-6"
-    (ngSubmit)="onSubmit()"
-  >
+  <form [formGroup]="form" class="flex flex-col gap-6" (ngSubmit)="onSubmit()">
     <div class="flex gap-6">
       <div class="w-1/2">
         <label for="imageInput" class="block mb-2 font-semibold">
@@ -98,7 +94,10 @@
     <div>
       <label class="block flex flex-col">
         <span class="font-semibold mb-2">Markdown</span>
-        
+        <md-editor formControlName="markdownPath" [height]="'300px'"></md-editor>
+
+        <h3>Prévia do Markdown:</h3>
+        <pre>{{ content }}</pre>
       </label>
     </div>
 
@@ -117,4 +116,3 @@
     </div>
   </form>
 </div>
-
