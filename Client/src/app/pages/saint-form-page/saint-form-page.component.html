@@ -1,0 +1,120 @@
+<div
+  class="flex flex-col gap-6 p-6 shadow rounded-lg bg-white max-w-4xl mx-auto"
+>
+  <form
+    [formGroup]="form"
+    class="flex flex-col gap-6"
+    (ngSubmit)="onSubmit()"
+  >
+    <div class="flex gap-6">
+      <div class="w-1/2">
+        <label for="imageInput" class="block mb-2 font-semibold">
+          Icon image
+        </label>
+
+        <label
+          for="imageInput"
+          class="block aspect-square w-full border-2 border-dashed rounded grid place-items-center text-gray-500 cursor-pointer hover:border-blue-400 hover:text-blue-600 transition overflow-hidden"
+        >
+          @if (form.get('image')?.value) {
+          <img
+            [src]="form.get('image')?.value"
+            alt="Selected image"
+            class="object-cover w-full h-full rounded"
+          />
+          } @else {
+          <div class="flex items-center justify-center">
+            <mat-icon
+              class="!text-[330px] w-[330px] h-[330px] leading-none text-primary"
+              fontIcon="add_a_photo"
+            ></mat-icon>
+          </div>
+          }
+        </label>
+
+        <input
+          id="imageInput"
+          type="file"
+          accept=".webp,.png,.jpg,.jpeg"
+          (change)="onFileSelected($event)"
+          class="hidden"
+        />
+      </div>
+
+      <div class="flex-1 flex flex-col gap-4">
+        <label class="block">
+          <span class="block pb-2 font-semibold">Name</span>
+          <input
+            type="text"
+            formControlName="name"
+            placeholder="Saint's name"
+            class="w-full border rounded px-3 py-2"
+          />
+        </label>
+
+        <label class="block">
+          <span class="block pb-2 font-semibold">Country</span>
+          <select
+            formControlName="country"
+            class="w-full border rounded px-3 py-2"
+          >
+            <option value="" disabled>Select a country</option>
+          </select>
+        </label>
+
+        <label class="block">
+          <span class="block pb-2 font-semibold">Century</span>
+          <select
+            formControlName="century"
+            class="w-full border rounded px-3 py-2"
+          >
+            <option value="" disabled>Select a century</option>
+          </select>
+        </label>
+
+        <label class="block">
+          <span class="block pb-2 font-semibold">Description</span>
+          <textarea
+            formControlName="description"
+            rows="1"
+            placeholder="Saint's brief description"
+            class="w-full border rounded px-3 py-2 resize-none overflow-hidden"
+            (input)="autoResize($event)"
+          ></textarea>
+        </label>
+
+        <label class="block">
+          <span class="block pb-2 font-semibold">Slug</span>
+          <input
+            type="text"
+            formControlName="slug"
+            placeholder="slug-exemplo"
+            class="w-full border rounded px-3 py-2"
+          />
+        </label>
+      </div>
+    </div>
+
+    <div>
+      <label class="block flex flex-col">
+        <span class="font-semibold mb-2">Markdown</span>
+        
+      </label>
+    </div>
+
+    <div class="flex justify-end pt-5">
+      <button
+        mat-flat-button
+        type="submit"
+        [disabled]="form.invalid"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded inline-flex items-center gap-2"
+      >
+        <mat-icon class="text-white">
+          {{ isEditMode ? "edit" : "add" }}
+        </mat-icon>
+        {{ isEditMode ? "Atualizar Santo" : "Criar Santo" }}
+      </button>
+    </div>
+  </form>
+</div>
+

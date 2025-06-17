@@ -3,11 +3,11 @@ import { FooterComponent } from "../../components/footer/footer.component";
 import { HeaderComponent } from "../../components/header/header.component";
 
 @Component({
-  selector: 'app-saints-details-page',
+  selector: 'app-saint-details-page',
   imports: [FooterComponent, HeaderComponent],
-  templateUrl: './saints-details-page.component.html',
-  styleUrl: './saints-details-page.component.scss'
+  templateUrl: './saint-details-page.component.html',
+  styleUrl: './saint-details-page.component.scss'
 })
-export class SaintsDetailsPageComponent {
+export class SaintDetailsPageComponent {
 
 }

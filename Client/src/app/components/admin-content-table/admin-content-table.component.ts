@@ -5,6 +5,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatCardModule } from '@angular/material/card';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-content-table',
@@ -15,32 +16,37 @@ import { MatCardModule } from '@angular/material/card';
     MatPaginatorModule,
     MatIconModule,
     MatSortModule,
-    MatCardModule
-  ]
+    MatCardModule,
+    RouterLink,
+  ],
 })
 export class AdminContentTableComponent implements OnInit {
   private saintsService = inject(SaintsService);
+  private route = inject(ActivatedRoute);
 
   public columns: string[] = ['name', 'country', 'century', 'actions'];
-  public displayedColumns = ['name', 'country', 'century', 'actions'];
+  public displayedColumns = [...this.columns];
   public dataSource = new MatTableDataSource<any>([]);
 
+  public currentEntity: string = '';
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort
+  @ViewChild(MatSort) sort!: MatSort;
+
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
   }
 
-  deleteObject(_t19: any) {
-    throw new Error('Method not implemented.');
-  }
-
-  editObject(_t19: any) {
-    throw new Error('Method not implemented.');
-  }
   ngOnInit(): void {
-    this.saintsService.getSaints().subscribe(saints => {
+    this.currentEntity = this.route.snapshot.paramMap.get('object') || '';
+
+    this.saintsService.getSaints().subscribe((saints) => {
       this.dataSource.data = saints;
     });
   }
+
+  editObject(entity: any) {}
+
+  deleteObject(entity: any) {}
 }

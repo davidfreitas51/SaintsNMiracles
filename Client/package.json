@@ -20,6 +20,7 @@
     "@angular/platform-browser-dynamic": "^19.2.0",
     "@angular/router": "^19.2.0",
     "@tailwindcss/postcss": "^4.1.8",
+    "ngx-markdown-editor": "^5.3.4",
     "postcss": "^8.5.4",
     "roman-numerals": "^0.3.2",
     "rxjs": "~7.8.0",

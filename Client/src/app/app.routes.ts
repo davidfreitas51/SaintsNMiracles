@@ -4,9 +4,10 @@ import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { AboutUsPageComponent } from './pages/about-us-page/about-us-page.component';
 import { SaintsPageComponent } from './pages/saints-page/saints-page.component';
 import { SignsPageComponent } from './pages/signs-page/signs-page.component';
-import { SaintsDetailsPageComponent } from './pages/saints-details-page/saints-details-page.component';
+import { SaintDetailsPageComponent } from './pages/saint-details-page/saint-details-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { ContentManagerPageComponent } from './pages/content-manager-page/content-manager-page.component';
+import { SaintFormPageComponent } from './pages/saint-form-page/saint-form-page.component';
 
 export const routes: Routes = [
   {
@@ -23,7 +24,7 @@ export const routes: Routes = [
   },
   {
     path: 'saints/:slug',
-    component: SaintsDetailsPageComponent,
+    component: SaintDetailsPageComponent,
   },
   {
     path: 'signs',
@@ -44,7 +45,20 @@ export const routes: Routes = [
       },
       {
         path: ':object',
-        component: ContentManagerPageComponent,
+        children: [
+          {
+            path: '',
+            component: ContentManagerPageComponent,
+          },
+          {
+            path: 'create',
+            component: SaintFormPageComponent,
+          },
+          {
+            path: ':id/edit',
+            component: SaintFormPageComponent,
+          },
+        ],
       },
     ],
   },
