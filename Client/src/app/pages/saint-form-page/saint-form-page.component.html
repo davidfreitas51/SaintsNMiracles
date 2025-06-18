@@ -50,22 +50,26 @@
 
         <label class="block">
           <span class="block pb-2 font-semibold">Country</span>
-          <select
+          <mat-select
             formControlName="country"
             class="w-full border rounded px-3 py-2"
           >
-            <option value="" disabled>Select a country</option>
-          </select>
+            @for (item of countries; track $index) {
+            <mat-option value="">{{ item }}</mat-option>
+            }
+          </mat-select>
         </label>
 
         <label class="block">
           <span class="block pb-2 font-semibold">Century</span>
-          <select
+          <mat-select
             formControlName="century"
-            class="w-full border rounded px-3 py-2"
+            class="w-full border rounded px-4 py-2"
           >
-            <option value="" disabled>Select a century</option>
-          </select>
+            @for (item of centuries; track $index) {
+            <mat-option value="">{{ item }}</mat-option>
+            }
+          </mat-select>
         </label>
 
         <label class="block">
@@ -93,28 +97,25 @@
 
     <div>
       <label class="block flex flex-col">
-        <span class="font-semibold mb-2">Markdown</span>
+        <span class="font-semibold">Markdown</span>
         <md-editor
           formControlName="markdownPath"
           [height]="'300px'"
         ></md-editor>
-
-        <h3>Prévia do Markdown:</h3>
-        <pre>{{ content }}</pre>
       </label>
     </div>
 
     <div class="flex justify-end pt-5">
       <button
+        (click)="onSubmit()"
         mat-flat-button
         type="submit"
-        [disabled]="form.invalid"
         class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded inline-flex items-center gap-2"
       >
         <mat-icon class="text-white">
           {{ isEditMode ? "edit" : "add" }}
         </mat-icon>
-        {{ isEditMode ? "Atualizar Santo" : "Criar Santo" }}
+        {{ isEditMode ? "Update Saint" : "Create Saint" }}
       </button>
     </div>
   </form>

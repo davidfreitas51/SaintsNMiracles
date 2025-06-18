@@ -1,5 +1,5 @@
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -11,6 +11,8 @@ import {
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { ActivatedRoute, Router } from '@angular/router';
+import { MatSelectModule } from '@angular/material/select';
+import { SaintsService } from '../../services/saints.service';
 
 @Component({
   selector: 'app-saint-form-page',
@@ -23,16 +25,19 @@ import { ActivatedRoute, Router } from '@angular/router';
     MatButtonModule,
     FormsModule,
     LMarkdownEditorModule,
+    MatSelectModule,
   ],
 })
 export class SaintFormPageComponent implements OnInit {
+  saintsService = inject(SaintsService);
+
   form!: FormGroup;
   isEditMode = false;
   saintId: string | null = null;
-  content: string = ''; 
+  content: string = '';
 
   countries = ['Brazil', 'Italy', 'France', 'USA', 'Portugal'];
-  centuries = Array.from({ length: 20 }, (_, i) => i + 1);
+  centuries = Array.from({ length: 21 }, (_, i) => i + 1);
 
   constructor(
     private fb: FormBuilder,
@@ -65,29 +70,48 @@ export class SaintFormPageComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
-    if (this.form.invalid) return;
+  onSubmit() {
+    if (this.form.invalid) {
+      return;
+    }
 
-    const formValue = this.form.value;
+    const saint = {
+      name: this.form.value.name,
+      country: this.form.value.country,
+      century: this.form.value.century,
+      image: this.form.value.image, // This is a base64 string for preview, backend expects a string
+      description: this.form.value.description,
+      slug: this.form.value.slug,
+      markdownContent: this.form.value.markdownPath, // Rename to match backend
+    };
 
     if (this.isEditMode) {
-      // Atualizar
-      // this.saintsService.updateSaint(this.saintId, formValue).subscribe(...)
+      // Update logic here
     } else {
-      // Criar novo
-      // this.saintsService.createSaint(formValue).subscribe(...)
+      this.saintsService.createSaint(saint).subscribe({
+        next: () => {
+          console.log('Success');
+        },
+        error: (err) => {
+          console.error(err);
+        },
+      });
     }
   }
+  selectedFile: File | null = null;
 
   onFileSelected(event: Event): void {
-    const file = (event.target as HTMLInputElement).files?.[0];
-    if (!file) return;
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.selectedFile = input.files[0];
 
-    const reader = new FileReader();
-    reader.onload = () => {
-      this.form.get('image')?.setValue(reader.result);
-    };
-    reader.readAsDataURL(file);
+      // For preview only, not for submission
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.form.patchValue({ image: reader.result });
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
   }
 
   autoResize(event: Event): void {

@@ -5,13 +5,17 @@ import { Saint } from '../interfaces/saint';
 import { Observable } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class SaintsService {
-  private http = inject(HttpClient)
-  public baseUrl = environment.apiUrl
+  private http = inject(HttpClient);
+  public baseUrl = environment.apiUrl;
 
   public getSaints(): Observable<Saint[]> {
     return this.http.get<Saint[]>(this.baseUrl + 'saints');
+  }
+
+  public createSaint(data: any): Observable<void> {
+    return this.http.post<void>(this.baseUrl + 'saints', data);
   }
 }

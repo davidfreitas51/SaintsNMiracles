@@ -45,9 +45,15 @@ public class SaintsController(ISaintsRepository saintsRepository) : ControllerBa
 
         if (await saintsRepository.CreateSaint(saint))
         {
-            return Ok();
+            return Created();
         }
 
         return BadRequest();
+    }
+
+    [HttpDelete("{id:int}")]
+    public async Task<IActionResult> DeleteSaint(int id)
+    {
+        return Ok();
     }
 }
