@@ -21,7 +21,7 @@
           } @else {
           <div class="flex items-center justify-center">
             <mat-icon
-              class="!text-[330px] w-[330px] h-[330px] leading-none text-primary"
+              class="!text-[330px] w-[330px] h-[330px] leading-none text-primary-app"
               fontIcon="add_a_photo"
             ></mat-icon>
           </div>
@@ -94,7 +94,10 @@
     <div>
       <label class="block flex flex-col">
         <span class="font-semibold mb-2">Markdown</span>
-        <md-editor formControlName="markdownPath" [height]="'300px'"></md-editor>
+        <md-editor
+          formControlName="markdownPath"
+          [height]="'300px'"
+        ></md-editor>
 
         <h3>Prévia do Markdown:</h3>
         <pre>{{ content }}</pre>

@@ -5,7 +5,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatCardModule } from '@angular/material/card';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-content-table',
@@ -23,6 +23,7 @@ import { ActivatedRoute, RouterLink } from '@angular/router';
 export class AdminContentTableComponent implements OnInit {
   private saintsService = inject(SaintsService);
   private route = inject(ActivatedRoute);
+  public router = inject(Router)
 
   public columns: string[] = ['name', 'country', 'century', 'actions'];
   public displayedColumns = [...this.columns];

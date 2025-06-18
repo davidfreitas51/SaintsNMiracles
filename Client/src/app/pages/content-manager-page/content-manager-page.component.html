@@ -1,15 +1,17 @@
 <div>
-  <h1 class="text-3xl font-bold mb-6 text-primary">{{ pageName }}</h1>
+  <h1 class="text-3xl font-bold mb-6 text-primary-app">{{ pageName }}</h1>
 
   <div class="w-full">
-    <a mat-fab extended class="mb-8" [routerLink]="['/admin', object.toLowerCase() + 's', 'create']">
+    <a
+      mat-fab
+      extended
+      class="mb-8"
+      [routerLink]="['/admin', object.toLowerCase() + 's', 'create']"
+    >
       <mat-icon>add</mat-icon>
       Create new {{ object }}
     </a>
-    
-    
 
     <app-admin-content-table></app-admin-content-table>
   </div>
 </div>
-

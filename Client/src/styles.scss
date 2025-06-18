@@ -12,26 +12,20 @@ body {
 }
 
 :root {
-  --color-primary: #5a2a0c;
-  /* marrom avermelhado escuro */
-  --color-secondary: #e6d3b3;
-  /* bege claro suave */
-  --color-hover: #341705;
-  /* marrom escuro profundo */
-  --color-accent: #b8894c;
-  /* dourado queimado suave */
-  --color-accent-light: #d9a86c;
-  /* tom mais claro do accent */
-  --color-accent-dark: #8b5e30;
-  /* tom mais escuro do accent */
+  --color-primary: #5a2a0c !important; /* marrom avermelhado escuro */
+  --color-secondary: #e6d3b3 !important; /* bege claro suave */
+  --color-hover: #341705 !important; /* marrom escuro profundo */
+  --color-accent: #b8894c !important; /* dourado queimado suave */
+  --color-accent-light: #d9a86c !important; /* tom mais claro do accent */
+  --color-accent-dark: #8b5e30 !important; /* tom mais escuro do accent */
 }
 
 /* Backgrounds */
-.bg-primary {
+.bg-primary-app {
   background-color: var(--color-primary);
 }
 
-.bg-secondary {
+.bg-secondary-app {
   background-color: var(--color-secondary);
 }
 
@@ -56,11 +50,11 @@ body {
 }
 
 /* Text */
-.text-primary {
+.text-primary-app {
   color: var(--color-primary);
 }
 
-.text-secondary {
+.text-secondary-app {
   color: var(--color-secondary);
 }
 
@@ -68,15 +62,15 @@ body {
   color: var(--color-hover);
 }
 
-.text-accent {
+.text-accent-app {
   color: var(--color-accent);
 }
 
-.text-accent-light {
+.text-accent-app-light {
   color: var(--color-accent-light);
 }
 
-.text-accent-dark {
+.text-accent-app-dark {
   color: var(--color-accent-dark);
 }
 
@@ -84,11 +78,11 @@ body {
   color: var(--color-hover);
 }
 
-.hover\:text-accent:hover {
+.hover\:text-accent-app:hover {
   color: var(--color-accent);
 }
 
-.hover\:text-accent-light:hover {
+.hover\:text-accent-app-light:hover {
   color: var(--color-accent-light);
 }
 
@@ -120,4 +114,14 @@ body {
 
 .border-accent-dark {
   border-color: var(--color-accent-dark);
+}
+
+@layer base {
+  a {
+    @apply text-inherit no-underline;
+  }
+
+  a:hover {
+    @apply no-underline;
+  }
 }
