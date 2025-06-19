@@ -5,7 +5,7 @@ export interface Saint {
     century: number
     image: string
     description: string
-    markdownPath: string
+    markdownContent: string
     slug: string
     createdAt: string
 }

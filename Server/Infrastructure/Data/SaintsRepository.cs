@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices;
 using Core.Interfaces;
 using Core.Models;
 using Microsoft.EntityFrameworkCore;
@@ -22,4 +23,9 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
         return await context.SaveChangesAsync() > 0;
     }
 
+    public async Task DeleteSaint(int id)
+    {
+        Saint? saint = await GetById(id);
+        if (saint is not null) context.Remove(saint);
+    }
 }

@@ -17,7 +17,6 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
     MatIconModule,
     MatSortModule,
     MatCardModule,
-    RouterLink,
   ],
 })
 export class AdminContentTableComponent implements OnInit {
@@ -49,5 +48,10 @@ export class AdminContentTableComponent implements OnInit {
 
   editObject(entity: any) {}
 
-  deleteObject(entity: any) {}
+  deleteObject(entity: any) {
+    console.log(entity.id)
+    this.saintsService.deleteSaint(entity.id).subscribe(() => {
+      
+    })
+  }
 }

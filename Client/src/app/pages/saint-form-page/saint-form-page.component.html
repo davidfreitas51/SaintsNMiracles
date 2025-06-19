@@ -55,7 +55,7 @@
             class="w-full border rounded px-3 py-2"
           >
             @for (item of countries; track $index) {
-            <mat-option value="">{{ item }}</mat-option>
+            <mat-option value="{{ item }}">{{ item }}</mat-option>
             }
           </mat-select>
         </label>
@@ -67,7 +67,7 @@
             class="w-full border rounded px-4 py-2"
           >
             @for (item of centuries; track $index) {
-            <mat-option value="">{{ item }}</mat-option>
+            <mat-option value="{{ item }}">{{ item }}</mat-option>
             }
           </mat-select>
         </label>
@@ -99,7 +99,7 @@
       <label class="block flex flex-col">
         <span class="font-semibold">Markdown</span>
         <md-editor
-          formControlName="markdownPath"
+          formControlName="markdownContent"
           [height]="'300px'"
         ></md-editor>
       </label>
@@ -107,9 +107,9 @@
 
     <div class="flex justify-end pt-5">
       <button
-        (click)="onSubmit()"
         mat-flat-button
         type="submit"
+        [disabled]="form.invalid || imageLoading"
         class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded inline-flex items-center gap-2"
       >
         <mat-icon class="text-white">

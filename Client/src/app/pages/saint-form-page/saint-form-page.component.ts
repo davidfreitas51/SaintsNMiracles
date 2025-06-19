@@ -39,6 +39,8 @@ export class SaintFormPageComponent implements OnInit {
   countries = ['Brazil', 'Italy', 'France', 'USA', 'Portugal'];
   centuries = Array.from({ length: 21 }, (_, i) => i + 1);
 
+  imageLoading = false;
+
   constructor(
     private fb: FormBuilder,
     private route: ActivatedRoute,
@@ -53,7 +55,7 @@ export class SaintFormPageComponent implements OnInit {
       century: [null, Validators.required],
       image: ['', Validators.required],
       description: ['', Validators.required],
-      markdownPath: ['', Validators.required],
+      markdownContent: ['', Validators.required],
       slug: ['', Validators.required],
     });
 
@@ -71,18 +73,17 @@ export class SaintFormPageComponent implements OnInit {
   }
 
   onSubmit() {
-    if (this.form.invalid) {
+    if (this.imageLoading) {
       return;
     }
-
     const saint = {
       name: this.form.value.name,
       country: this.form.value.country,
-      century: this.form.value.century,
-      image: this.form.value.image, // This is a base64 string for preview, backend expects a string
+      century: +this.form.value.century,
+      image: this.form.value.image,
       description: this.form.value.description,
       slug: this.form.value.slug,
-      markdownContent: this.form.value.markdownPath, // Rename to match backend
+      markdownContent: this.form.value.markdownContent,
     };
 
     if (this.isEditMode) {
@@ -90,7 +91,7 @@ export class SaintFormPageComponent implements OnInit {
     } else {
       this.saintsService.createSaint(saint).subscribe({
         next: () => {
-          console.log('Success');
+          this.router.navigate(['admin/saints'])
         },
         error: (err) => {
           console.error(err);
@@ -102,15 +103,16 @@ export class SaintFormPageComponent implements OnInit {
 
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
-    if (input.files && input.files.length > 0) {
-      this.selectedFile = input.files[0];
-
-      // For preview only, not for submission
+    if (input.files && input.files[0]) {
+      this.imageLoading = true;
+      const file = input.files[0];
       const reader = new FileReader();
       reader.onload = () => {
-        this.form.patchValue({ image: reader.result });
+        const base64 = reader.result as string;
+        this.form.patchValue({ image: base64 });
+        this.imageLoading = false;
       };
-      reader.readAsDataURL(this.selectedFile);
+      reader.readAsDataURL(file);
     }
   }
 
@@ -120,7 +122,7 @@ export class SaintFormPageComponent implements OnInit {
     textarea.style.height = `${textarea.scrollHeight}px`;
   }
 
-  get markdownPath(): FormControl {
-    return this.form.get('markdownPath') as FormControl;
+  get markdownContent(): FormControl {
+    return this.form.get('markdownContent') as FormControl;
   }
 }

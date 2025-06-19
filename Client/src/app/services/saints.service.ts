@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Saint } from '../interfaces/saint';
 import { Observable } from 'rxjs';
+import { NewSaintDTO } from '../interfaces/new-saint-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -15,7 +16,20 @@ export class SaintsService {
     return this.http.get<Saint[]>(this.baseUrl + 'saints');
   }
 
-  public createSaint(data: any): Observable<void> {
-    return this.http.post<void>(this.baseUrl + 'saints', data);
+  public createSaint(formValue: any): Observable<void> {
+    const saintDto: NewSaintDTO = {
+      name: formValue.name,
+      country: formValue.country,
+      century: +formValue.century,
+      image: formValue.image,
+      description: formValue.description,
+      slug: formValue.slug,
+      markdownContent: formValue.markdownContent,
+    };
+    return this.http.post<void>(this.baseUrl + 'saints', saintDto);
+  }
+
+  public deleteSaint(id: number): Observable<void> {
+    return this.http.delete<void>(this.baseUrl + 'saints/' + id);
   }
 }

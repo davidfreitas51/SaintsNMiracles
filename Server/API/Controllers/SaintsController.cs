@@ -26,7 +26,7 @@ public class SaintsController(ISaintsRepository saintsRepository) : ControllerBa
     public async Task<IActionResult> CreateSaint(NewSaintDTO newSaint)
     {
         newSaint.Slug = Regex.Replace(newSaint.Name.ToLower(), @"[^a-z0-9]+", "-").Trim('-');
-        var folder = Path.Combine("wwwroot", "markdown", newSaint.Slug);
+        var folder = Path.Combine("wwwroot", "markdown", "saints", newSaint.Slug);
         Directory.CreateDirectory(folder);
 
         var markdownPath = Path.Combine(folder, "markdown.md");
@@ -54,6 +54,7 @@ public class SaintsController(ISaintsRepository saintsRepository) : ControllerBa
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteSaint(int id)
     {
+        await saintsRepository.DeleteSaint(id);
         return Ok();
     }
 }
