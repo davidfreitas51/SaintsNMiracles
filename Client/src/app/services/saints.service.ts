@@ -23,7 +23,6 @@ export class SaintsService {
       century: +formValue.century,
       image: formValue.image,
       description: formValue.description,
-      slug: formValue.slug,
       markdownContent: formValue.markdownContent,
     };
     return this.http.post<void>(this.baseUrl + 'saints', saintDto);

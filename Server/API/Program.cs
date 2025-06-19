@@ -18,7 +18,7 @@ builder.Services.AddCors(options =>
 });
 
 builder.Services.AddScoped<ISaintsRepository, SaintsRepository>();
-
+builder.Services.AddScoped<ISaintsService, SaintsService>();
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"));

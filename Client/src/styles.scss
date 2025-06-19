@@ -125,3 +125,10 @@ body {
     @apply no-underline;
   }
 }
+button[disabled] {
+  @apply bg-blue-300 cursor-not-allowed opacity-50;
+}
+
+button[disabled]:hover {
+  @apply bg-blue-300;
+}

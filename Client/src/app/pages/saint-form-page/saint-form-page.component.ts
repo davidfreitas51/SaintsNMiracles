@@ -10,9 +10,10 @@ import {
 } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { SaintsService } from '../../services/saints.service';
+import { SnackbarService } from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-saint-form-page',
@@ -26,10 +27,12 @@ import { SaintsService } from '../../services/saints.service';
     FormsModule,
     LMarkdownEditorModule,
     MatSelectModule,
+    RouterModule
   ],
 })
 export class SaintFormPageComponent implements OnInit {
   saintsService = inject(SaintsService);
+  snackBarService = inject(SnackbarService)
 
   form!: FormGroup;
   isEditMode = false;
@@ -56,7 +59,6 @@ export class SaintFormPageComponent implements OnInit {
       image: ['', Validators.required],
       description: ['', Validators.required],
       markdownContent: ['', Validators.required],
-      slug: ['', Validators.required],
     });
 
     // Observa mudança nos parâmetros da rota
@@ -82,7 +84,6 @@ export class SaintFormPageComponent implements OnInit {
       century: +this.form.value.century,
       image: this.form.value.image,
       description: this.form.value.description,
-      slug: this.form.value.slug,
       markdownContent: this.form.value.markdownContent,
     };
 
@@ -91,6 +92,7 @@ export class SaintFormPageComponent implements OnInit {
     } else {
       this.saintsService.createSaint(saint).subscribe({
         next: () => {
+          this.snackBarService.success('Saint successfully created')
           this.router.navigate(['admin/saints'])
         },
         error: (err) => {

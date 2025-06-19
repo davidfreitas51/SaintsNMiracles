@@ -4,6 +4,5 @@ export interface NewSaintDTO {
   century: number;
   image: string;
   description: string;
-  slug: string;
   markdownContent: string;
 }

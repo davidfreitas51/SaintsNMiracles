@@ -26,6 +26,10 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
     public async Task DeleteSaint(int id)
     {
         Saint? saint = await GetById(id);
-        if (saint is not null) context.Remove(saint);
+        if (saint is not null)
+        {
+            context.Remove(saint);
+            await context.SaveChangesAsync();
+        }
     }
 }

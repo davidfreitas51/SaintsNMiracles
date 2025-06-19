@@ -8,7 +8,7 @@ namespace API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class SaintsController(ISaintsRepository saintsRepository) : ControllerBase
+public class SaintsController(ISaintsRepository saintsRepository, ISaintsService saintsService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllSaints()
@@ -23,33 +23,28 @@ public class SaintsController(ISaintsRepository saintsRepository) : ControllerBa
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateSaint(NewSaintDTO newSaint)
+    public async Task<IActionResult> CreateSaint([FromBody] NewSaintDTO newSaint)
     {
-        newSaint.Slug = Regex.Replace(newSaint.Name.ToLower(), @"[^a-z0-9]+", "-").Trim('-');
-        var folder = Path.Combine("wwwroot", "markdown", "saints", newSaint.Slug);
-        Directory.CreateDirectory(folder);
+        var slug = Regex.Replace(newSaint.Name.ToLower(), @"[^a-z0-9]+", "-").Trim('-');
 
-        var markdownPath = Path.Combine(folder, "markdown.md");
-        await System.IO.File.WriteAllTextAsync(markdownPath, newSaint.MarkdownContent);
+        var (markdownPath, imagePath) = await saintsService.SaveSaintFilesAsync(newSaint, slug);
 
         var saint = new Saint
         {
             Name = newSaint.Name,
             Country = newSaint.Country,
             Century = newSaint.Century,
-            Image = newSaint.Image,
+            Image = imagePath ?? "",
             Description = newSaint.Description,
-            Slug = newSaint.Slug,
+            Slug = slug,
             MarkdownPath = markdownPath
         };
 
-        if (await saintsRepository.CreateSaint(saint))
-        {
-            return Created();
-        }
+        var created = await saintsRepository.CreateSaint(saint);
 
-        return BadRequest();
+        return created ? Created() : BadRequest();
     }
+
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteSaint(int id)

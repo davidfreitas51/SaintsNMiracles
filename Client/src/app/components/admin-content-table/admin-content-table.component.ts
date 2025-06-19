@@ -1,57 +1,101 @@
-import { Component, inject, OnInit, viewChild, ViewChild } from '@angular/core';
-import { SaintsService } from '../../services/saints.service';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
-import { MatIconModule } from '@angular/material/icon';
+import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { SaintsService } from '../../services/saints.service';
+import { SnackbarService } from '../../services/snackbar.service';
+import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin-content-table',
   templateUrl: './admin-content-table.component.html',
   styleUrls: ['./admin-content-table.component.scss'],
+  standalone: true,
   imports: [
-    MatTableModule,
-    MatPaginatorModule,
+    MatPaginator,
     MatIconModule,
-    MatSortModule,
     MatCardModule,
+    MatTableModule,
+    MatSortModule,
   ],
 })
 export class AdminContentTableComponent implements OnInit {
   private saintsService = inject(SaintsService);
+  private snackBarService = inject(SnackbarService);
   private route = inject(ActivatedRoute);
-  public router = inject(Router)
+  private cdr = inject(ChangeDetectorRef);
 
+  public router = inject(Router)
   public columns: string[] = ['name', 'country', 'century', 'actions'];
   public displayedColumns = [...this.columns];
   public dataSource = new MatTableDataSource<any>([]);
-
-  public currentEntity: string = '';
+  public currentEntity = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+  ngOnInit(): void {
+    const plural = this.route.snapshot.paramMap.get('object') || '';
+    this.currentEntity = this.getSingularName(plural);
+
+    this.loadData();
+  }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
   }
 
-  ngOnInit(): void {
-    this.currentEntity = this.route.snapshot.paramMap.get('object') || '';
-
+  private loadData(): void {
     this.saintsService.getSaints().subscribe((saints) => {
       this.dataSource.data = saints;
+      this.cdr.detectChanges();
     });
   }
 
-  editObject(entity: any) {}
+  editObject(entity: any): void {
+    this.router.navigate([
+      '/admin',
+      this.currentEntity.toLowerCase(),
+      entity.id,
+      'edit',
+    ]);
+  }
 
-  deleteObject(entity: any) {
-    console.log(entity.id)
-    this.saintsService.deleteSaint(entity.id).subscribe(() => {
-      
-    })
+  deleteObject(entity: any): void {
+    this.saintsService.deleteSaint(entity.id).subscribe({
+      next: () => {
+        this.snackBarService.success(
+          `${this.currentEntity} successfully deleted`
+        );
+        this.loadData();
+      },
+      error: (err) => {
+        this.snackBarService.error(
+          `Failed to delete ${this.currentEntity.toLowerCase()}`
+        );
+        console.error(err);
+      },
+    });
+  }
+
+  private getSingularName(plural: string): string {
+    const map: Record<string, string> = {
+      saints: 'Saint',
+    };
+    return map[plural] || this.capitalize(plural);
+  }
+
+  private capitalize(value: string): string {
+    return value.charAt(0).toUpperCase() + value.slice(1);
   }
 }

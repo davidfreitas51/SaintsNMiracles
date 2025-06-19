@@ -7,6 +7,5 @@ public class NewSaintDTO
     public int Century { get; set; }
     public string Image { get; set; } = default!;
     public string Description { get; set; } = default!;
-    public string Slug { get; set; } = default!;
     public string MarkdownContent { get; set; } = default!;
 }
