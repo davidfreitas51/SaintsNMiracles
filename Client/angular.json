@@ -33,11 +33,11 @@
               "src/favicon.ico"
             ],
             "styles": [
-              "@angular/material/prebuilt-themes/azure-blue.css",
-              "src/styles.scss",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/font-awesome/css/font-awesome.min.css",
-              "node_modules/ngx-markdown-editor/assets/highlight.js/agate.min.css"
+              "@angular/material/prebuilt-themes/azure-blue.css",
+              "node_modules/ngx-markdown-editor/assets/highlight.js/agate.min.css",
+              "src/styles.scss"
             ],
             "scripts": [
               "node_modules/ngx-markdown-editor/assets/highlight.js/highlight.min.js",
@@ -116,5 +116,8 @@
         }
       }
     }
+  },
+  "cli": {
+    "analytics": false
   }
 }

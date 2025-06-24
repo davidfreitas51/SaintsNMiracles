@@ -16,10 +16,17 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
         return Ok(await saintsRepository.GetAll());
     }
 
+
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
         return Ok(await saintsRepository.GetById(id));
+    }
+
+    [HttpGet("{slug}")]
+    public async Task<IActionResult> GetSaintBySlug(string slug)
+    {
+        return Ok(await saintsRepository.GetBySlug(slug));
     }
 
     [HttpPost]

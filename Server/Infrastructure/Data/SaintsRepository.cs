@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices;
 using Core.Interfaces;
 using Core.Models;
 using Microsoft.EntityFrameworkCore;
@@ -10,11 +9,6 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
     public async Task<IEnumerable<Saint>> GetAll()
     {
         return await context.Saints.ToListAsync();
-    }
-
-    public async Task<Saint?> GetById(int id)
-    {
-        return await context.Saints.FindAsync(id);
     }
 
     public async Task<bool> CreateSaint(Saint newSaint)
@@ -31,5 +25,15 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
             context.Remove(saint);
             await context.SaveChangesAsync();
         }
+    }
+    public async Task<Saint?> GetBySlug(string slug)
+    {
+        return await context.Saints
+            .FirstOrDefaultAsync(s => s.Slug == slug);
+    }
+
+    public async Task<Saint?> GetById(int id)
+    {
+        return await context.Saints.FindAsync(id);
     }
 }

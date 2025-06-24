@@ -16,6 +16,10 @@ export class SaintsService {
     return this.http.get<Saint[]>(this.baseUrl + 'saints');
   }
 
+  public getSaint(slug: string): Observable<Saint> {
+    return this.http.get<Saint>(this.baseUrl + 'saints/' + slug)
+  }
+
   public createSaint(formValue: any): Observable<void> {
     const saintDto: NewSaintDTO = {
       name: formValue.name,

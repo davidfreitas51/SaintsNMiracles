@@ -13,47 +13,46 @@
     >
       <a
         routerLink="/"
-        routerLinkActive="text-accent-app font-bold"
         [routerLinkActiveOptions]="{ exact: true }"
+        routerLinkActive="active"
         class="hover:darken transition"
       >
         Home
       </a>
       <a
         routerLink="/saints"
-        routerLinkActive="text-accent-app font-bold"
+        routerLinkActive="active"
         class="hover:darken transition"
       >
         Saints
       </a>
       <a
         routerLink="/signs"
-        routerLinkActive="text-accent-app font-bold"
+        routerLinkActive="active"
         class="hover:darken transition"
       >
         Signs
       </a>
       <a
         routerLink="/about"
-        routerLinkActive="text-accent-app font-bold"
+        routerLinkActive="active"
         class="hover:darken transition"
       >
         About Us
       </a>
       <a
         routerLink="/admin"
-        routerLinkActive="text-accent-app font-bold"
+        routerLinkActive="active"
         class="hover:darken transition"
       >
-      Admin
-    </a>
+        Admin
+      </a>
     </nav>
 
     <div class="hidden md:flex gap-4 items-center">
       <a
         routerLink="/account/register"
-        class="py-3 px-6 border rounded hover:darken transition text-lg font-semibold"
-        style="color: var(--color-secondary) !important"
+        class="py-3 px-6 border rounded hover:darken transition text-lg font-semibold text-secondary-app"
       >
         Create Account
       </a>
@@ -85,32 +84,33 @@
   >
     <button
       mat-menu-item
-      routerLink="/"
-      routerLinkActive="text-accent-app font-bold"
+      [routerLink]="'/'"
+      [routerLinkActiveOptions]="{ exact: true }"
+      routerLinkActive="active"
       class="text-lg font-semibold hover:darken"
     >
       Home
     </button>
     <button
       mat-menu-item
-      routerLink="/signs"
-      routerLinkActive="text-accent-app font-bold"
+      [routerLink]="'/signs'"
+      routerLinkActive="active"
       class="text-lg font-semibold hover:darken"
     >
       Signs
     </button>
     <button
       mat-menu-item
-      routerLink="/saints"
-      routerLinkActive="text-accent-app font-bold"
+      [routerLink]="'/saints'"
+      routerLinkActive="active"
       class="text-lg font-semibold hover:darken"
     >
       Saints
     </button>
     <button
       mat-menu-item
-      routerLink="/about"
-      routerLinkActive="text-accent-app font-bold"
+      [routerLink]="'/about'"
+      routerLinkActive="active"
       class="text-lg font-semibold hover:darken"
     >
       About Us
@@ -118,19 +118,22 @@
     <mat-divider></mat-divider>
     <button
       mat-menu-item
-      routerLink="/account/register"
+      [routerLink]="'/account/register'"
       class="text-lg bg-hover hover:darken text-secondary-app"
     >
       Create Account
     </button>
     <button
       mat-menu-item
-      routerLink="/account/login"
+      [routerLink]="'/account/login'"
       class="text-lg font-semibold rounded hover:darken"
     >
       Login
     </button>
   </mat-menu>
 </header>
+
+
+
 
 <div class="h-20"></div>
