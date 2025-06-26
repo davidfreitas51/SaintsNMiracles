@@ -26,9 +26,10 @@
         <mat-label>Filter By Country</mat-label>
         <mat-select>
           <mat-option value="">All</mat-option>
-          <mat-option *ngFor="let c of countries" [value]="c">{{
-            c
-          }}</mat-option>
+          @for (c of countries; track $index) {
+            <mat-option [value]="c">{{ c }}</mat-option>
+          }
+          
         </mat-select>
       </mat-form-field>
     </div>

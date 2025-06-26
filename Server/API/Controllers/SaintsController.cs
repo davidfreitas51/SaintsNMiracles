@@ -16,7 +16,6 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
         return Ok(await saintsRepository.GetAll());
     }
 
-
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
@@ -51,7 +50,6 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
 
         return created ? Created() : BadRequest();
     }
-
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteSaint(int id)

@@ -127,7 +127,7 @@ body {
 
   a:not(.active):not([class*="text-"]) {
     color: inherit !important;
-  }  
+  }
 }
 
 button[disabled] {
@@ -136,4 +136,16 @@ button[disabled] {
 
 button[disabled]:hover {
   @apply bg-blue-300;
+}
+
+.mat-mdc-snack-bar-container.snack-error {
+  --mdc-snackbar-container-color: red;
+  --mat-snack-bar-button-color: #fff;
+  --mdc-snackbar-supporting-text-color: #fff;
+}
+
+.mat-mdc-snack-bar-container.snack-success {
+  --mdc-snackbar-container-color: green;
+  --mat-snack-bar-button-color: #fff;
+  --mdc-snackbar-supporting-text-color: #fff;
 }

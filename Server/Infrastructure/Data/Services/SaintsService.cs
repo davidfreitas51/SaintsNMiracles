@@ -37,6 +37,8 @@ public class SaintsService(IHostEnvironment env) : ISaintsService
             }
         }
 
-        return (markdownPath, relativeImagePath);
+        var relativeMarkdownPath = $"/markdown/saints/{slug}/markdown.md";
+        return (relativeMarkdownPath, relativeImagePath);
     }
+
 }

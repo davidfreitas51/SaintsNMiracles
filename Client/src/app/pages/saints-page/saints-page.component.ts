@@ -25,19 +25,20 @@ import { RomanPipe } from '../../pipes/roman.pipe';
     FormsModule,
   ],
   templateUrl: './saints-page.component.html',
-  styleUrl: './saints-page.component.scss'
+  styleUrl: './saints-page.component.scss',
 })
 export class SaintsPageComponent implements OnInit {
   private router = inject(Router);
   private saintsService = inject(SaintsService);
 
+  countries = ['Brazil', 'Italy', 'France', 'USA', 'Portugal'];
   public saints: Saint[] | null = null;
   imageBaseUrl = environment.assetsUrl;
 
   ngOnInit() {
     this.saintsService.getSaints().subscribe({
-      next: saints => this.saints = saints,
-      error: err => console.error(err)
+      next: (saints) => (this.saints = saints),
+      error: (err) => console.error(err),
     });
   }
 
