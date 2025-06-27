@@ -21,7 +21,7 @@
     <!-- Main Content -->
     <main class="w-2/4 prose prose-indigo max-w-none">
       <h1 class="text-4xl font-extrabold mb-6 text-center">{{ saint.name }}</h1>
-      <div>{{ markdownContent }}</div>
+      <div [innerHTML]="markdownContent"></div> 
     </main>
 
     <!-- Right Sidebar -->

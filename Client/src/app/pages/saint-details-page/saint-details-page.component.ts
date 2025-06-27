@@ -4,7 +4,7 @@ import { SaintsService } from '../../services/saints.service';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { environment } from '../../../environments/environment';
-import { HttpClient } from '@angular/common/http';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-saint-details-page',
@@ -14,9 +14,10 @@ import { HttpClient } from '@angular/common/http';
 export class SaintDetailsPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private saintsService = inject(SaintsService);
+  private sanitizer = inject(DomSanitizer);
   imageBaseUrl = environment.assetsUrl;
   public saint: any = null;
-  public markdownContent: string | null = null;
+  markdownContent!: SafeHtml;
 
   ngOnInit(): void {
     const slug =
@@ -28,8 +29,11 @@ export class SaintDetailsPageComponent implements OnInit {
 
     this.saintsService.getSaintWithMarkdown(slug).subscribe({
       next: (data) => {
+        console.log('HTML gerado (puro):', data.markdown.toString()); // <-- esse é o que interessa
         this.saint = data.saint;
-        this.markdownContent = data.markdown;
+        this.markdownContent = this.sanitizer.bypassSecurityTrustHtml(
+          data.markdown
+        );
       },
       error: (err) => {
         console.error('Erro ao carregar santo:', err);

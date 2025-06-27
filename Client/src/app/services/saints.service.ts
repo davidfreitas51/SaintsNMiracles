@@ -2,9 +2,10 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Saint } from '../interfaces/saint';
-import { map, Observable, switchMap } from 'rxjs';
+import { from, map, Observable, of, switchMap } from 'rxjs';
 import { NewSaintDTO } from '../interfaces/new-saint-dto';
 import { SaintWithMarkdown } from '../interfaces/saint-with-markdown';
+import { marked } from 'marked';
 
 @Injectable({
   providedIn: 'root',
@@ -37,7 +38,7 @@ export class SaintsService {
     return this.http.delete<void>(this.baseUrl + 'saints/' + id);
   }
 
-  public getSaintWithMarkdown(slug: string): Observable<SaintWithMarkdown> {
+  getSaintWithMarkdown(slug: string): Observable<SaintWithMarkdown> {
     return this.getSaint(slug).pipe(
       switchMap((saint) =>
         this.http
@@ -45,10 +46,16 @@ export class SaintsService {
             responseType: 'text',
           })
           .pipe(
-            map((markdown) => ({
-              saint,
-              markdown,
-            }))
+            switchMap((rawMarkdown) => {
+              const html = marked.parse(rawMarkdown); 
+              if (html instanceof Promise) {
+                return from(html).pipe(
+                  map((resolvedHtml) => ({ saint, markdown: resolvedHtml }))
+                );
+              } else {
+                return of({ saint, markdown: html });
+              }
+            })
           )
       )
     );
