@@ -5,11 +5,12 @@ import { FooterComponent } from '../../components/footer/footer.component';
 import { HeaderComponent } from '../../components/header/header.component';
 import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { MatDividerModule } from '@angular/material/divider';
 
 @Component({
   selector: 'app-saint-details-page',
   templateUrl: './saint-details-page.component.html',
-  imports: [FooterComponent, HeaderComponent],
+  imports: [FooterComponent, HeaderComponent, MatDividerModule],
 })
 export class SaintDetailsPageComponent implements OnInit {
   private route = inject(ActivatedRoute);

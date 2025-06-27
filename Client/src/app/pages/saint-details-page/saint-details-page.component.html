@@ -1,44 +1,54 @@
-<app-header></app-header>
+<div class="min-h-screen flex flex-col">
+  <app-header></app-header>
 
-@if (saint) {
-  <div class="max-w-screen-xl mx-auto px-4 my-8 flex gap-8">
-    <!-- Left Sidebar -->
-    <aside class="w-1/4 flex flex-col items-center gap-4">
-      <img
-        [src]="imageBaseUrl + saint.image"
-        [alt]="saint.name"
-        class="w-full rounded shadow-md"
-      />
-      <div class="text-sm text-gray-700 w-full text-center">
-        <div class="flex justify-center gap-6 mb-2">
-          <p><strong>Século:</strong> {{ saint.century }}º</p>
-          <p><strong>País:</strong> {{ saint.country }}</p>
+  <main class="flex-grow">
+    @if (saint) {
+    <div class="max-w-screen-xl mx-auto px-4 my-8 flex gap-8">
+      <!-- Left Sidebar -->
+      <aside class="w-1/4 flex mt-20 flex-col items-center gap-4">
+        <img
+          [src]="imageBaseUrl + saint.image"
+          [alt]="saint.name"
+          class="w-full rounded shadow-md"
+        />
+        <div class="text-sm text-gray-700 w-full text-center">
+          <div class="flex justify-center gap-6 mb-2">
+            <p><strong>Século:</strong> {{ saint.century }}º</p>
+            <p><strong>País:</strong> {{ saint.country }}</p>
+          </div>
+          <p class="mt-2">{{ saint.description }}</p>
         </div>
-        <p class="mt-2">{{ saint.description }}</p>
-      </div>
-    </aside>
+      </aside>
 
-    <!-- Main Content -->
-    <main class="w-2/4 prose prose-indigo max-w-none">
-      <h1 class="text-4xl font-extrabold mb-6 text-center">{{ saint.name }}</h1>
-      <div [innerHTML]="markdownContent"></div> 
-    </main>
+      <!-- Main Content -->
+      <main class="w-2/4 prose prose-indigo max-w-none">
+        <h1 class="text-4xl font-extrabold mb-6 text-center">
+          Saint {{ saint.name }}
+        </h1>
+        
+        <div class="border-b border-gray-300 my-6"></div>
+        
+        <div class="mt-5" [innerHTML]="markdownContent"></div>
+      </main>
+      
 
-    <!-- Right Sidebar -->
-    <aside class="w-1/4 space-y-4">
-      <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3">
-        Veja também
-      </h2>
-      <ul class="list-disc list-inside text-blue-700 hover:text-blue-900">
-        <li><a routerLink="/saints">Lista de Santos</a></li>
-        <li><a routerLink="/signs">Sinais e Simbolismos</a></li>
-        <li><a routerLink="/about">Sobre Nós</a></li>
-        <li><a routerLink="/contact">Contato</a></li>
-      </ul>
-    </aside>
-  </div>
-} @else {
-  <div class="text-center text-lg py-20 text-gray-500">Carregando...</div>
-}
+      <!-- Right Sidebar -->
+      <aside class="mt-7 w-1/4 space-y-4">
+        <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3">
+          Veja também
+        </h2>
+        <ul class="list-disc list-inside text-blue-700 hover:text-blue-900">
+          <li><a routerLink="/saints">Lista de Santos</a></li>
+          <li><a routerLink="/signs">Sinais e Simbolismos</a></li>
+          <li><a routerLink="/about">Sobre Nós</a></li>
+          <li><a routerLink="/contact">Contato</a></li>
+        </ul>
+      </aside>
+    </div>
+    } @else {
+    <div class="text-center text-lg py-20 text-gray-500">Carregando...</div>
+    }
+  </main>
 
-<app-footer></app-footer>
+  <app-footer></app-footer>
+</div>
