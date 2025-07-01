@@ -24,7 +24,6 @@
                 class="inline-block w-4 h-4 mr-1 object-contain align-text-bottom"
               />
             </p>
-            
           </div>
           <p class="mt-2">{{ saint.description }}</p>
         </div>
@@ -35,24 +34,48 @@
         <h1 class="text-4xl font-extrabold mb-6 text-center">
           Saint {{ saint.name }}
         </h1>
-        
+
         <div class="border-b border-gray-300 my-6"></div>
-        
+
         <div class="markdown-content mt-5" [innerHTML]="markdownContent"></div>
       </main>
-      
 
       <!-- Right Sidebar -->
-      <aside class="mt-7 w-1/4 space-y-4">
-        <h2 class="text-xl font-semibold border-b border-gray-300 pb-2 mb-3">
-          Veja também
-        </h2>
-        <ul class="list-disc list-inside text-blue-700 hover:text-blue-900">
-          <li><a routerLink="/saints">Lista de Santos</a></li>
-          <li><a routerLink="/signs">Sinais e Simbolismos</a></li>
-          <li><a routerLink="/about">Sobre Nós</a></li>
-          <li><a routerLink="/contact">Contato</a></li>
+      <aside
+        class="w-full lg:w-64 border-l border-gray-200 mt-16 pl-4 sticky top-28 hidden lg:block"
+      >
+        <h3
+          class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2 mt-8"
+        >
+          Sections
+        </h3>
+        <ul class="list-disc list-inside space-y-2 text-sm">
+          @for (heading of headings; track $index) {
+          <li>
+            <a
+              (click)="scrollTo(heading.id)"
+              class="text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium"
+            >
+              {{ heading.text }}
+            </a>
+          </li>
+          }
         </ul>
+        
+
+        <div class="mt-10">
+          <h3
+            class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2"
+          >
+            Veja também
+          </h3>
+          <ul class="list-disc list-inside text-blue-700 hover:text-blue-900">
+            <li><a routerLink="/saints">Lista de Santos</a></li>
+            <li><a routerLink="/signs">Sinais e Simbolismos</a></li>
+            <li><a routerLink="/about">Sobre Nós</a></li>
+            <li><a routerLink="/contact">Contato</a></li>
+          </ul>
+        </div>
       </aside>
     </div>
     } @else {
