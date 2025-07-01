@@ -8,6 +8,7 @@ import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatDividerModule } from '@angular/material/divider';
 import { RomanPipe } from '../../pipes/roman.pipe';
 import countries from 'i18n-iso-countries';
+import { marked } from 'marked'; 
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import { CommonModule } from '@angular/common';
 import { CountryCodePipe } from "../../pipes/country-code.pipe";
@@ -40,18 +41,16 @@ export class SaintDetailsPageComponent implements OnInit {
         .join('/')
         .split('/')
         .pop() || '';
-
-    this.saintsService.getSaintWithMarkdown(slug).subscribe({
-      next: (data) => {
-        console.log('HTML gerado (puro):', data.markdown.toString()); // <-- esse é o que interessa
-        this.saint = data.saint;
-        this.markdownContent = this.sanitizer.bypassSecurityTrustHtml(
-          data.markdown
-        );
-      },
-      error: (err) => {
-        console.error('Erro ao carregar santo:', err);
-      },
-    });
+        this.saintsService.getSaintWithMarkdown(slug).subscribe({
+          next: async (data) => {
+            this.saint = data.saint;
+            const raw = await marked.parse(data.markdown);
+            this.markdownContent = this.sanitizer.bypassSecurityTrustHtml(raw);
+          },
+          error: (err) => {
+            console.error('Error loading saint: ', err);
+          },
+        });
+        
   }
 }

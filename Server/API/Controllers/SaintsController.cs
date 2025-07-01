@@ -29,7 +29,7 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
     }
 
     [HttpPost]
-    public async Task<IActionResult> CreateSaint([FromBody] NewSaintDTO newSaint)
+    public async Task<IActionResult> CreateSaint([FromBody] NewSaintDto newSaint)
     {
         var slug = Regex.Replace(newSaint.Name.ToLower(), @"[^a-z0-9]+", "-").Trim('-');
 
@@ -50,6 +50,35 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
 
         return created ? Created() : BadRequest();
     }
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> UpdateSaint(int id, [FromBody] NewSaintDto updatedSaint)
+    {
+        var existingSaint = await saintsRepository.GetByIdAsync(id);
+        if (existingSaint == null)
+            return NotFound();
+
+        var slug = Regex.Replace(updatedSaint.Name.ToLower(), @"[^a-z0-9]+", "-").Trim('-');
+
+        var (markdownPath, imagePath) = await saintsService.SaveSaintFilesAsync(updatedSaint, slug);
+
+        existingSaint.Name = updatedSaint.Name;
+        existingSaint.Country = updatedSaint.Country;
+        existingSaint.Century = updatedSaint.Century;
+        existingSaint.Description = updatedSaint.Description;
+        existingSaint.Slug = slug;
+
+        if (!string.IsNullOrWhiteSpace(imagePath))
+            existingSaint.Image = imagePath;
+
+        if (!string.IsNullOrWhiteSpace(markdownPath))
+            existingSaint.MarkdownPath = markdownPath;
+
+        var updated = await saintsRepository.UpdateSaintAsync(existingSaint);
+        return updated ? NoContent() : BadRequest();
+    }
+
+
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteSaint(int id)

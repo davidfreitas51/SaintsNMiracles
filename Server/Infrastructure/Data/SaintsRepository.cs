@@ -58,6 +58,13 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
         return await context.SaveChangesAsync() > 0;
     }
 
+    public async Task<bool> UpdateSaintAsync(Saint saint)
+    {
+        context.Saints.Update(saint);
+        return await context.SaveChangesAsync() > 0;
+    }
+
+
     public async Task DeleteSaintAsync(int id)
     {
         Saint? saint = await GetByIdAsync(id);

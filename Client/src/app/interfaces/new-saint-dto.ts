@@ -1,4 +1,4 @@
-export interface NewSaintDTO {
+export interface NewSaintDto {
   name: string;
   country: string;
   century: number;

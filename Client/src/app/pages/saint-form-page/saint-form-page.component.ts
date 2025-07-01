@@ -22,10 +22,10 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { SaintsService } from '../../services/saints.service';
 import { SnackbarService } from '../../services/snackbar.service';
-import { RomanPipe } from "../../pipes/roman.pipe";
+import { RomanPipe } from '../../pipes/roman.pipe';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
-import { CountryCodePipe } from "../../pipes/country-code.pipe";
+import { CountryCodePipe } from '../../pipes/country-code.pipe';
 
 @Component({
   selector: 'app-saint-form-page',
@@ -42,8 +42,8 @@ import { CountryCodePipe } from "../../pipes/country-code.pipe";
     RouterModule,
     RomanPipe,
     CommonModule,
-    CountryCodePipe
-],
+    CountryCodePipe,
+  ],
 })
 export class SaintFormPageComponent implements OnInit, AfterViewInit {
   saintsService = inject(SaintsService);
@@ -58,7 +58,7 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
   saintId: string | null = null;
   imageLoading = false;
 
-  centuries = Array.from({ length: 21 }, (_, i) => i + 1);
+  centuries = Array.from({ length: 20 }, (_, i) => i + 1);
 
   constructor(
     private fb: FormBuilder,
@@ -82,15 +82,15 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
       this.isEditMode = !!this.saintId;
 
       if (this.isEditMode && this.saintId) {
-        this.saintsService.getSaint(this.saintId).subscribe({
-          next: (saint) => {
-            console.log(saint.century);
+        this.saintsService.getSaintWithMarkdown(this.saintId).subscribe({
+          next: ({ saint, markdown }) => {
             this.form.patchValue({
               name: saint.name,
               country: saint.country,
               century: saint.century.toString(),
               image: saint.image,
               description: saint.description,
+              markdownContent: markdown,
             });
             setTimeout(() => {
               this.autoResizeOnLoad();
@@ -98,6 +98,7 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
             this.cdr.detectChanges();
           },
           error: (err) => {
+            this.snackBarService.error('Error loading saint for update');
             this.router.navigate(['admin/saints']);
           },
         });
@@ -133,7 +134,7 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
         },
         error: (err) => {
           console.error(err);
-          this.snackBarService.error('Erro ao atualizar santo');
+          this.snackBarService.error('Error updating saint');
         },
       });
     } else {
@@ -144,7 +145,7 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
         },
         error: (err) => {
           console.error(err);
-          this.snackBarService.error('Erro ao criar santo');
+          this.snackBarService.error('Error creating saint');
         },
       });
     }

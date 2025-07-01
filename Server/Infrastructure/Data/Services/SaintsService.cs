@@ -7,7 +7,7 @@ public class SaintsService(IHostEnvironment env) : ISaintsService
 {
     private readonly IHostEnvironment _env = env;
 
-    public async Task<(string markdownPath, string? imagePath)> SaveSaintFilesAsync(NewSaintDTO newSaint, string slug)
+    public async Task<(string markdownPath, string? imagePath)> SaveSaintFilesAsync(NewSaintDto newSaint, string slug)
     {
         var wwwroot = Path.Combine(_env.ContentRootPath, "wwwroot");
 

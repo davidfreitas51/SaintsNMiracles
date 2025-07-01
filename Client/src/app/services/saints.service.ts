@@ -3,10 +3,9 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Saint } from '../interfaces/saint';
 import { Observable, switchMap, map, from, of } from 'rxjs';
-import { NewSaintDTO } from '../interfaces/new-saint-dto';
+import { NewSaintDto as NewSaintDto } from '../interfaces/new-saint-dto';
 import { SaintWithMarkdown } from '../interfaces/saint-with-markdown';
 import { SaintFilters } from '../interfaces/saint-filter';
-import { marked } from 'marked';
 
 @Injectable({
   providedIn: 'root',
@@ -34,7 +33,7 @@ export class SaintsService {
   }
 
   public createSaint(formValue: any): Observable<void> {
-    const saintDto: NewSaintDTO = {
+    const saintDto: NewSaintDto = {
       name: formValue.name,
       country: formValue.country,
       century: +formValue.century,
@@ -49,29 +48,19 @@ export class SaintsService {
     return this.http.delete<void>(this.baseUrl + 'saints/' + id);
   }
 
-  public updateSaint(id: string, formValue: NewSaintDTO): Observable<void> {
+  public updateSaint(id: string, formValue: NewSaintDto): Observable<void> {
+    console.log(formValue)
     return this.http.put<void>(this.baseUrl + 'saints/' + id, formValue);
   }
 
-  getSaintWithMarkdown(slug: string): Observable<SaintWithMarkdown> {
+  public getSaintWithMarkdown(slug: string): Observable<SaintWithMarkdown> {
     return this.getSaint(slug).pipe(
       switchMap((saint) =>
         this.http
           .get(environment.assetsUrl + saint.markdownPath, {
             responseType: 'text',
           })
-          .pipe(
-            switchMap((rawMarkdown) => {
-              const html = marked.parse(rawMarkdown);
-              if (html instanceof Promise) {
-                return from(html).pipe(
-                  map((resolvedHtml) => ({ saint, markdown: resolvedHtml }))
-                );
-              } else {
-                return of({ saint, markdown: html });
-              }
-            })
-          )
+          .pipe(map((rawMarkdown) => ({ saint, markdown: rawMarkdown })))
       )
     );
   }

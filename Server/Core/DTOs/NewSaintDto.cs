@@ -1,6 +1,6 @@
 namespace Core.DTOs;
 
-public class NewSaintDTO
+public class NewSaintDto
 {
     public string Name { get; set; } = default!;
     public string Country { get; set; } = default!;
