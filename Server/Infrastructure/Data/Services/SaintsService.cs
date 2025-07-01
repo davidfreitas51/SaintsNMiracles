@@ -7,7 +7,36 @@ public class SaintsService(IHostEnvironment env) : ISaintsService
 {
     private readonly IHostEnvironment _env = env;
 
-    public async Task<(string markdownPath, string? imagePath)> SaveSaintFilesAsync(NewSaintDto newSaint, string slug)
+    public async Task DeleteFilesAsync(string slug)
+    {
+        var wwwroot = Path.Combine(_env.ContentRootPath, "wwwroot");
+
+        var markdownFolder = Path.Combine(wwwroot, "markdown", "saints", slug);
+        if (Directory.Exists(markdownFolder))
+        {
+            Directory.Delete(markdownFolder, recursive: true);
+        }
+
+        var imageFolder = Path.Combine(wwwroot, "images", "saints");
+        if (Directory.Exists(imageFolder))
+        {
+            var imageExtensions = new[] { "png", "jpg", "jpeg", "webp" };
+            foreach (var ext in imageExtensions)
+            {
+                var imagePath = Path.Combine(imageFolder, $"{slug}.{ext}");
+                if (File.Exists(imagePath))
+                {
+                    File.Delete(imagePath);
+                    break;
+                }
+            }
+        }
+
+        await Task.CompletedTask;
+    }
+
+
+    public async Task<(string markdownPath, string? imagePath)> SaveFilesAsync(NewSaintDto newSaint, string slug)
     {
         var wwwroot = Path.Combine(_env.ContentRootPath, "wwwroot");
 

@@ -11,7 +11,7 @@ namespace API.Controllers;
 public class SaintsController(ISaintsRepository saintsRepository, ISaintsService saintsService) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAllSaints([FromQuery]SaintFilters filters)
+    public async Task<IActionResult> GetAllSaints([FromQuery] SaintFilters filters)
     {
         return Ok(await saintsRepository.GetAllAsync(filters));
     }
@@ -33,7 +33,7 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
     {
         var slug = Regex.Replace(newSaint.Name.ToLower(), @"[^a-z0-9]+", "-").Trim('-');
 
-        var (markdownPath, imagePath) = await saintsService.SaveSaintFilesAsync(newSaint, slug);
+        var (markdownPath, imagePath) = await saintsService.SaveFilesAsync(newSaint, slug);
 
         var saint = new Saint
         {
@@ -60,7 +60,8 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
 
         var slug = Regex.Replace(updatedSaint.Name.ToLower(), @"[^a-z0-9]+", "-").Trim('-');
 
-        var (markdownPath, imagePath) = await saintsService.SaveSaintFilesAsync(updatedSaint, slug);
+
+        var (markdownPath, imagePath) = await saintsService.SaveFilesAsync(updatedSaint, slug);
 
         existingSaint.Name = updatedSaint.Name;
         existingSaint.Country = updatedSaint.Country;
@@ -83,6 +84,10 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteSaint(int id)
     {
+        var saintToDelete = await saintsRepository.GetByIdAsync(id);
+        if (saintToDelete is null)
+            return NotFound();
+        await saintsService.DeleteFilesAsync(saintToDelete.Slug);
         await saintsRepository.DeleteSaintAsync(id);
         return Ok();
     }
