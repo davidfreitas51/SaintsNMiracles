@@ -49,6 +49,10 @@ export class SaintsService {
     return this.http.delete<void>(this.baseUrl + 'saints/' + id);
   }
 
+  public updateSaint(id: string, formValue: NewSaintDTO): Observable<void> {
+    return this.http.put<void>(this.baseUrl + 'saints/' + id, formValue);
+  }
+
   getSaintWithMarkdown(slug: string): Observable<SaintWithMarkdown> {
     return this.getSaint(slug).pipe(
       switchMap((saint) =>

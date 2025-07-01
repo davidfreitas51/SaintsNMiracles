@@ -16,6 +16,7 @@ import { SaintFilters } from '../../interfaces/saint-filter';
 import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import { CommonModule } from '@angular/common';
+import { CountryCodePipe } from "../../pipes/country-code.pipe";
 countries.registerLocale(enLocale);
 
 @Component({
@@ -33,7 +34,8 @@ countries.registerLocale(enLocale);
     MatButtonModule,
     MatIconModule,
     CommonModule,
-  ],
+    CountryCodePipe
+],
   templateUrl: './saints-page.component.html',
   styleUrl: './saints-page.component.scss',
 })
@@ -85,9 +87,5 @@ export class SaintsPageComponent implements OnInit {
   clearFilters() {
     this.saintFilters = new SaintFilters()
     this.updateData()
-  }
-
-  getFlagCode(country: string): string | null {
-    return countries.getAlpha2Code(country, 'en')?.toLowerCase() ?? null;
   }
 }

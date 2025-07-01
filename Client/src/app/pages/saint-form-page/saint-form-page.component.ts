@@ -1,5 +1,13 @@
 import { LMarkdownEditorModule } from 'ngx-markdown-editor';
-import { Component, OnInit, ChangeDetectorRef, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject,
+  ViewChild,
+  ElementRef,
+  AfterViewInit,
+} from '@angular/core';
 import {
   FormBuilder,
   FormControl,
@@ -14,6 +22,10 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { SaintsService } from '../../services/saints.service';
 import { SnackbarService } from '../../services/snackbar.service';
+import { RomanPipe } from "../../pipes/roman.pipe";
+import { environment } from '../../../environments/environment';
+import { CommonModule } from '@angular/common';
+import { CountryCodePipe } from "../../pipes/country-code.pipe";
 
 @Component({
   selector: 'app-saint-form-page',
@@ -27,22 +39,26 @@ import { SnackbarService } from '../../services/snackbar.service';
     FormsModule,
     LMarkdownEditorModule,
     MatSelectModule,
-    RouterModule
-  ],
+    RouterModule,
+    RomanPipe,
+    CommonModule,
+    CountryCodePipe
+],
 })
-export class SaintFormPageComponent implements OnInit {
+export class SaintFormPageComponent implements OnInit, AfterViewInit {
   saintsService = inject(SaintsService);
-  snackBarService = inject(SnackbarService)
+  snackBarService = inject(SnackbarService);
+
+  @ViewChild('descriptionTextarea')
+  descriptionTextarea!: ElementRef<HTMLTextAreaElement>;
+  imageBaseUrl = environment.assetsUrl;
 
   form!: FormGroup;
   isEditMode = false;
   saintId: string | null = null;
-  content: string = '';
-
-  countries = ['Brazil', 'Italy', 'France', 'USA', 'Portugal'];
-  centuries = Array.from({ length: 21 }, (_, i) => i + 1);
-
   imageLoading = false;
+
+  centuries = Array.from({ length: 21 }, (_, i) => i + 1);
 
   constructor(
     private fb: FormBuilder,
@@ -61,24 +77,46 @@ export class SaintFormPageComponent implements OnInit {
       markdownContent: ['', Validators.required],
     });
 
-    // Observa mudança nos parâmetros da rota
     this.route.paramMap.subscribe((params) => {
       this.saintId = params.get('id');
       this.isEditMode = !!this.saintId;
-      this.cdr.detectChanges();
 
-      if (this.isEditMode) {
-        // Aqui você pode carregar os dados do santo, ex:
-        // this.saintsService.getSaintById(this.saintId).subscribe((saint) => this.form.patchValue(saint));
+      if (this.isEditMode && this.saintId) {
+        this.saintsService.getSaint(this.saintId).subscribe({
+          next: (saint) => {
+            console.log(saint.century);
+            this.form.patchValue({
+              name: saint.name,
+              country: saint.country,
+              century: saint.century.toString(),
+              image: saint.image,
+              description: saint.description,
+            });
+            setTimeout(() => {
+              this.autoResizeOnLoad();
+            });
+            this.cdr.detectChanges();
+          },
+          error: (err) => {
+            this.router.navigate(['admin/saints']);
+          },
+        });
+      } else {
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  ngAfterViewInit() {
+    this.autoResizeOnLoad();
   }
 
   onSubmit() {
     if (this.imageLoading) {
       return;
     }
-    const saint = {
+
+    const saintData = {
       name: this.form.value.name,
       country: this.form.value.country,
       century: +this.form.value.century,
@@ -87,20 +125,31 @@ export class SaintFormPageComponent implements OnInit {
       markdownContent: this.form.value.markdownContent,
     };
 
-    if (this.isEditMode) {
-      // Update logic here
-    } else {
-      this.saintsService.createSaint(saint).subscribe({
+    if (this.isEditMode && this.saintId) {
+      this.saintsService.updateSaint(this.saintId, saintData).subscribe({
         next: () => {
-          this.snackBarService.success('Saint successfully created')
-          this.router.navigate(['admin/saints'])
+          this.snackBarService.success('Saint successfully updated');
+          this.router.navigate(['admin/saints']);
         },
         error: (err) => {
           console.error(err);
+          this.snackBarService.error('Erro ao atualizar santo');
+        },
+      });
+    } else {
+      this.saintsService.createSaint(saintData).subscribe({
+        next: () => {
+          this.snackBarService.success('Saint successfully created');
+          this.router.navigate(['admin/saints']);
+        },
+        error: (err) => {
+          console.error(err);
+          this.snackBarService.error('Erro ao criar santo');
         },
       });
     }
   }
+
   selectedFile: File | null = null;
 
   onFileSelected(event: Event): void {
@@ -118,6 +167,12 @@ export class SaintFormPageComponent implements OnInit {
     }
   }
 
+  autoResizeOnLoad() {
+    const textarea = this.descriptionTextarea.nativeElement;
+    textarea.style.height = 'auto';
+    textarea.style.height = `${textarea.scrollHeight}px`;
+  }
+
   autoResize(event: Event): void {
     const textarea = event.target as HTMLTextAreaElement;
     textarea.style.height = 'auto';
@@ -126,5 +181,13 @@ export class SaintFormPageComponent implements OnInit {
 
   get markdownContent(): FormControl {
     return this.form.get('markdownContent') as FormControl;
+  }
+
+  getImagePreview(): string {
+    const img = this.form.get('image')?.value;
+    if (!img) return '';
+    return img.startsWith('data:image') || img.startsWith('http')
+      ? img
+      : this.imageBaseUrl + img;
   }
 }

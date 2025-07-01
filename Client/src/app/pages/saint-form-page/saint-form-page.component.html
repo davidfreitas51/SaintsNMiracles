@@ -7,27 +7,27 @@
         <label for="imageInput" class="block mb-2 font-semibold">
           Icon image
         </label>
-
+      
         <label
           for="imageInput"
           class="block aspect-square w-full border-2 border-dashed rounded grid place-items-center text-gray-500 cursor-pointer hover:border-blue-400 hover:text-blue-600 transition overflow-hidden"
         >
           @if (form.get('image')?.value) {
-          <img
-            [src]="form.get('image')?.value"
-            alt="Selected image"
-            class="object-cover w-full h-full rounded"
-          />
+            <img
+              [src]="getImagePreview()"
+              alt="Selected image"
+              class="object-cover w-full h-full rounded"
+            />
           } @else {
-          <div class="flex items-center justify-center">
-            <mat-icon
-              class="!text-[330px] w-[330px] h-[330px] leading-none text-primary-app"
-              fontIcon="add_a_photo"
-            ></mat-icon>
-          </div>
+            <div class="flex items-center justify-center">
+              <mat-icon
+                class="!text-[330px] w-[330px] h-[330px] leading-none text-primary-app"
+                fontIcon="add_a_photo"
+              ></mat-icon>
+            </div>
           }
         </label>
-
+      
         <input
           id="imageInput"
           type="file"
@@ -36,6 +36,7 @@
           class="hidden"
         />
       </div>
+      
 
       <div class="flex-1 flex flex-col gap-4">
         <label class="block">
@@ -48,18 +49,22 @@
           />
         </label>
 
-        <label class="block">
+        <label class="block relative">
           <span class="block pb-2 font-semibold">Country</span>
-          <mat-select
+          <input
+            type="text"
             formControlName="country"
-            class="w-full border rounded px-3 py-2"
-          >
-            @for (item of countries; track $index) {
-            <mat-option value="{{ item }}">{{ item }}</mat-option>
-            }
-          </mat-select>
+            placeholder="Saint's country"
+            class="w-full border rounded px-3 py-2 pr-10"
+          />
+          <img
+            *ngIf="form.get('country')?.value | countryCode as flagCode"
+            [src]="'https://flagcdn.com/w20/' + flagCode + '.png'"
+            [alt]="form.get('country')?.value + ' flag'"
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 mt-4 h-5 object-contain pointer-events-none"
+          />
         </label>
-
+        
         <label class="block">
           <span class="block pb-2 font-semibold">Century</span>
           <mat-select
@@ -67,7 +72,7 @@
             class="w-full border rounded px-4 py-2"
           >
             @for (item of centuries; track $index) {
-            <mat-option value="{{ item }}">{{ item }}</mat-option>
+            <mat-option value="{{ item }}">{{ item | roman }}</mat-option>
             }
           </mat-select>
         </label>
@@ -75,10 +80,11 @@
         <label class="block">
           <span class="block pb-2 font-semibold">Description</span>
           <textarea
+            #descriptionTextarea
             formControlName="description"
             rows="1"
             placeholder="Saint's brief description"
-            class="w-full border rounded px-3 py-2 resize-none overflow-hidden"
+            class="w-full border rounded px-3 py-2 resize-none overflow-hidden min-h-[40px]"
             (input)="autoResize($event)"
           ></textarea>
         </label>

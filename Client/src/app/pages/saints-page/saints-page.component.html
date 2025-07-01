@@ -111,7 +111,7 @@
               class="text-xs text-gray-500 mb-1 flex items-center justify-center gap-1"
             >
               <img
-                *ngIf="getFlagCode(saint.country) as flagCode"
+                *ngIf="saint.country | countryCode as flagCode"
                 [src]="'https://flagcdn.com/w20/' + flagCode + '.png'"
                 [alt]="saint.country + ' flag'"
                 class="w-4 h-4 object-contain"

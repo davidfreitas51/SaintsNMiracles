@@ -10,4 +10,5 @@ public interface ISaintsRepository
     Task<bool> CreateSaintAsync(Saint saint);
     Task DeleteSaintAsync(int id);
     Task<IReadOnlyList<string>> GetCountriesAsync();
+    Task<int> GetTotalSaintsAsync();
 }

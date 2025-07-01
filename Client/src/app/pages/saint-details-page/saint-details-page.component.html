@@ -18,8 +18,8 @@
               <strong>Country:</strong>
               {{ saint.country }}
               <img
-                *ngIf="getFlagCode(saint.country) as flagCode"
-                [src]="'https://flagcdn.com/w20/' + flagCode + '.png'"
+                *ngIf="saint.country | countryCode as code"
+                [src]="'https://flagcdn.com/w20/' + code + '.png'"
                 [alt]="saint.country + ' flag'"
                 class="inline-block w-4 h-4 mr-1 object-contain align-text-bottom"
               />

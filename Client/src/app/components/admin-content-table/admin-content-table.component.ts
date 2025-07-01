@@ -35,16 +35,24 @@ export class AdminContentTableComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
 
-  public router = inject(Router)
+  public router = inject(Router);
   public columns: string[] = ['name', 'country', 'century', 'actions'];
   public displayedColumns = [...this.columns];
   public dataSource = new MatTableDataSource<any>([]);
   public currentEntity = '';
 
-  saintFilters: SaintFilters = new SaintFilters()
+  saintFilters: SaintFilters = new SaintFilters();
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+  humanizeColumn(col: string): string {
+    if (!col) return '';
+    return col
+      .replace(/[_\-]+/g, ' ')
+      .replace(/([a-z])([A-Z])/g, '$1 $2')
+      .replace(/^./, (str) => str.toUpperCase());
+  }
 
   ngOnInit(): void {
     const plural = this.route.snapshot.paramMap.get('object') || '';

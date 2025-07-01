@@ -83,6 +83,11 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
         return await context.Saints.Select(s => s.Country).Distinct().ToListAsync();
     }
 
+    public async Task<int> GetTotalSaintsAsync()
+    {
+        return await context.Saints.CountAsync();
+    }
+
     private static string Normalize(string input)
     {
         if (string.IsNullOrWhiteSpace(input)) return "";
