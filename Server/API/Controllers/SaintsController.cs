@@ -60,8 +60,7 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
 
         var slug = Regex.Replace(updatedSaint.Name.ToLower(), @"[^a-z0-9]+", "-").Trim('-');
 
-
-        var (markdownPath, imagePath) = await saintsService.SaveFilesAsync(updatedSaint, slug);
+        var (markdownPath, imagePath) = await saintsService.UpdateFilesAsync(updatedSaint, slug);
 
         existingSaint.Name = updatedSaint.Name;
         existingSaint.Country = updatedSaint.Country;
@@ -78,7 +77,6 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
         var updated = await saintsRepository.UpdateSaintAsync(existingSaint);
         return updated ? NoContent() : BadRequest();
     }
-
 
 
     [HttpDelete("{id:int}")]
