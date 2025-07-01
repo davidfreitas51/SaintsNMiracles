@@ -23,32 +23,32 @@
           class="text-sm text-gray-700 px-4 py-3 border-b"
         >
           @if (col !== 'actions') {
-          {{ element[col] }}
+            {{ col === 'century' ? (element[col] | roman) : element[col] }}
           } @else {
-          <div class="flex gap-2 justify-center">
-            <button
-              (click)="
-                editObject(element);
-                router.navigate([
-                  '/admin',
-                  currentEntity.toLowerCase() + 's',
-                  element.id,
-                  'edit'
-                ])
-              "
-              mat-icon-button
-              class="text-blue-500 cursor-pointer"
-            >
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button
-              (click)="deleteObject(element)"
-              mat-icon-button
-              class="text-red-500 cursor-pointer"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
+            <div class="flex gap-2 justify-center">
+              <button
+                (click)="
+                  editObject(element);
+                  router.navigate([
+                    '/admin',
+                    currentEntity.toLowerCase() + 's',
+                    element.id,
+                    'edit'
+                  ])
+                "
+                mat-icon-button
+                class="text-blue-500 cursor-pointer"
+              >
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button
+                (click)="deleteObject(element)"
+                mat-icon-button
+                class="text-red-500 cursor-pointer"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
           }
         </td>
       </ng-container>
@@ -64,3 +64,4 @@
     class="rounded-b-2xl"
   ></mat-paginator>
 </mat-card>
+

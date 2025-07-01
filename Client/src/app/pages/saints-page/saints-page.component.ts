@@ -63,7 +63,6 @@ export class SaintsPageComponent implements OnInit {
   }
 
   private updateData() {
-    console.log('filters:', this.saintFilters);
     this.saintsService.getSaints(this.saintFilters).subscribe({
       next: (saints) => (this.saints = saints),
       error: (err) => console.error(err),

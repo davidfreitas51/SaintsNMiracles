@@ -15,6 +15,9 @@ import { SnackbarService } from '../../services/snackbar.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { SaintFilters } from '../../interfaces/saint-filter';
+import { RomanPipe } from '../../pipes/roman.pipe';
+import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 
 @Component({
   selector: 'app-admin-content-table',
@@ -27,11 +30,13 @@ import { SaintFilters } from '../../interfaces/saint-filter';
     MatCardModule,
     MatTableModule,
     MatSortModule,
+    RomanPipe,
   ],
 })
 export class AdminContentTableComponent implements OnInit {
   private saintsService = inject(SaintsService);
   private snackBarService = inject(SnackbarService);
+  private dialogService = inject(ConfirmDialogService);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
 
@@ -83,20 +88,31 @@ export class AdminContentTableComponent implements OnInit {
   }
 
   deleteObject(entity: any): void {
-    this.saintsService.deleteSaint(entity.id).subscribe({
-      next: () => {
-        this.snackBarService.success(
-          `${this.currentEntity} successfully deleted`
-        );
-        this.loadData();
-      },
-      error: (err) => {
-        this.snackBarService.error(
-          `Failed to delete ${this.currentEntity.toLowerCase()}`
-        );
-        console.error(err);
-      },
-    });
+    this.dialogService
+      .confirm({
+        title: `Delete ${this.currentEntity}?`,
+        message: `You're about to permanently delete “${entity.name}”. This action cannot be undone.`,
+        confirmText: 'Yes, delete',
+        cancelText: 'Cancel',
+      })
+      .subscribe((confirmed) => {
+        if (!confirmed) return;
+
+        this.saintsService.deleteSaint(entity.id).subscribe({
+          next: () => {
+            this.snackBarService.success(
+              `${this.currentEntity} successfully deleted`
+            );
+            this.loadData();
+          },
+          error: (err) => {
+            this.snackBarService.error(
+              `Failed to delete ${this.currentEntity.toLowerCase()}`
+            );
+            console.error(err);
+          },
+        });
+      });
   }
 
   private getSingularName(plural: string): string {
