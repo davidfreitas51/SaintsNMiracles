@@ -6,11 +6,22 @@ import { HeaderComponent } from '../../components/header/header.component';
 import { environment } from '../../../environments/environment';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 import { MatDividerModule } from '@angular/material/divider';
+import { RomanPipe } from '../../pipes/roman.pipe';
+import countries from 'i18n-iso-countries';
+import enLocale from 'i18n-iso-countries/langs/en.json';
+import { CommonModule } from '@angular/common';
+countries.registerLocale(enLocale);
 
 @Component({
   selector: 'app-saint-details-page',
   templateUrl: './saint-details-page.component.html',
-  imports: [FooterComponent, HeaderComponent, MatDividerModule],
+  imports: [
+    FooterComponent,
+    HeaderComponent,
+    MatDividerModule,
+    RomanPipe,
+    CommonModule,
+  ],
 })
 export class SaintDetailsPageComponent implements OnInit {
   private route = inject(ActivatedRoute);
@@ -40,5 +51,9 @@ export class SaintDetailsPageComponent implements OnInit {
         console.error('Erro ao carregar santo:', err);
       },
     });
+  }
+
+  getFlagCode(countryName: string): string | null {
+    return countries.getAlpha2Code(countryName, 'en')?.toLowerCase() ?? null;
   }
 }

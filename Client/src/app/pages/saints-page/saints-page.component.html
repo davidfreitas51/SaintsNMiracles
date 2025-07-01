@@ -2,46 +2,88 @@
   <app-header></app-header>
 
   <main class="flex-grow">
-    @if (true) { }
-
     <div class="p-4 pt-10 w-full max-w-screen-xl mx-auto">
-      <div class="flex flex-wrap justify-between items-center gap-y-4">
+      <div
+        class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 flex-wrap"
+      >
         <div class="flex flex-wrap gap-3">
-          <mat-form-field appearance="fill" class="min-w-[150px] w-[200px]">
-            <mat-label>Group By</mat-label>
-            <mat-select>
-              <mat-option value="country">Country</mat-option>
-              <mat-option value="century">Century</mat-option>
-            </mat-select>
-          </mat-form-field>
+          <button
+            mat-icon-button
+            color="warn"
+            class="hover:text-blue-600 mt-2 mr-3"
+            (click)="clearFilters()"
+            matTooltip="Clear all filters"
+          >
+            <mat-icon>filter_alt_off</mat-icon>
+          </button>
 
+          <!-- Order By -->
           <mat-form-field appearance="fill" class="min-w-[150px] w-[200px]">
             <mat-label>Order By</mat-label>
-            <mat-select>
+            <mat-select
+              [(ngModel)]="saintFilters.orderBy"
+              (selectionChange)="handleFilterChange('orderBy', $event)"
+            >
               <mat-option value="name">Name (A-Z)</mat-option>
+              <mat-option value="name_desc">Name (Z-A)</mat-option>
               <mat-option value="century">Century (Asc)</mat-option>
-              <mat-option value="-century">Century (Desc)</mat-option>
+              <mat-option value="century_desc">Century (Desc)</mat-option>
             </mat-select>
           </mat-form-field>
 
+          <!-- Filter By Country -->
           <mat-form-field appearance="fill" class="min-w-[150px] w-[200px]">
             <mat-label>Filter By Country</mat-label>
-            <mat-select>
+            <mat-select
+              [(ngModel)]="saintFilters.country"
+              (selectionChange)="handleFilterChange('country', $event)"
+            >
               <mat-option value="">All</mat-option>
               @for (c of countries; track $index) {
-                <mat-option [value]="c">{{ c }}</mat-option>
+              <mat-option [value]="c">{{ c }}</mat-option>
+              }
+            </mat-select>
+          </mat-form-field>
+
+          <!-- Filter By Century -->
+          <mat-form-field appearance="fill" class="min-w-[150px] w-[200px]">
+            <mat-label>Filter By Century</mat-label>
+            <mat-select
+              [(ngModel)]="saintFilters.century"
+              (selectionChange)="handleFilterChange('century', $event)"
+            >
+              <mat-option value="">All</mat-option>
+              @for (c of centuries; track $index) {
+              <mat-option [value]="c">{{ c | roman }}</mat-option>
               }
             </mat-select>
           </mat-form-field>
         </div>
 
-        <mat-form-field
-          appearance="fill"
-          class="w-full sm:w-[250px] md:w-[300px] lg:w-[400px]"
+        <!-- Search -->
+        <div
+          class="flex gap-2 items-center w-full sm:w-[250px] md:w-[300px] lg:w-[400px]"
         >
-          <mat-label>Search</mat-label>
-          <input matInput type="text" placeholder="Search saints..." />
-        </mat-form-field>
+          <mat-form-field appearance="fill" class="w-full">
+            <mat-label>Search</mat-label>
+            <input
+              matInput
+              #searchInput
+              type="text"
+              placeholder="Search saints..."
+              [(ngModel)]="saintFilters.search"
+              (keyup.enter)="handleSearch(searchInput.value)"
+            />
+            <button
+              mat-icon-button
+              matSuffix
+              class="hover:text-blue-800 transition-colors duration-150"
+              (click)="handleSearch(searchInput.value)"
+            >
+              <mat-icon>search</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
       </div>
     </div>
 
@@ -49,38 +91,47 @@
       class="grid gap-4 p-4 w-full max-w-screen-xl mx-auto grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6"
     >
       @for (saint of saints; track saint.id) {
-        <ng-container>
-          <mat-card
-            (click)="redirectToSaintDetails(saint.slug)"
-            class="flex flex-col p-3 rounded-2xl shadow-md hover:shadow-xl transition h-full"
-          >
-            <div class="flex justify-center mb-2">
+      <ng-container>
+        <mat-card
+          (click)="redirectToSaintDetails(saint.slug)"
+          class="flex flex-col p-3 rounded-2xl shadow-md hover:shadow-xl transition h-full"
+        >
+          <div class="flex justify-center mb-2">
+            <img
+              [src]="imageBaseUrl + saint.image"
+              [alt]="saint.name"
+              class="w-16 h-16 object-cover rounded-full border border-gray-300"
+            />
+          </div>
+
+          <div class="flex flex-col flex-1 text-center">
+            <h3 class="text-sm font-semibold mb-1">{{ saint.name }}</h3>
+
+            <div
+              class="text-xs text-gray-500 mb-1 flex items-center justify-center gap-1"
+            >
               <img
-                [src]="imageBaseUrl + saint.image"
-                [alt]="saint.name"
-                class="w-16 h-16 object-cover rounded-full border border-gray-300"
+                *ngIf="getFlagCode(saint.country) as flagCode"
+                [src]="'https://flagcdn.com/w20/' + flagCode + '.png'"
+                [alt]="saint.country + ' flag'"
+                class="w-4 h-4 object-contain"
               />
+              <span>{{ saint.country }} – {{ saint.century | roman }}</span>
             </div>
 
-            <div class="flex flex-col flex-1 text-center">
-              <h3 class="text-sm font-semibold mb-1">{{ saint.name }}</h3>
-              <div class="text-xs text-gray-500 mb-1">
-                {{ saint.country }} – {{ saint.century | roman }}
-              </div>
+            <p class="text-xs text-gray-600 line-clamp-3 flex-1">
+              {{ saint.description }}
+            </p>
 
-              <p class="text-xs text-gray-600 line-clamp-3 flex-1">
-                {{ saint.description }}
-              </p>
-
-              <a
-                [routerLink]="['/saints', saint.slug]"
-                class="text-primary-app font-semibold pt-5 text-xs hover:underline mt-auto inline-block self-center"
-              >
-                Read More
-              </a>
-            </div>
-          </mat-card>
-        </ng-container>
+            <a
+              [routerLink]="['/saints', saint.slug]"
+              class="text-primary-app font-semibold pt-5 text-xs hover:underline mt-auto inline-block self-center"
+            >
+              Read More
+            </a>
+          </div>
+        </mat-card>
+      </ng-container>
       }
     </div>
   </main>

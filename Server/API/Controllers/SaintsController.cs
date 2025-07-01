@@ -11,21 +11,21 @@ namespace API.Controllers;
 public class SaintsController(ISaintsRepository saintsRepository, ISaintsService saintsService) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAllSaints()
+    public async Task<IActionResult> GetAllSaints([FromQuery]SaintFilters filters)
     {
-        return Ok(await saintsRepository.GetAll());
+        return Ok(await saintsRepository.GetAllAsync(filters));
     }
 
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
-        return Ok(await saintsRepository.GetById(id));
+        return Ok(await saintsRepository.GetByIdAsync(id));
     }
 
     [HttpGet("{slug}")]
     public async Task<IActionResult> GetSaintBySlug(string slug)
     {
-        return Ok(await saintsRepository.GetBySlug(slug));
+        return Ok(await saintsRepository.GetBySlugAsync(slug));
     }
 
     [HttpPost]
@@ -46,7 +46,7 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
             MarkdownPath = markdownPath
         };
 
-        var created = await saintsRepository.CreateSaint(saint);
+        var created = await saintsRepository.CreateSaintAsync(saint);
 
         return created ? Created() : BadRequest();
     }
@@ -54,7 +54,14 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteSaint(int id)
     {
-        await saintsRepository.DeleteSaint(id);
+        await saintsRepository.DeleteSaintAsync(id);
         return Ok();
+    }
+
+    [HttpGet("countries")]
+    public async Task<IActionResult> GetSaintCountries()
+    {
+        var countries = await saintsRepository.GetCountriesAsync();
+        return Ok(countries);
     }
 }

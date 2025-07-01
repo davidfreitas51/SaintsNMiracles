@@ -4,9 +4,10 @@ namespace Core.Interfaces;
 
 public interface ISaintsRepository
 {
-    Task<IEnumerable<Saint>> GetAll();
-    Task<Saint?> GetById(int id);
-    Task<Saint?> GetBySlug(string slug);
-    Task<bool> CreateSaint(Saint saint);
-    Task DeleteSaint(int id);
+    Task<IEnumerable<Saint>> GetAllAsync(SaintFilters filters);
+    Task<Saint?> GetByIdAsync(int id);
+    Task<Saint?> GetBySlugAsync(string slug);
+    Task<bool> CreateSaintAsync(Saint saint);
+    Task DeleteSaintAsync(int id);
+    Task<IReadOnlyList<string>> GetCountriesAsync();
 }

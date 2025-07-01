@@ -13,8 +13,18 @@
         />
         <div class="text-sm text-gray-700 w-full text-center">
           <div class="flex justify-center gap-6 mb-2">
-            <p><strong>Século:</strong> {{ saint.century }}º</p>
-            <p><strong>País:</strong> {{ saint.country }}</p>
+            <p><strong>Century:</strong> {{ saint.century | roman }}</p>
+            <p>
+              <strong>Country:</strong>
+              {{ saint.country }}
+              <img
+                *ngIf="getFlagCode(saint.country) as flagCode"
+                [src]="'https://flagcdn.com/w20/' + flagCode + '.png'"
+                [alt]="saint.country + ' flag'"
+                class="inline-block w-4 h-4 mr-1 object-contain align-text-bottom"
+              />
+            </p>
+            
           </div>
           <p class="mt-2">{{ saint.description }}</p>
         </div>
@@ -28,7 +38,7 @@
         
         <div class="border-b border-gray-300 my-6"></div>
         
-        <div class="mt-5" [innerHTML]="markdownContent"></div>
+        <div class="markdown-content mt-5" [innerHTML]="markdownContent"></div>
       </main>
       
 

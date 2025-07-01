@@ -14,6 +14,7 @@ import { SaintsService } from '../../services/saints.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
+import { SaintFilters } from '../../interfaces/saint-filter';
 
 @Component({
   selector: 'app-admin-content-table',
@@ -40,6 +41,8 @@ export class AdminContentTableComponent implements OnInit {
   public dataSource = new MatTableDataSource<any>([]);
   public currentEntity = '';
 
+  saintFilters: SaintFilters = new SaintFilters()
+
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -56,7 +59,7 @@ export class AdminContentTableComponent implements OnInit {
   }
 
   private loadData(): void {
-    this.saintsService.getSaints().subscribe((saints) => {
+    this.saintsService.getSaints(this.saintFilters).subscribe((saints) => {
       this.dataSource.data = saints;
       this.cdr.detectChanges();
     });

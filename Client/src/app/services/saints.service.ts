@@ -1,10 +1,11 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Saint } from '../interfaces/saint';
-import { from, map, Observable, of, switchMap } from 'rxjs';
+import { Observable, switchMap, map, from, of } from 'rxjs';
 import { NewSaintDTO } from '../interfaces/new-saint-dto';
 import { SaintWithMarkdown } from '../interfaces/saint-with-markdown';
+import { SaintFilters } from '../interfaces/saint-filter';
 import { marked } from 'marked';
 
 @Injectable({
@@ -14,12 +15,22 @@ export class SaintsService {
   private http = inject(HttpClient);
   public baseUrl = environment.apiUrl;
 
-  public getSaints(): Observable<Saint[]> {
-    return this.http.get<Saint[]>(this.baseUrl + 'saints');
+  public getSaints(saintFilters: SaintFilters): Observable<Saint[]> {
+    let params = new HttpParams();
+
+    Object.entries(saintFilters).forEach(([key, value]) => {
+      if (value) params = params.set(key, value);
+    });
+
+    return this.http.get<Saint[]>(this.baseUrl + 'saints', { params });
   }
 
   public getSaint(slug: string): Observable<Saint> {
     return this.http.get<Saint>(this.baseUrl + 'saints/' + slug);
+  }
+
+  public getCountries(): Observable<string[]> {
+    return this.http.get<string[]>(this.baseUrl + 'saints/countries');
   }
 
   public createSaint(formValue: any): Observable<void> {
@@ -47,7 +58,7 @@ export class SaintsService {
           })
           .pipe(
             switchMap((rawMarkdown) => {
-              const html = marked.parse(rawMarkdown); 
+              const html = marked.parse(rawMarkdown);
               if (html instanceof Promise) {
                 return from(html).pipe(
                   map((resolvedHtml) => ({ saint, markdown: resolvedHtml }))
