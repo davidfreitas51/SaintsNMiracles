@@ -21,6 +21,7 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
         {
             query = query.Where(s => s.Century.ToString() == filters.Century);
         }
+
         if (string.IsNullOrWhiteSpace(filters.OrderBy))
         {
             query = query.OrderBy(s => s.Name);
@@ -49,7 +50,8 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
                 .ToList();
         }
 
-        return result;
+        int skip = (filters.PageNumber - 1) * filters.PageSize;
+        return result.Skip(skip).Take(filters.PageSize);
     }
 
     public async Task<bool> CreateSaintAsync(Saint newSaint)

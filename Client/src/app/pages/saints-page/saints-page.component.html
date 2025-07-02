@@ -134,6 +134,17 @@
       </ng-container>
       }
     </div>
+    <div class="py-6 flex justify-center">
+      <mat-paginator
+        [length]="totalCount"
+        [pageIndex]="saintFilters.pageNumber - 1"
+        [pageSize]="saintFilters.pageSize"
+        [pageSizeOptions]="[25, 50, 100]"
+        showFirstLastButtons
+        (page)="handlePageChange($event)"
+      ></mat-paginator>
+    </div>
+
   </main>
 
   <app-footer></app-footer>

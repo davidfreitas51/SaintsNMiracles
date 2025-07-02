@@ -17,6 +17,7 @@ import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import { CommonModule } from '@angular/common';
 import { CountryCodePipe } from "../../pipes/country-code.pipe";
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
 countries.registerLocale(enLocale);
 
 @Component({
@@ -34,8 +35,9 @@ countries.registerLocale(enLocale);
     MatButtonModule,
     MatIconModule,
     CommonModule,
-    CountryCodePipe
-],
+    CountryCodePipe,
+    MatPaginator,
+  ],
   templateUrl: './saints-page.component.html',
   styleUrl: './saints-page.component.scss',
 })
@@ -44,8 +46,9 @@ export class SaintsPageComponent implements OnInit {
   private saintsService = inject(SaintsService);
 
   countries: string[] = [];
-  centuries: number[] = Array.from({ length: 21 }, (_, i) => i + 1); 
+  centuries: number[] = Array.from({ length: 21 }, (_, i) => i + 1);
   public saints: Saint[] | null = null;
+  totalCount: number = 0;
   imageBaseUrl = environment.assetsUrl;
 
   saintFilters: SaintFilters = new SaintFilters();
@@ -64,7 +67,10 @@ export class SaintsPageComponent implements OnInit {
 
   private updateData() {
     this.saintsService.getSaints(this.saintFilters).subscribe({
-      next: (saints) => (this.saints = saints),
+      next: (saints) => {
+        this.saints = saints;
+        this.totalCount = this.saints.length;
+      },
       error: (err) => console.error(err),
     });
   }
@@ -73,18 +79,23 @@ export class SaintsPageComponent implements OnInit {
     key: keyof typeof this.saintFilters,
     event: MatSelectChange
   ) {
-    this.saintFilters[key] = event.value;
-    console.log(this.saintFilters);
+    (this.saintFilters as any)[key] = event.value;
     this.updateData();
   }
 
   handleSearch(query: string) {
-    this.saintFilters.search = query
+    this.saintFilters.search = query;
     this.updateData();
   }
 
   clearFilters() {
-    this.saintFilters = new SaintFilters()
-    this.updateData()
+    this.saintFilters = new SaintFilters();
+    this.updateData();
+  }
+
+  handlePageChange(event: PageEvent): void {
+    this.saintFilters.pageNumber = event.pageIndex + 1;
+    this.saintFilters.pageSize = event.pageSize;
+    this.updateData();
   }
 }
