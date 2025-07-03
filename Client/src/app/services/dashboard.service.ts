@@ -14,8 +14,8 @@ export class DashboardService {
     return this.http.get<number>(this.baseUrl + 'dashboard/saints');
   }
 
-  getTotalSigns(): Observable<number> {
-    return this.http.get<number>(this.baseUrl + 'dashboard/signs');
+  getTotalMiracles(): Observable<number> {
+    return this.http.get<number>(this.baseUrl + 'dashboard/miracles');
   }
 
   getTotalUsers(): Observable<number> {

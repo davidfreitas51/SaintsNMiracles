@@ -3,7 +3,7 @@ import { LandingPageComponent } from './pages/landing-page/landing-page.componen
 import { AdminPageComponent } from './pages/admin-page/admin-page.component';
 import { AboutUsPageComponent } from './pages/about-us-page/about-us-page.component';
 import { SaintsPageComponent } from './pages/saints-page/saints-page.component';
-import { SignsPageComponent } from './pages/signs-page/signs-page.component';
+import { MiraclesPageComponent } from './pages/miracles-page/miracles-page.component';
 import { SaintDetailsPageComponent } from './pages/saint-details-page/saint-details-page.component';
 import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
 import { ContentManagerPageComponent } from './pages/content-manager-page/content-manager-page.component';
@@ -27,8 +27,8 @@ export const routes: Routes = [
     component: SaintDetailsPageComponent,
   },
   {
-    path: 'signs',
-    component: SignsPageComponent,
+    path: 'miracles',
+    component: MiraclesPageComponent,
   },
   {
     path: 'admin',

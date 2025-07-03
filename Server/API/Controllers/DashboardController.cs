@@ -15,7 +15,7 @@ public class DashboardController(ISaintsRepository saintsRepository) : Controlle
     }
 
     [HttpGet]
-    public async Task<IActionResult> TotalSigns()
+    public async Task<IActionResult> TotalMiracles()
     {
         return Ok(0);
     }

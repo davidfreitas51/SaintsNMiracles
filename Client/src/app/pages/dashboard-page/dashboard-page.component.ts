@@ -14,7 +14,7 @@ export class DashboardPageComponent implements OnInit {
 
   summary = [
     { label: 'Total Saints', value: 0 },
-    { label: 'Total Signs', value: 0 },
+    { label: 'Total Miracles', value: 0 },
     { label: 'Total Users', value: 0 },
   ];
 
@@ -31,9 +31,9 @@ export class DashboardPageComponent implements OnInit {
       error: (err) => console.error('Failed to load total saints:', err),
     });
 
-    this.dashboardService.getTotalSigns().subscribe({
+    this.dashboardService.getTotalMiracles().subscribe({
       next: (total) => (this.summary[1].value = total),
-      error: (err) => console.error('Failed to load total signs:', err),
+      error: (err) => console.error('Failed to load total miracles:', err),
     });
 
     this.dashboardService.getTotalUsers().subscribe({
