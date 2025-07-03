@@ -6,7 +6,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatSelectChange, MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Saint } from '../../interfaces/saint';
 import { environment } from '../../../environments/environment';
 import { RomanPipe } from '../../pipes/roman.pipe';
@@ -44,6 +44,7 @@ countries.registerLocale(enLocale);
 export class SaintsPageComponent implements OnInit {
   private router = inject(Router);
   private saintsService = inject(SaintsService);
+  private route = inject(ActivatedRoute);
 
   countries: string[] = [];
   centuries: number[] = Array.from({ length: 21 }, (_, i) => i + 1);
@@ -54,7 +55,18 @@ export class SaintsPageComponent implements OnInit {
   saintFilters: SaintFilters = new SaintFilters();
 
   ngOnInit() {
-    this.updateData();
+    this.route.queryParams.subscribe((params) => {
+      const country = params['country'];
+      const century = params['century'];
+      const search = params['search'];
+
+      if (country) this.saintFilters.country = country;
+      if (century) this.saintFilters.century = century;
+      if (search) this.saintFilters.search = search;
+
+      this.updateData();
+    });
+
     this.saintsService.getCountries().subscribe({
       next: (countries) => (this.countries = countries),
       error: (err) => console.error(err),
@@ -84,7 +96,7 @@ export class SaintsPageComponent implements OnInit {
   }
 
   handleSearch(query: string) {
-    this.saintFilters.pageNumber = 1
+    this.saintFilters.pageNumber = 1;
     this.saintFilters.search = query;
     this.updateData();
   }

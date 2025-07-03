@@ -64,16 +64,54 @@
         
 
         <div class="mt-10">
-          <h3
-            class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2"
-          >
-            Veja também
+          <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">
+            Related Sections
           </h3>
-          <ul class="list-disc list-inside text-blue-700 hover:text-blue-900">
-            <li><a routerLink="/saints">Lista de Santos</a></li>
-            <li><a routerLink="/miracles">Miracles list</a></li>
-            <li><a routerLink="/about">Sobre Nós</a></li>
-            <li><a routerLink="/contact">Contato</a></li>
+          <ul class="list-disc list-outside space-y-2 text-sm">
+            <li>
+              <a
+                [routerLink]="['/saints']"
+                [queryParams]="{ country: saint.country }"
+                class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+              >
+                Saints from {{ saint.country }}
+              </a>
+            </li>
+            <li>
+              <a
+                [routerLink]="['/saints']"
+                [queryParams]="{ century: saint.century }"
+                class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+              >
+                Saints from the {{ saint.century | roman }} century
+              </a>
+            </li>
+            <li>
+              <a
+                [routerLink]="['/miracles']"
+                [queryParams]="{ country: saint.country }"
+                class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+              >
+                Miracles from {{ saint.country }}
+              </a>
+            </li>
+            <li>
+              <a
+                [routerLink]="['/miracles']"
+                [queryParams]="{ century: saint.century }"
+                class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+              >
+                Miracles from the {{ saint.century | roman }} century
+              </a>
+            </li>
+            <li>
+              <a
+                routerLink="/about"
+                class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+              >
+                About Us
+              </a>
+            </li>
           </ul>
         </div>
       </aside>

@@ -1,5 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SaintsService } from '../../services/saints.service';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { HeaderComponent } from '../../components/header/header.component';
@@ -24,6 +24,7 @@ countries.registerLocale(enLocale);
     RomanPipe,
     CommonModule,
     CountryCodePipe,
+    RouterLink
   ],
 })
 export class SaintDetailsPageComponent implements OnInit {
@@ -57,7 +58,6 @@ export class SaintDetailsPageComponent implements OnInit {
           }
           return `<h${depth}>${text}</h${depth}>`;
         };
-        
 
         const rawHtml = await marked.parse(data.markdown, { renderer });
         this.markdownContent = this.sanitizer.bypassSecurityTrustHtml(rawHtml);
