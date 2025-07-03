@@ -25,6 +25,7 @@
     "font-awesome": "^4.7.0",
     "i18n-iso-countries": "^7.14.0",
     "marked": "^15.0.12",
+    "ngx-image-cropper": "^9.1.5",
     "ngx-markdown-editor": "^5.3.4",
     "postcss": "^8.5.4",
     "roman-numerals": "^0.3.2",

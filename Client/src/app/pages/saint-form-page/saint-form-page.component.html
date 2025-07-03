@@ -7,27 +7,27 @@
         <label for="imageInput" class="block mb-2 font-semibold">
           Icon image
         </label>
-      
+
         <label
           for="imageInput"
           class="block aspect-square w-full border-2 border-dashed rounded grid place-items-center text-gray-500 cursor-pointer hover:border-blue-400 hover:text-blue-600 transition overflow-hidden"
         >
           @if (form.get('image')?.value) {
-            <img
-              [src]="getImagePreview()"
-              alt="Selected image"
-              class="object-cover w-full h-full rounded"
-            />
+          <img
+            [src]="getImagePreview()"
+            alt="Selected image"
+            class="object-cover w-full h-full rounded"
+          />
           } @else {
-            <div class="flex items-center justify-center">
-              <mat-icon
-                class="!text-[330px] w-[330px] h-[330px] leading-none text-primary-app"
-                fontIcon="add_a_photo"
-              ></mat-icon>
-            </div>
+          <div class="flex items-center justify-center">
+            <mat-icon
+              class="!text-[330px] w-[330px] h-[330px] leading-none text-primary-app"
+              fontIcon="add_a_photo"
+            ></mat-icon>
+          </div>
           }
         </label>
-      
+
         <input
           id="imageInput"
           type="file"
@@ -35,8 +35,18 @@
           (change)="onFileSelected($event)"
           class="hidden"
         />
+        <image-cropper
+          [imageChangedEvent]="imageChangedEvent"
+          [maintainAspectRatio]="true"
+          [aspectRatio]="4 / 3"
+          format="png"
+          (imageCropped)="imageCropped($event)"
+          (imageLoaded)="imageLoaded($event)"
+          (cropperReady)="cropperReady()"
+          (loadImageFailed)="loadImageFailed()"
+        ></image-cropper>
+        <img [src]="croppedImage" />
       </div>
-      
 
       <div class="flex-1 flex flex-col gap-4">
         <label class="block">
@@ -64,7 +74,7 @@
             class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 mt-4 h-5 object-contain pointer-events-none"
           />
         </label>
-        
+
         <label class="block">
           <span class="block pb-2 font-semibold">Century</span>
           <mat-select

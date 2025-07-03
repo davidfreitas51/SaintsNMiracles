@@ -7,6 +7,7 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
+  Sanitizer,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -26,6 +27,12 @@ import { RomanPipe } from '../../pipes/roman.pipe';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { CountryCodePipe } from '../../pipes/country-code.pipe';
+import {
+  ImageCropperComponent,
+  ImageCroppedEvent,
+  LoadedImage,
+} from 'ngx-image-cropper';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-saint-form-page',
@@ -43,11 +50,14 @@ import { CountryCodePipe } from '../../pipes/country-code.pipe';
     RomanPipe,
     CommonModule,
     CountryCodePipe,
+    ImageCropperComponent,
   ],
 })
 export class SaintFormPageComponent implements OnInit, AfterViewInit {
   saintsService = inject(SaintsService);
   snackBarService = inject(SnackbarService);
+  imageChangedEvent: Event | null = null;
+  croppedImage: SafeUrl = '';
 
   @ViewChild('descriptionTextarea')
   descriptionTextarea!: ElementRef<HTMLTextAreaElement>;
@@ -64,7 +74,8 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -196,5 +207,22 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
     return img.startsWith('data:image') || img.startsWith('http')
       ? img
       : this.imageBaseUrl + img;
+  }
+
+  fileChangeEvent(event: Event): void {
+    this.imageChangedEvent = event;
+  }
+  imageCropped(event: ImageCroppedEvent) {
+    this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl ?? '');
+    // event.blob can be used to upload the cropped image
+  }
+  imageLoaded(image: LoadedImage) {
+    // show cropper
+  }
+  cropperReady() {
+    // cropper ready
+  }
+  loadImageFailed() {
+    // show message
   }
 }
