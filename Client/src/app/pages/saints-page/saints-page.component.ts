@@ -84,6 +84,7 @@ export class SaintsPageComponent implements OnInit {
   }
 
   handleSearch(query: string) {
+    this.saintFilters.pageNumber = 1
     this.saintFilters.search = query;
     this.updateData();
   }

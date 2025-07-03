@@ -145,7 +145,13 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
         },
         error: (err) => {
           console.error(err);
-          this.snackBarService.error('Error creating saint');
+
+          const errorMessage =
+            typeof err.error === 'string'
+              ? err.error
+              : err.error?.message ?? 'Unexpected error.';
+
+          this.snackBarService.error('Error creating saint: ' + errorMessage);
         },
       });
     }

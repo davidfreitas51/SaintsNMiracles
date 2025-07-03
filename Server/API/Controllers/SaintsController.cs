@@ -34,6 +34,12 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
     {
         var slug = Regex.Replace(newSaint.Name.ToLower(), @"[^a-z0-9]+", "-").Trim('-');
 
+        var exists = await saintsRepository.SlugExistsAsync(slug);
+        if (exists)
+        {
+            return Conflict($"A saint with the same name already exists.");
+        }
+
         var (markdownPath, imagePath) = await saintsService.SaveFilesAsync(newSaint, slug);
 
         var saint = new Saint

@@ -12,7 +12,6 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
     {
         var query = context.Saints.AsQueryable();
 
-        // Filtros
         if (!string.IsNullOrWhiteSpace(filters.Country))
         {
             query = query.Where(s => s.Country == filters.Country);
@@ -23,7 +22,15 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
             query = query.Where(s => s.Century.ToString() == filters.Century);
         }
 
-        // Ordenação
+        if (!string.IsNullOrWhiteSpace(filters.Search))
+        {
+            var search = filters.Search.ToLower();
+
+            query = query.Where(s =>
+                EF.Functions.Like(s.Name.ToLower(), $"%{search}%") ||
+                EF.Functions.Like(s.Description.ToLower(), $"%{search}%"));
+        }
+        
         query = string.IsNullOrWhiteSpace(filters.OrderBy)
             ? query.OrderBy(s => s.Name)
             : filters.OrderBy.ToLower() switch
@@ -41,17 +48,6 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
             .Skip((filters.PageNumber - 1) * filters.PageSize)
             .Take(filters.PageSize)
             .ToListAsync();
-
-        if (!string.IsNullOrWhiteSpace(filters.Search))
-        {
-            var search = Normalize(filters.Search);
-
-            items = items
-                .Where(s =>
-                    Normalize(s.Name).Contains(search) ||
-                    Normalize(s.Description).Contains(search))
-                .ToList();
-        }
 
         return new PagedResult<Saint>
         {
@@ -115,5 +111,10 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
             .ToArray();
 
         return new string(chars).ToLowerInvariant();
+    }
+
+    public async Task<bool> SlugExistsAsync(string slug)
+    {
+        return await context.Saints.AnyAsync(s => s.Slug == slug);
     }
 }
