@@ -1,6 +1,7 @@
 using System.Text.Json;
 using Core.Interfaces;
 using Infrastructure.Data;
+using Infrastructure.Data.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +25,9 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddScoped<ISaintsRepository, SaintsRepository>();
 builder.Services.AddScoped<ISaintsService, SaintsService>();
+builder.Services.AddScoped<IMiraclesRepository, MiraclesRepository>();
+builder.Services.AddScoped<IMiraclesService, MiraclesService>();
+
 builder.Services.AddDbContext<DataContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"));

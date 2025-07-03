@@ -8,9 +8,9 @@ public interface ISaintsRepository
     Task<Saint?> GetByIdAsync(int id);
     Task<Saint?> GetBySlugAsync(string slug);
     Task<bool> SlugExistsAsync(string slug);
-    Task<bool> CreateSaintAsync(Saint saint);
-    Task<bool> UpdateSaintAsync(Saint saint);
-    Task DeleteSaintAsync(int id);
+    Task<bool> CreateAsync(Saint saint);
+    Task<bool> UpdateAsync(Saint saint);
+    Task DeleteAsync(int id);
     Task<IReadOnlyList<string>> GetCountriesAsync();
     Task<int> GetTotalSaintsAsync();
 }

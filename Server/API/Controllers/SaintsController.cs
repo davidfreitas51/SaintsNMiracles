@@ -53,7 +53,7 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
             MarkdownPath = markdownPath
         };
 
-        var created = await saintsRepository.CreateSaintAsync(saint);
+        var created = await saintsRepository.CreateAsync(saint);
 
         return created ? Created() : BadRequest();
     }
@@ -81,7 +81,7 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
         if (!string.IsNullOrWhiteSpace(markdownPath))
             existingSaint.MarkdownPath = markdownPath;
 
-        var updated = await saintsRepository.UpdateSaintAsync(existingSaint);
+        var updated = await saintsRepository.UpdateAsync(existingSaint);
         return updated ? NoContent() : BadRequest();
     }
 
@@ -93,7 +93,7 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
         if (saintToDelete is null)
             return NotFound();
         await saintsService.DeleteFilesAsync(saintToDelete.Slug);
-        await saintsRepository.DeleteSaintAsync(id);
+        await saintsRepository.DeleteAsync(id);
         return Ok();
     }
 

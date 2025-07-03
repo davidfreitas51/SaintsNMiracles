@@ -1,0 +1,52 @@
+[
+  {
+    "Title": "The Miracle of the Sun",
+    "Country": "Portugal",
+    "Century": 20,
+    "Image": "/miracles/miracle-of-the-sun/image.png",
+    "Description": "A crowd of over 70,000 witnessed the sun 'dance' in the sky in Fátima, 1917.",
+    "MarkdownPath": "/miracles/miracle-of-the-sun/markdown.md",
+    "Slug": "miracle-of-the-sun",
+    "CreatedAt": "2025-06-05T00:00:00Z"
+  },
+  {
+    "Title": "The Eucharistic Miracle of Lanciano",
+    "Country": "Italy",
+    "Century": 8,
+    "Image": "/miracles/lanciano/image.png",
+    "Description": "A consecrated Host visibly turned into flesh and blood during Mass.",
+    "MarkdownPath": "/miracles/lanciano/markdown.md",
+    "Slug": "lanciano",
+    "CreatedAt": "2025-06-06T00:00:00Z"
+  },
+  {
+    "Title": "Healing at Lourdes",
+    "Country": "France",
+    "Century": 19,
+    "Image": "/miracles/lourdes/image.png",
+    "Description": "Thousands have reported miraculous healings at the Marian shrine of Lourdes.",
+    "MarkdownPath": "/miracles/lourdes/markdown.md",
+    "Slug": "lourdes",
+    "CreatedAt": "2025-06-07T00:00:00Z"
+  },
+  {
+    "Title": "The Miracle of Bolsena",
+    "Country": "Italy",
+    "Century": 13,
+    "Image": "/miracles/bolsena/image.png",
+    "Description": "A consecrated Host began to bleed during Mass, leading to the Feast of Corpus Christi.",
+    "MarkdownPath": "/miracles/bolsena/markdown.md",
+    "Slug": "bolsena",
+    "CreatedAt": "2025-06-08T00:00:00Z"
+  },
+  {
+    "Title": "Our Lady of Guadalupe",
+    "Country": "Mexico",
+    "Century": 16,
+    "Image": "/miracles/guadalupe/image.png",
+    "Description": "The miraculous image of the Virgin Mary appeared on the tilma of St. Juan Diego.",
+    "MarkdownPath": "/miracles/guadalupe/markdown.md",
+    "Slug": "guadalupe",
+    "CreatedAt": "2025-06-09T00:00:00Z"
+  }
+]
