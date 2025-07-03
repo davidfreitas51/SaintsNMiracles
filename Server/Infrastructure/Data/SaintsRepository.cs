@@ -8,10 +8,11 @@ namespace Infrastructure.Data;
 
 public class SaintsRepository(DataContext context) : ISaintsRepository
 {
-    public async Task<IEnumerable<Saint>> GetAllAsync(SaintFilters filters)
+    public async Task<PagedResult<Saint>> GetAllAsync(SaintFilters filters)
     {
         var query = context.Saints.AsQueryable();
 
+        // Filtros
         if (!string.IsNullOrWhiteSpace(filters.Country))
         {
             query = query.Where(s => s.Country == filters.Country);
@@ -22,13 +23,10 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
             query = query.Where(s => s.Century.ToString() == filters.Century);
         }
 
-        if (string.IsNullOrWhiteSpace(filters.OrderBy))
-        {
-            query = query.OrderBy(s => s.Name);
-        }
-        else
-        {
-            query = filters.OrderBy.ToLower() switch
+        // Ordenação
+        query = string.IsNullOrWhiteSpace(filters.OrderBy)
+            ? query.OrderBy(s => s.Name)
+            : filters.OrderBy.ToLower() switch
             {
                 "name" => query.OrderBy(s => s.Name),
                 "name_desc" => query.OrderByDescending(s => s.Name),
@@ -36,22 +34,32 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
                 "century_desc" => query.OrderByDescending(s => s.Century),
                 _ => query.OrderBy(s => s.Name)
             };
-        }
 
-        var result = await query.ToListAsync();
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .Skip((filters.PageNumber - 1) * filters.PageSize)
+            .Take(filters.PageSize)
+            .ToListAsync();
 
         if (!string.IsNullOrWhiteSpace(filters.Search))
         {
             var search = Normalize(filters.Search);
 
-            result = result.Where(s =>
-                Normalize(s.Name).Contains(search) ||
-                Normalize(s.Description).Contains(search))
+            items = items
+                .Where(s =>
+                    Normalize(s.Name).Contains(search) ||
+                    Normalize(s.Description).Contains(search))
                 .ToList();
         }
 
-        int skip = (filters.PageNumber - 1) * filters.PageSize;
-        return result.Skip(skip).Take(filters.PageSize);
+        return new PagedResult<Saint>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = filters.PageNumber,
+            PageSize = filters.PageSize
+        };
     }
 
     public async Task<bool> CreateSaintAsync(Saint newSaint)

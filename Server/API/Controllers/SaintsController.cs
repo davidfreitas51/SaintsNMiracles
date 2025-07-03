@@ -13,7 +13,8 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
     [HttpGet]
     public async Task<IActionResult> GetAllSaints([FromQuery] SaintFilters filters)
     {
-        return Ok(await saintsRepository.GetAllAsync(filters));
+        var saints = await saintsRepository.GetAllAsync(filters);
+        return Ok(saints);
     }
 
     [HttpGet("{id:int}")]

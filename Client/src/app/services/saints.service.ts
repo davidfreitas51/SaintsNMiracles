@@ -14,14 +14,21 @@ export class SaintsService {
   private http = inject(HttpClient);
   public baseUrl = environment.apiUrl;
 
-  public getSaints(saintFilters: SaintFilters): Observable<Saint[]> {
+  getSaints(
+    saintFilters: SaintFilters
+  ): Observable<{ items: Saint[]; totalCount: number }> {
     let params = new HttpParams();
 
     Object.entries(saintFilters).forEach(([key, value]) => {
-      if (value) params = params.set(key, value);
+      if (value !== null && value !== undefined && value !== '') {
+        params = params.set(key, value.toString());
+      }
     });
 
-    return this.http.get<Saint[]>(this.baseUrl + 'saints', { params });
+    return this.http.get<{ items: Saint[]; totalCount: number }>(
+      this.baseUrl + 'saints',
+      { params }
+    );
   }
 
   public getSaint(slug: string): Observable<Saint> {
@@ -49,7 +56,7 @@ export class SaintsService {
   }
 
   public updateSaint(id: string, formValue: NewSaintDto): Observable<void> {
-    console.log(formValue)
+    console.log(formValue);
     return this.http.put<void>(this.baseUrl + 'saints/' + id, formValue);
   }
 

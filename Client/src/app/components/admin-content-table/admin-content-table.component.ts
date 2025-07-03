@@ -45,6 +45,7 @@ export class AdminContentTableComponent implements OnInit {
   public displayedColumns = [...this.columns];
   public dataSource = new MatTableDataSource<any>([]);
   public currentEntity = '';
+  totalCount: number = 0;
 
   saintFilters: SaintFilters = new SaintFilters();
 
@@ -72,8 +73,9 @@ export class AdminContentTableComponent implements OnInit {
   }
 
   private loadData(): void {
-    this.saintsService.getSaints(this.saintFilters).subscribe((saints) => {
-      this.dataSource.data = saints;
+    this.saintsService.getSaints(this.saintFilters).subscribe((res) => {
+      this.dataSource.data = res.items;
+      this.totalCount = res.totalCount;
       this.cdr.detectChanges();
     });
   }

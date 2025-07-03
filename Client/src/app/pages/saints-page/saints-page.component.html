@@ -135,15 +135,18 @@
       }
     </div>
     <div class="py-6 flex justify-center">
-      <mat-paginator
-        [length]="totalCount"
-        [pageIndex]="saintFilters.pageNumber - 1"
-        [pageSize]="saintFilters.pageSize"
-        [pageSizeOptions]="[25, 50, 100]"
-        showFirstLastButtons
-        (page)="handlePageChange($event)"
-      ></mat-paginator>
+      <div class="rounded-xl overflow-hidden shadow-sm border">
+        <mat-paginator
+          [length]="totalCount"
+          [pageIndex]="saintFilters.pageNumber - 1"
+          [pageSize]="saintFilters.pageSize"
+          [pageSizeOptions]="[25, 50, 100]"
+          showFirstLastButtons
+          (page)="handlePageChange($event)"
+        ></mat-paginator>
+      </div>
     </div>
+    
 
   </main>
 
