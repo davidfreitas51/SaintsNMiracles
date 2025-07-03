@@ -7,7 +7,6 @@ import {
   ViewChild,
   ElementRef,
   AfterViewInit,
-  Sanitizer,
 } from '@angular/core';
 import {
   FormBuilder,
@@ -27,12 +26,8 @@ import { RomanPipe } from '../../pipes/roman.pipe';
 import { environment } from '../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { CountryCodePipe } from '../../pipes/country-code.pipe';
-import {
-  ImageCropperComponent,
-  ImageCroppedEvent,
-  LoadedImage,
-} from 'ngx-image-cropper';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { CropDialogComponent } from '../../components/crop-dialog/crop-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-saint-form-page',
@@ -50,19 +45,18 @@ import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
     RomanPipe,
     CommonModule,
     CountryCodePipe,
-    ImageCropperComponent,
   ],
 })
 export class SaintFormPageComponent implements OnInit, AfterViewInit {
   saintsService = inject(SaintsService);
   snackBarService = inject(SnackbarService);
-  imageChangedEvent: Event | null = null;
-  croppedImage: SafeUrl = '';
+  dialog = inject(MatDialog);
 
   @ViewChild('descriptionTextarea')
   descriptionTextarea!: ElementRef<HTMLTextAreaElement>;
   imageBaseUrl = environment.assetsUrl;
 
+  croppedImage: string | null = null;
   form!: FormGroup;
   isEditMode = false;
   saintId: string | null = null;
@@ -74,8 +68,7 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private cdr: ChangeDetectorRef,
-    private sanitizer: DomSanitizer
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -168,21 +161,23 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
     }
   }
 
-  selectedFile: File | null = null;
+  onFileSelected(event: Event, input: HTMLInputElement): void {
+    const dialogRef = this.dialog.open(CropDialogComponent, {
+      height: '600px',
+      width: '600px',
+      data: { imageChangedEvent: event },
+    });
 
-  onFileSelected(event: Event): void {
-    const input = event.target as HTMLInputElement;
-    if (input.files && input.files[0]) {
-      this.imageLoading = true;
-      const file = input.files[0];
-      const reader = new FileReader();
-      reader.onload = () => {
-        const base64 = reader.result as string;
-        this.form.patchValue({ image: base64 });
-        this.imageLoading = false;
-      };
-      reader.readAsDataURL(file);
-    }
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && typeof result === 'string') {
+        this.croppedImage = result;
+        this.form.patchValue({ image: result });
+        this.form.get('image')?.updateValueAndValidity();
+      } else {
+        console.error('Unexpected result format:', result);
+      }
+      input.value = '';
+    });
   }
 
   autoResizeOnLoad() {
@@ -207,22 +202,5 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
     return img.startsWith('data:image') || img.startsWith('http')
       ? img
       : this.imageBaseUrl + img;
-  }
-
-  fileChangeEvent(event: Event): void {
-    this.imageChangedEvent = event;
-  }
-  imageCropped(event: ImageCroppedEvent) {
-    this.croppedImage = this.sanitizer.bypassSecurityTrustUrl(event.objectUrl ?? '');
-    // event.blob can be used to upload the cropped image
-  }
-  imageLoaded(image: LoadedImage) {
-    // show cropper
-  }
-  cropperReady() {
-    // cropper ready
-  }
-  loadImageFailed() {
-    // show message
   }
 }
