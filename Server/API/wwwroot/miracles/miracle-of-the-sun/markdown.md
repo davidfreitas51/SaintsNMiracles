@@ -1,7 +1,3 @@
-## The Miracle of the Sun
-
----
-
 ## A Divine Warning in Troubled Times
 
 In **1917**, the world was gripped by the horrors of **World War I**. Amidst the violence and moral decline, **Heaven intervened** in an unexpected place: the small village of **Fátima**, Portugal. Three shepherd children—**Lucia dos Santos** (10), and her cousins **Francisco** (9) and **Jacinta Marto** (7)—began receiving **apparitions of the Blessed Virgin Mary** in the **Cova da Iria** fields.

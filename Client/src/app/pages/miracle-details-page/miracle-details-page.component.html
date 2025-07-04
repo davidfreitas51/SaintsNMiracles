@@ -1,0 +1,125 @@
+<div class="min-h-screen flex flex-col">
+    <app-header></app-header>
+  
+    <main class="flex-grow">
+      @if (miracle) {
+      <div class="max-w-screen-xl mx-auto px-4 my-8 flex gap-8">
+        <!-- Left Sidebar -->
+        <aside class="w-1/4 flex mt-20 flex-col items-center gap-4">
+          <img
+            [src]="imageBaseUrl + miracle.image"
+            [alt]="miracle.title"
+            class="w-full rounded shadow-md"
+          />
+          <div class="text-sm text-gray-700 w-full text-center">
+            <div class="flex justify-center gap-6 mb-2">
+              <p><strong>Century:</strong> {{ miracle.century | roman }}</p>
+              <p>
+                <strong>Country:</strong>
+                {{ miracle.country }}
+                <img
+                  *ngIf="miracle.country | countryCode as code"
+                  [src]="'https://flagcdn.com/w20/' + code + '.png'"
+                  [alt]="miracle.country + ' flag'"
+                  class="inline-block w-4 h-4 mr-1 object-contain align-text-bottom"
+                />
+              </p>
+            </div>
+            <p class="mt-2">{{ miracle.description }}</p>
+          </div>
+        </aside>
+  
+        <!-- Main Content -->
+        <main class="w-2/4 prose prose-indigo max-w-none">
+          <h1 class="text-4xl font-extrabold mb-6 text-center">
+            Miracle: {{ miracle.title }}
+          </h1>
+  
+          <div class="border-b border-gray-300 my-6"></div>
+  
+          <div class="markdown-content mt-5" [innerHTML]="markdownContent"></div>
+        </main>
+  
+        <!-- Right Sidebar -->
+        <aside
+          class="w-full lg:w-64 border-l border-gray-200 mt-16 pl-4 sticky top-28 hidden lg:block"
+        >
+          <h3
+            class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2 mt-8"
+          >
+            Sections
+          </h3>
+          <ul class="list-disc list-outside space-y-2 text-sm">
+            @for (heading of headings; track $index) {
+            <li>
+              <a
+                (click)="scrollTo(heading.id)"
+                class="text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium"
+              >
+                {{ heading.text }}
+              </a>
+            </li>
+            }
+          </ul>
+  
+          <div class="mt-10">
+            <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">
+              Related Sections
+            </h3>
+            <ul class="list-disc list-outside space-y-2 text-sm">
+              <li>
+                <a
+                  [routerLink]="['/miracles']"
+                  [queryParams]="{ country: miracle.country }"
+                  class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+                >
+                  Miracles from {{ miracle.country }}
+                </a>
+              </li>
+              <li>
+                <a
+                  [routerLink]="['/miracles']"
+                  [queryParams]="{ century: miracle.century }"
+                  class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+                >
+                  Miracles from the {{ miracle.century | roman }} century
+                </a>
+              </li>
+              <li>
+                <a
+                  [routerLink]="['/saints']"
+                  [queryParams]="{ country: miracle.country }"
+                  class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+                >
+                  Saints from {{ miracle.country }}
+                </a>
+              </li>
+              <li>
+                <a
+                  [routerLink]="['/saints']"
+                  [queryParams]="{ century: miracle.century }"
+                  class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+                >
+                  Saints from the {{ miracle.century | roman }} century
+                </a>
+              </li>
+              <li>
+                <a
+                  routerLink="/about"
+                  class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+                >
+                  About Us
+                </a>
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+      } @else {
+      <div class="text-center text-lg py-20 text-gray-500">Carregando...</div>
+      }
+    </main>
+  
+    <app-footer></app-footer>
+  </div>
+  

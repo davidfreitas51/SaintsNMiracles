@@ -5,4 +5,4 @@ export class SaintFilters{
     search: string = ''
     pageNumber: number = 1
     pageSize: number = 25
-} 
+}
