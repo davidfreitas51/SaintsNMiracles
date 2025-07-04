@@ -4,7 +4,7 @@ namespace Core.Interfaces;
 
 public interface IMiraclesRepository
 {
-    Task<PagedResult<Miracle>> GetAllAsync(SaintFilters filters);
+    Task<PagedResult<Miracle>> GetAllAsync(MiracleFilters filters);
     Task<Miracle?> GetByIdAsync(int id);
     Task<Miracle?> GetBySlugAsync(string slug);
     Task<bool> SlugExistsAsync(string slug);
@@ -12,5 +12,5 @@ public interface IMiraclesRepository
     Task<bool> UpdateAsync(Miracle miracle);
     Task DeleteAsync(int id);
     Task<IReadOnlyList<string>> GetCountriesAsync();
-    Task<int> GetTotalAsync();
+    Task<int> GetTotalMiraclesAsync();
 }

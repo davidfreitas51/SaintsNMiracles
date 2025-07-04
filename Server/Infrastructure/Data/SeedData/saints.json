@@ -6,8 +6,7 @@
     "Image": "/saints/francis-of-assisi/image.png",
     "Description": "Founder of the Franciscans, known for his humility and love of creation.",
     "MarkdownPath": "/saints/francis-of-assisi/markdown.md",
-    "Slug": "francis-of-assisi",
-    "CreatedAt": "2025-05-31T00:00:00Z"
+    "Slug": "francis-of-assisi"
   },
   {
     "Name": "Teresa of Ávila",
@@ -16,8 +15,7 @@
     "Image": "/saints/teresa-of-avila/image.png",
     "Description": "Mystic, writer, and reformer of the Carmelite Order.",
     "MarkdownPath": "/saints/teresa-of-avila/markdown.md",
-    "Slug": "teresa-of-avila",
-    "CreatedAt": "2025-06-01T00:00:00Z"
+    "Slug": "teresa-of-avila"
   },
   {
     "Name": "Augustine of Hippo",
@@ -26,8 +24,7 @@
     "Image": "/saints/augustine-of-hippo/image.png",
     "Description": "Theologian and philosopher, author of 'Confessions' and 'City of God'.",
     "MarkdownPath": "/saints/augustine-of-hippo/markdown.md",
-    "Slug": "augustine-of-hippo",
-    "CreatedAt": "2025-06-02T00:00:00Z"
+    "Slug": "augustine-of-hippo"
   },
   {
     "Name": "Joan of Arc",
@@ -36,8 +33,7 @@
     "Image": "/saints/joan-of-arc/image.png",
     "Description": "French heroine and martyr who led troops during the Hundred Years' War.",
     "MarkdownPath": "/saints/joan-of-arc/markdown.md",
-    "Slug": "joan-of-arc",
-    "CreatedAt": "2025-06-03T00:00:00Z"
+    "Slug": "joan-of-arc"
   },
   {
     "Name": "Padre Pio",
@@ -46,7 +42,6 @@
     "Image": "/saints/padre-pio/image.png",
     "Description": "Known for his piety, miracles, and bearing the stigmata.",
     "MarkdownPath": "/saints/padre-pio/markdown.md",
-    "Slug": "padre-pio",
-    "CreatedAt": "2025-06-04T00:00:00Z"
+    "Slug": "padre-pio"
   }
 ]

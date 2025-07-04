@@ -7,5 +7,4 @@ export interface Saint {
     description: string
     markdownPath: string
     slug: string
-    createdAt: string
 }

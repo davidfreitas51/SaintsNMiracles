@@ -3,7 +3,7 @@ namespace Core.Models;
 public class Miracle
 {
     public int Id { get; set; }
-    public required string Name { get; set; }
+    public required string Title { get; set; }
     public required string Country { get; set; }
     public required int Century { get; set; }
     public required string Image { get; set; }

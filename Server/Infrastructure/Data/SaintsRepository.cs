@@ -102,18 +102,6 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
         return await context.Saints.CountAsync();
     }
 
-    private static string Normalize(string input)
-    {
-        if (string.IsNullOrWhiteSpace(input)) return "";
-
-        var normalized = input.Normalize(NormalizationForm.FormD);
-        var chars = normalized
-            .Where(c => CharUnicodeInfo.GetUnicodeCategory(c) != UnicodeCategory.NonSpacingMark)
-            .ToArray();
-
-        return new string(chars).ToLowerInvariant();
-    }
-
     public async Task<bool> SlugExistsAsync(string slug)
     {
         return await context.Saints.AnyAsync(s => s.Slug == slug);

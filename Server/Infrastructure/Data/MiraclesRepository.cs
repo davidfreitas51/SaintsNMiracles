@@ -1,52 +1,105 @@
 using Core.Interfaces;
 using Core.Models;
+using Microsoft.EntityFrameworkCore;
 
-namespace Infrastructure.Data.Services;
+namespace Infrastructure.Data;
 
-public class MiraclesRepository : IMiraclesRepository
+public class MiraclesRepository(DataContext context) : IMiraclesRepository
 {
-    public Task<bool> CreateAsync(Miracle miracle)
+    public async Task<PagedResult<Miracle>> GetAllAsync(MiracleFilters filters)
     {
-        throw new NotImplementedException();
+        var query = context.Miracles.AsQueryable();
+
+        if (!string.IsNullOrWhiteSpace(filters.Country))
+        {
+            query = query.Where(m => m.Country == filters.Country);
+        }
+
+        if (!string.IsNullOrWhiteSpace(filters.Century))
+        {
+            query = query.Where(m => m.Century.ToString() == filters.Century);
+        }
+
+        if (!string.IsNullOrWhiteSpace(filters.Search))
+        {
+            var search = filters.Search.ToLower();
+
+            query = query.Where(m =>
+                EF.Functions.Like(m.Title.ToLower(), $"%{search}%") ||
+                EF.Functions.Like(m.Description.ToLower(), $"%{search}%"));
+        }
+
+        query = string.IsNullOrWhiteSpace(filters.OrderBy)
+            ? query.OrderBy(m => m.Title)
+            : filters.OrderBy.ToLower() switch
+            {
+                "title" => query.OrderBy(m => m.Title),
+                "title_desc" => query.OrderByDescending(m => m.Title),
+                "century" => query.OrderBy(m => m.Century),
+                "century_desc" => query.OrderByDescending(m => m.Century),
+                _ => query.OrderBy(m => m.Title)
+            };
+
+        var totalCount = await query.CountAsync();
+
+        var items = await query
+            .Skip((filters.PageNumber - 1) * filters.PageSize)
+            .Take(filters.PageSize)
+            .ToListAsync();
+
+        return new PagedResult<Miracle>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = filters.PageNumber,
+            PageSize = filters.PageSize
+        };
     }
 
-    public Task DeleteAsync(int id)
+    public async Task<bool> CreateAsync(Miracle newMiracle)
     {
-        throw new NotImplementedException();
+        await context.Miracles.AddAsync(newMiracle);
+        return await context.SaveChangesAsync() > 0;
     }
 
-    public Task<PagedResult<Miracle>> GetAllAsync(SaintFilters filters)
+    public async Task<bool> UpdateAsync(Miracle miracle)
     {
-        throw new NotImplementedException();
+        context.Miracles.Update(miracle);
+        return await context.SaveChangesAsync() > 0;
     }
 
-    public Task<Miracle?> GetByIdAsync(int id)
+    public async Task DeleteAsync(int id)
     {
-        throw new NotImplementedException();
+        var miracle = await GetByIdAsync(id);
+        if (miracle is not null)
+        {
+            context.Miracles.Remove(miracle);
+            await context.SaveChangesAsync();
+        }
     }
 
-    public Task<Miracle?> GetBySlugAsync(string slug)
+    public async Task<Miracle?> GetBySlugAsync(string slug)
     {
-        throw new NotImplementedException();
+        return await context.Miracles.FirstOrDefaultAsync(m => m.Slug == slug);
     }
 
-    public Task<IReadOnlyList<string>> GetCountriesAsync()
+    public async Task<Miracle?> GetByIdAsync(int id)
     {
-        throw new NotImplementedException();
+        return await context.Miracles.FindAsync(id);
     }
 
-    public Task<int> GetTotalAsync()
+    public async Task<IReadOnlyList<string>> GetCountriesAsync()
     {
-        throw new NotImplementedException();
+        return await context.Miracles.Select(m => m.Country).Distinct().ToListAsync();
     }
 
-    public Task<bool> SlugExistsAsync(string slug)
+    public async Task<int> GetTotalMiraclesAsync()
     {
-        throw new NotImplementedException();
+        return await context.Miracles.CountAsync();
     }
 
-    public Task<bool> UpdateAsync(Miracle miracle)
+    public async Task<bool> SlugExistsAsync(string slug)
     {
-        throw new NotImplementedException();
+        return await context.Miracles.AnyAsync(m => m.Slug == slug);
     }
 }

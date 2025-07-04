@@ -10,5 +10,4 @@ public class Saint
     public required string Description { get; set; }
     public required string MarkdownPath { get; set; }
     public required string Slug { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 }

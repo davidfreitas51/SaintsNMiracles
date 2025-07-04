@@ -21,7 +21,11 @@
     <None Update="Data/SeedData/saints.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
+    <None Update="Data/SeedData/miracles.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
+
   
   <ItemGroup>
     <Folder Include="Migrations/" />

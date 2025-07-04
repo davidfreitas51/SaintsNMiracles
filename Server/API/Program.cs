@@ -1,7 +1,6 @@
 using System.Text.Json;
 using Core.Interfaces;
 using Infrastructure.Data;
-using Infrastructure.Data.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
