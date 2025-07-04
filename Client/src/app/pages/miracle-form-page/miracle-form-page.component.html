@@ -1,0 +1,140 @@
+<div
+  class="flex flex-col gap-6 p-6 shadow rounded-lg bg-white max-w-4xl mx-auto"
+>
+  <form [formGroup]="form" class="flex flex-col gap-6" (ngSubmit)="onSubmit()">
+    <div class="flex gap-6">
+      <div class="w-1/2">
+        <label for="imageInput" class="block mb-2 font-semibold">
+          Icon image
+        </label>
+
+        <label
+          for="imageInput"
+          class="block aspect-square w-full border-2 border-dashed rounded grid place-items-center text-gray-500 cursor-pointer hover:border-blue-400 hover:text-blue-600 transition overflow-hidden"
+        >
+          <ng-container *ngIf="form.get('image')?.value; else croppedOrPlaceholder">
+            <img
+              [src]="getImagePreview()"
+              alt="Selected image"
+              class="object-cover w-full h-full rounded"
+            />
+          </ng-container>
+          <ng-template #croppedOrPlaceholder>
+            <ng-container *ngIf="croppedImage; else placeholderIcon">
+              <div class="flex items-center justify-center">
+                <img
+                  [src]="croppedImage"
+                  alt="Selected image"
+                  class="object-cover w-full h-full rounded"
+                />
+              </div>
+            </ng-container>
+          </ng-template>
+
+          <ng-template #placeholderIcon>
+            <div class="flex items-center justify-center">
+              <mat-icon
+                class="!text-[330px] w-[330px] h-[330px] leading-none text-primary-app"
+                fontIcon="add_a_photo"
+              ></mat-icon>
+            </div>
+          </ng-template>
+        </label>
+
+        <input
+          id="imageInput"
+          #fileInput
+          type="file"
+          accept=".webp,.png,.jpg,.jpeg"
+          (change)="onFileSelected($event, fileInput)"
+          class="hidden"
+        />
+      </div>
+
+      <div class="flex-1 flex flex-col gap-4">
+        <label class="block">
+          <span class="block pb-2 font-semibold">Title</span>
+          <input
+            type="text"
+            formControlName="title"
+            placeholder="Miracle's title"
+            class="w-full border rounded px-3 py-2"
+          />
+        </label>
+
+        <label class="block relative">
+          <span class="block pb-2 font-semibold">Country</span>
+          <input
+            type="text"
+            formControlName="country"
+            placeholder="Miracle's country"
+            class="w-full border rounded px-3 py-2 pr-10"
+          />
+          <img
+            *ngIf="form.get('country')?.value | countryCode as flagCode"
+            [src]="'https://flagcdn.com/w20/' + flagCode + '.png'"
+            [alt]="form.get('country')?.value + ' flag'"
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 mt-4 h-5 object-contain pointer-events-none"
+          />
+        </label>
+
+        <label class="block">
+          <span class="block pb-2 font-semibold">Century</span>
+          <mat-select
+            formControlName="century"
+            class="w-full border rounded px-4 py-2"
+          >
+            <mat-option *ngFor="let item of centuries" [value]="item">
+              {{ item | roman }}
+            </mat-option>
+          </mat-select>
+        </label>
+
+        <label class="block">
+          <span class="block pb-2 font-semibold">Description</span>
+          <textarea
+            #descriptionTextarea
+            formControlName="description"
+            rows="1"
+            placeholder="Brief description"
+            class="w-full border rounded px-3 py-2 resize-none overflow-hidden min-h-[40px]"
+            (input)="autoResize($event)"
+          ></textarea>
+        </label>
+      </div>
+    </div>
+
+    <div>
+      <label class="block flex flex-col">
+        <span class="font-semibold">Markdown</span>
+        <md-editor
+          formControlName="markdownContent"
+          [height]="'300px'"
+        ></md-editor>
+      </label>
+    </div>
+
+    <div class="flex justify-end pt-5">
+      <button
+        mat-flat-button
+        [routerLink]="['/admin/miracles']"
+        class="bg-red-600 hover:bg-red-700 text-white font-semibold mr-5 py-2 px-4 rounded inline-flex items-center gap-2"
+      >
+        <mat-icon class="text-white">undo</mat-icon>
+        Cancel
+      </button>
+
+      <button
+        mat-flat-button
+        type="submit"
+        [disabled]="form.invalid || imageLoading"
+        class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded inline-flex items-center gap-2"
+      >
+        <mat-icon class="text-white">
+          {{ isEditMode ? 'edit' : 'add' }}
+        </mat-icon>
+        {{ isEditMode ? 'Update Miracle' : 'Create Miracle' }}
+      </button>
+    </div>
+  </form>
+</div>

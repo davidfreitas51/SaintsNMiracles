@@ -11,13 +11,13 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { SaintsService } from '../../services/saints.service';
+import { MiraclesService } from '../../services/miracles.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
-import { SaintFilters } from '../../interfaces/saint-filter';
 import { RomanPipe } from '../../pipes/roman.pipe';
-import { ConfirmDialogComponent } from '../confirm-dialog/confirm-dialog.component';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
+import { combineLatest } from 'rxjs';
 
 @Component({
   selector: 'app-admin-content-table',
@@ -35,19 +35,36 @@ import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 })
 export class AdminContentTableComponent implements OnInit {
   private saintsService = inject(SaintsService);
+  private miraclesService = inject(MiraclesService);
   private snackBarService = inject(SnackbarService);
   private dialogService = inject(ConfirmDialogService);
   private route = inject(ActivatedRoute);
   private cdr = inject(ChangeDetectorRef);
 
   public router = inject(Router);
-  public columns: string[] = ['name', 'country', 'century', 'actions'];
-  public displayedColumns = [...this.columns];
+  public columns: string[] = [];
+  public displayedColumns: string[] = [];
   public dataSource = new MatTableDataSource<any>([]);
   public currentEntity = '';
   totalCount: number = 0;
 
-  saintFilters: SaintFilters = new SaintFilters();
+  saintFilters = {
+    country: '',
+    century: '',
+    search: '',
+    pageNumber: 1,
+    pageSize: 25,
+    orderBy: 'name',
+  };
+
+  miracleFilters = {
+    country: '',
+    century: '',
+    search: '',
+    pageNumber: 1,
+    pageSize: 25,
+    orderBy: 'title',
+  };
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -61,10 +78,28 @@ export class AdminContentTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    const plural = this.route.snapshot.paramMap.get('object') || '';
-    this.currentEntity = this.getSingularName(plural);
+    combineLatest([this.route.paramMap, this.route.queryParams]).subscribe(
+      ([params, queryParams]) => {
+        const plural = params.get('object') || '';
+        this.currentEntity = this.getSingularName(plural.toLowerCase());
+        this.setColumnsByEntity();
 
-    this.loadData();
+        // Atualizar filtros a partir dos query params
+        if (this.currentEntity === 'saint') {
+          this.saintFilters.country = queryParams['country'] || '';
+          this.saintFilters.century = queryParams['century'] || '';
+          this.saintFilters.search = queryParams['search'] || '';
+          this.saintFilters.pageNumber = 1;
+        } else if (this.currentEntity === 'miracle') {
+          this.miracleFilters.country = queryParams['country'] || '';
+          this.miracleFilters.century = queryParams['century'] || '';
+          this.miracleFilters.search = queryParams['search'] || '';
+          this.miracleFilters.pageNumber = 1;
+        }
+
+        this.loadData();
+      }
+    );
   }
 
   ngAfterViewInit() {
@@ -73,17 +108,27 @@ export class AdminContentTableComponent implements OnInit {
   }
 
   private loadData(): void {
-    this.saintsService.getSaints(this.saintFilters).subscribe((res) => {
-      this.dataSource.data = res.items;
-      this.totalCount = res.totalCount;
-      this.cdr.detectChanges();
-    });
+    if (this.currentEntity === 'saint') {
+      this.saintsService.getSaints(this.saintFilters).subscribe((res: any) => {
+        this.dataSource.data = res.items;
+        this.totalCount = res.totalCount;
+        this.cdr.detectChanges();
+      });
+    } else if (this.currentEntity === 'miracle') {
+      this.miraclesService
+        .getMiracles(this.miracleFilters)
+        .subscribe((res: any) => {
+          this.dataSource.data = res.items;
+          this.totalCount = res.totalCount;
+          this.cdr.detectChanges();
+        });
+    }
   }
 
   editObject(entity: any): void {
     this.router.navigate([
       '/admin',
-      this.currentEntity.toLowerCase(),
+      this.currentEntity.toLowerCase() + 's',
       entity.id,
       'edit',
     ]);
@@ -93,38 +138,69 @@ export class AdminContentTableComponent implements OnInit {
     this.dialogService
       .confirm({
         title: `Delete ${this.currentEntity}?`,
-        message: `You're about to permanently delete “${entity.name}”. This action cannot be undone.`,
+        message: `You're about to permanently delete “${
+          entity.name || entity.title
+        }”. This action cannot be undone.`,
         confirmText: 'Yes, delete',
         cancelText: 'Cancel',
       })
       .subscribe((confirmed) => {
         if (!confirmed) return;
 
-        this.saintsService.deleteSaint(entity.id).subscribe({
-          next: () => {
-            this.snackBarService.success(
-              `${this.currentEntity} successfully deleted`
-            );
-            this.loadData();
-          },
-          error: (err) => {
-            this.snackBarService.error(
-              `Failed to delete ${this.currentEntity.toLowerCase()}`
-            );
-            console.error(err);
-          },
-        });
+        if (this.currentEntity === 'saint') {
+          this.saintsService.deleteSaint(entity.id).subscribe({
+            next: () => {
+              this.snackBarService.success(
+                `${this.currentEntity} successfully deleted`
+              );
+              this.loadData();
+            },
+            error: (err) => {
+              this.snackBarService.error(
+                `Failed to delete ${this.currentEntity.toLowerCase()}`
+              );
+              console.error(err);
+            },
+          });
+        } else if (this.currentEntity === 'miracle') {
+          this.miraclesService.deleteMiracle(entity.id).subscribe({
+            next: () => {
+              this.snackBarService.success(
+                `${this.currentEntity} successfully deleted`
+              );
+              this.loadData();
+            },
+            error: (err) => {
+              this.snackBarService.error(
+                `Failed to delete ${this.currentEntity.toLowerCase()}`
+              );
+              console.error(err);
+            },
+          });
+        }
       });
   }
 
   private getSingularName(plural: string): string {
     const map: Record<string, string> = {
-      saints: 'Saint',
+      saints: 'saint',
+      miracles: 'miracle',
     };
     return map[plural] || this.capitalize(plural);
   }
 
   private capitalize(value: string): string {
     return value.charAt(0).toUpperCase() + value.slice(1);
+  }
+
+  private setColumnsByEntity(): void {
+    if (this.currentEntity === 'saint') {
+      this.columns = ['name', 'country', 'century', 'actions'];
+    } else if (this.currentEntity === 'miracle') {
+      this.columns = ['title', 'country', 'century', 'actions'];
+    } else {
+      this.columns = ['id', 'actions'];
+    }
+    this.displayedColumns = [...this.columns];
   }
 }

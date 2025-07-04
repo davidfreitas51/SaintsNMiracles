@@ -14,14 +14,14 @@ public class DashboardController(ISaintsRepository saintsRepository, IMiraclesRe
         return Ok(totalSaints);
     }
 
-    [HttpGet]
+    [HttpGet("miracles")]
     public async Task<IActionResult> TotalMiracles()
     {
         var totalMiracles = await miraclesRepository.GetTotalMiraclesAsync();
         return Ok(totalMiracles);
     }
 
-    [HttpGet]
+    [HttpGet("users")]
     public async Task<IActionResult> TotalUsers()
     {
         return Ok(0);

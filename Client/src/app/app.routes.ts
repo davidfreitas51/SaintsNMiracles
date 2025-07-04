@@ -9,6 +9,7 @@ import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.co
 import { ContentManagerPageComponent } from './pages/content-manager-page/content-manager-page.component';
 import { SaintFormPageComponent } from './pages/saint-form-page/saint-form-page.component';
 import { MiracleDetailsPageComponent } from './pages/miracle-details-page/miracle-details-page.component';
+import { ContentFormWrapperComponent } from './components/content-form-wrapper/content-form-wrapper.component';
 
 export const routes: Routes = [
   {
@@ -57,11 +58,11 @@ export const routes: Routes = [
           },
           {
             path: 'create',
-            component: SaintFormPageComponent,
+            component: ContentFormWrapperComponent,
           },
           {
             path: ':id/edit',
-            component: SaintFormPageComponent,
+            component: ContentFormWrapperComponent,
           },
         ],
       },
