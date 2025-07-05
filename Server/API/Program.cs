@@ -1,7 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Core.Interfaces;
+using Core.Models;
 using Infrastructure.Data;
+using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -27,6 +29,8 @@ builder.Services.AddScoped<ISaintsRepository, SaintsRepository>();
 builder.Services.AddScoped<ISaintsService, SaintsService>();
 builder.Services.AddScoped<IMiraclesRepository, MiraclesRepository>();
 builder.Services.AddScoped<IMiraclesService, MiraclesService>();
+builder.Services.AddScoped<IReligiousOrdersRepository, ReligiousOrdersRepository>();
+builder.Services.AddScoped<ITagsRepository, TagsRepository>();
 
 builder.Services.AddDbContext<DataContext>(options =>
 {
