@@ -1,4 +1,10 @@
-import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  OnInit,
+  ViewChild,
+  inject,
+} from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { EntityDialogData } from '../../interfaces/entity-dialog-data';
@@ -14,6 +20,7 @@ import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { MatSort, MatSortModule } from '@angular/material/sort';
+import { SnackbarService } from '../../services/snackbar.service';
 
 @Component({
   selector: 'app-entity-manager-dialog',
@@ -39,6 +46,7 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   readonly dialogRef = inject(MatDialogRef<EntityManagerDialogComponent>);
+  readonly snackbar = inject(SnackbarService)
   readonly data = inject<EntityDialogData>(MAT_DIALOG_DATA);
   dialogService = inject(ConfirmDialogService);
 
@@ -49,6 +57,7 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
   isLoading = false;
 
   editingElement: Entity | null = null;
+  originalElement: Entity | null = null;
 
   ngOnInit(): void {
     this.entityName = this.data.entityName;
@@ -78,10 +87,10 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
   updateEntity(entity: Entity): void {
     this.data.updateFn(entity).subscribe({
       next: () => {
-        console.log(`${this.entityName} updated`);
+        this.snackbar.success(`${this.entityName} updated`)
       },
-      error: (err) => {
-        console.error(`Failed to update ${this.entityName}`, err);
+      error: () => {
+        this.snackbar.error(`Failed to update ${this.entityName}`);
       },
     });
   }
@@ -99,11 +108,11 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
 
         this.data.deleteFn(entity.id).subscribe({
           next: () => {
-            console.log(`${this.entityName} deleted`);
+            this.snackbar.success(`${this.entityName} deleted`);
             this.loadEntities();
           },
-          error: (err) => {
-            console.error(`Failed to delete ${this.entityName}`, err);
+          error: () => {
+            this.snackbar.error(`Failed to delete ${this.entityName}`);
           },
         });
       });
@@ -126,15 +135,22 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
   }
 
   startEdit(element: Entity): void {
+    this.originalElement = element;
     this.editingElement = { ...element };
   }
 
-  saveEdit(element: Entity): void {
-    this.updateEntity(element);
+  saveEdit(): void {
+    if (!this.originalElement || !this.editingElement) return;
+
+    Object.assign(this.originalElement, this.editingElement);
+    this.updateEntity(this.originalElement);
+
     this.editingElement = null;
+    this.originalElement = null;
   }
 
   cancelEdit(): void {
     this.editingElement = null;
+    this.originalElement = null;
   }
 }

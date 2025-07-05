@@ -1,7 +1,4 @@
-<div
-  class="flex flex-col h-full w-full p-6 gap-4 overflow-hidden max-w-4xl mx-auto"
->
-  <!-- Header com título sempre quebrando, busca à esquerda e botão à direita -->
+<div class="flex flex-col h-full w-full p-6 gap-4 overflow-hidden max-w-4xl mx-auto">
   <div class="flex flex-col gap-2">
     <h1 class="text-3xl font-semibold text-primary-app break-words w-full">
       Manage {{ entityName }}s
@@ -9,14 +6,11 @@
 
     <div class="flex items-center justify-between flex-wrap gap-4 w-full">
       <div class="flex-grow min-w-0">
-        <div
-          class="flex gap-2 items-center w-full sm:w-[250px] md:w-[300px] lg:w-[400px]"
-        >
+        <div class="flex gap-2 items-center w-full sm:w-[250px] md:w-[300px] lg:w-[400px]">
           <mat-form-field appearance="fill" class="w-full">
             <mat-label>Search {{ entityName | lowercase }}</mat-label>
             <input
               matInput
-              #searchInput
               type="text"
               placeholder="Type to search..."
               [(ngModel)]="search"
@@ -48,7 +42,6 @@
     </div>
   </div>
 
-  <!-- Tabela com responsividade e feedback visual -->
   <div class="flex-grow overflow-auto rounded-xl border border-gray-300">
     <div class="overflow-x-auto">
       <table mat-table [dataSource]="dataSource" matSort class="min-w-[400px] max-w-full mx-auto w-full">
@@ -66,8 +59,7 @@
             <ng-container *ngIf="editingElement?.id === element.id; else viewMode">
               <input
                 class="bg-white border border-gray-300 rounded-md px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-primary-app"
-                [(ngModel)]="element.name"
-                (blur)="saveEdit(element)"
+                [(ngModel)]="editingElement!.name"
               />
             </ng-container>
             <ng-template #viewMode>
@@ -75,7 +67,7 @@
             </ng-template>
           </td>
         </ng-container>
-      
+
         <!-- Actions Column -->
         <ng-container matColumnDef="actions">
           <th
@@ -88,7 +80,6 @@
           </th>
           <td mat-cell *matCellDef="let element" class="text-center px-4 py-2" style="width: 120px;">
             <div class="flex justify-center gap-2 items-center" style="min-width: 120px;">
-              <!-- Edit button shown only if not editing this row -->
               <button
                 mat-icon-button
                 class="text-blue-500"
@@ -98,19 +89,17 @@
               >
                 <mat-icon>edit</mat-icon>
               </button>
-      
-              <!-- Confirm button shown only if editing this row -->
+
               <button
                 mat-icon-button
                 class="text-blue-600"
                 aria-label="Confirm"
                 *ngIf="editingElement?.id === element.id"
-                (click)="saveEdit(element)"
+                (click)="saveEdit()"
               >
                 <mat-icon>check</mat-icon>
               </button>
-      
-              <!-- Cancel button shown only if editing this row -->
+
               <button
                 mat-icon-button
                 class="text-green-600"
@@ -120,8 +109,7 @@
               >
                 <mat-icon>close</mat-icon>
               </button>
-      
-              <!-- Trash button hidden while editing -->
+
               <button
                 *ngIf="editingElement?.id !== element.id"
                 mat-icon-button
@@ -134,14 +122,13 @@
             </div>
           </td>
         </ng-container>
-      
+
         <tr mat-header-row *matHeaderRowDef="['name', 'actions']"></tr>
         <tr mat-row *matRowDef="let row; columns: ['name', 'actions']"></tr>
       </table>
     </div>
   </div>
 
-  <!-- Paginação -->
   <div class="flex justify-end pt-2">
     <mat-paginator
       [pageSizeOptions]="[5, 10, 20]"

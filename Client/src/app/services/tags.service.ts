@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { Tag } from '../interfaces/tag';
 import { EntityFilters } from '../interfaces/entity-filters';
+import { NewTagDto } from '../interfaces/new-tag-dto';
 
 @Injectable({
   providedIn: 'root',
@@ -40,9 +41,11 @@ export class TagsService {
   }
 
   updateTag(tag: Tag): Observable<void> {
-    return this.http.put<void>(`${this.baseUrl}/${tag.id}`, {
+    const dto: NewTagDto = {
       name: tag.name,
-    });
+      tagType: 0,
+    };
+    return this.http.put<void>(`${this.baseUrl}/${tag.id}`, dto);
   }
 
   deleteTag(id: number): Observable<void> {
