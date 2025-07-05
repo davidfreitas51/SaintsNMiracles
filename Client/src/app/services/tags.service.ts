@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { Observable } from 'rxjs';
 import { Tag } from '../interfaces/tag';
-import { TagFilters } from '../interfaces/tag-filters';
+import { EntityFilters } from '../interfaces/entity-filters';
 
 @Injectable({
   providedIn: 'root',
@@ -13,7 +13,7 @@ export class TagsService {
   private baseUrl = environment.apiUrl + 'tags';
 
   getTags(
-    filters: TagFilters
+    filters: EntityFilters
   ): Observable<{ items: Tag[]; totalCount: number }> {
     let params = new HttpParams();
 
@@ -35,7 +35,7 @@ export class TagsService {
   createTag(name: string): Observable<void> {
     return this.http.post<void>(this.baseUrl, {
       name,
-      tagType: 0, // default or placeholder value for now
+      tagType: 0,
     });
   }
 

@@ -18,6 +18,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { SnackbarService } from '../../services/snackbar.service';
 import { Observable } from 'rxjs';
+import { FeastDayFormatPipe } from "../../pipes/feast-day-format.pipe";
 
 @Component({
   selector: 'app-admin-content-table',
@@ -32,7 +33,8 @@ import { Observable } from 'rxjs';
     MatCardModule,
     RomanPipe,
     CommonModule,
-  ],
+    FeastDayFormatPipe
+],
 })
 export class AdminContentTableComponent implements OnChanges, AfterViewInit {
   @Input({ required: true }) data: any[] = [];

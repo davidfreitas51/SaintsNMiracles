@@ -9,6 +9,8 @@ import { SaintsService } from '../../services/saints.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EntityManagerDialogComponent } from '../../components/entity-manager-dialog/entity-manager-dialog.component';
 import { TagsService } from '../../services/tags.service';
+import { ReligiousOrdersService } from '../../services/religious-orders.service';
+import { EntityFilters } from '../../interfaces/entity-filters';
 
 @Component({
   selector: 'app-manage-saints-page',
@@ -25,9 +27,11 @@ import { TagsService } from '../../services/tags.service';
 })
 export class ManageSaintsPageComponent {
   private saintsService = inject(SaintsService);
+  private tagsService = inject(TagsService);
+  private religiousOrdersService = inject(ReligiousOrdersService);
   readonly dialog = inject(MatDialog);
-  private tagsService = inject(TagsService)
   saintsFilter: SaintFilters = new SaintFilters();
+  entityFilter: EntityFilters = new EntityFilters();
 
   saints: Saint[] = [];
 
@@ -43,12 +47,28 @@ export class ManageSaintsPageComponent {
 
   deleteSaint = (id: number) => this.saintsService.deleteSaint(id);
 
-  manageEntities(entityName: string) {
+  manageTags() {
     this.dialog.open(EntityManagerDialogComponent, {
-      height: '600px', 
+      height: '600px',
       panelClass: 'entity-manager-dialog',
-      data: { entityName },
+      data: {
+        entityName: 'Tag',
+        getAllFn: (filters: EntityFilters) => this.tagsService.getTags(filters),
+        createFn: (name: string) => this.tagsService.createTag(name),
+        updateFn: (entity: any) =>
+          this.tagsService.updateTag(entity),
+        deleteFn: (id: number) => this.tagsService.deleteTag(id),
+      },
     });
-    
+  }
+
+  manageReligiousOrders() {
+    this.dialog.open(EntityManagerDialogComponent, {
+      height: '600px',
+      panelClass: 'entity-manager-dialog',
+      data: {
+        entityName: 'Religious Order',
+      },
+    });
   }
 }

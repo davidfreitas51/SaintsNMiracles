@@ -1,4 +1,4 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild, inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { EntityDialogData } from '../../interfaces/entity-dialog-data';
@@ -11,6 +11,9 @@ import { Entity } from '../../interfaces/entity';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
+import { CommonModule } from '@angular/common';
+import { ConfirmDialogService } from '../../services/confirm-dialog.service';
+import { MatSort, MatSortModule } from '@angular/material/sort';
 
 @Component({
   selector: 'app-entity-manager-dialog',
@@ -27,11 +30,15 @@ import { MatInputModule } from '@angular/material/input';
     LowercasePipe,
     MatTableModule,
     MatPaginatorModule,
+    CommonModule,
+    MatSortModule,
   ],
 })
-export class EntityManagerDialogComponent implements OnInit {
+export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
+  @ViewChild(MatSort) sort!: MatSort;
   readonly dialogRef = inject(MatDialogRef<EntityManagerDialogComponent>);
   readonly data = inject<EntityDialogData>(MAT_DIALOG_DATA);
+  dialogService = inject(ConfirmDialogService);
 
   entityName = '';
   dataSource = new MatTableDataSource<Entity>([]);
@@ -39,9 +46,15 @@ export class EntityManagerDialogComponent implements OnInit {
   newName = '';
   isLoading = false;
 
+  editingElement: Entity | null = null;
+
   ngOnInit(): void {
     this.entityName = this.data.entityName;
     this.loadEntities();
+  }
+
+  ngAfterViewInit() {
+    this.dataSource.sort = this.sort;
   }
 
   loadEntities(): void {
@@ -71,15 +84,26 @@ export class EntityManagerDialogComponent implements OnInit {
   }
 
   deleteEntity(entity: Entity): void {
-    this.data.deleteFn(entity.id).subscribe({
-      next: () => {
-        console.log(`${this.entityName} deleted`);
-        this.loadEntities();
-      },
-      error: (err) => {
-        console.error(`Failed to delete ${this.entityName}`, err);
-      },
-    });
+    this.dialogService
+      .confirm({
+        title: `Delete ${this.entityName}?`,
+        message: `You're about to permanently delete “${entity.name}”. This action cannot be undone.`,
+        confirmText: 'Yes, delete',
+        cancelText: 'Cancel',
+      })
+      .subscribe((confirmed) => {
+        if (!confirmed) return;
+
+        this.data.deleteFn(entity.id).subscribe({
+          next: () => {
+            console.log(`${this.entityName} deleted`);
+            this.loadEntities();
+          },
+          error: (err) => {
+            console.error(`Failed to delete ${this.entityName}`, err);
+          },
+        });
+      });
   }
 
   createEntity(): void {
@@ -96,5 +120,18 @@ export class EntityManagerDialogComponent implements OnInit {
         console.error(`Failed to create ${this.entityName}`, err);
       },
     });
+  }
+
+  startEdit(element: Entity): void {
+    this.editingElement = { ...element };
+  }
+
+  saveEdit(element: Entity): void {
+    this.updateEntity(element);
+    this.editingElement = null;
+  }
+
+  cancelEdit(): void {
+    this.editingElement = null;
   }
 }
