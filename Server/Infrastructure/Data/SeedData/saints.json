@@ -6,7 +6,15 @@
     "Image": "/saints/francis-of-assisi/image.png",
     "Description": "Founder of the Franciscans, known for his humility and love of creation.",
     "MarkdownPath": "/saints/francis-of-assisi/markdown.md",
-    "Slug": "francis-of-assisi"
+    "Title": "The Poor Man of Assisi",
+    "FeastDay": "0001-10-04",
+    "PatronOf": "Animals and Ecology",
+    "ReligiousOrder": { "Name": "Franciscan (OFM)" },
+    "Slug": "francis-of-assisi",
+    "Tags": [
+      { "Name": "Founder", "TagType": "Saint" },
+      { "Name": "Monk", "TagType": "Saint" }
+    ]
   },
   {
     "Name": "Teresa of Ávila",
@@ -15,7 +23,16 @@
     "Image": "/saints/teresa-of-avila/image.png",
     "Description": "Mystic, writer, and reformer of the Carmelite Order.",
     "MarkdownPath": "/saints/teresa-of-avila/markdown.md",
-    "Slug": "teresa-of-avila"
+    "Title": "The Mystical Doctor",
+    "FeastDay": "0001-10-15",
+    "PatronOf": "Writers and Mystics",
+    "ReligiousOrder": { "Name": "Carmelite" },
+    "Slug": "teresa-of-avila",
+    "Tags": [
+      { "Name": "Mystic", "TagType": "Saint" },
+      { "Name": "Doctor of the Church", "TagType": "Saint" },
+      { "Name": "Nun", "TagType": "Saint" }
+    ]
   },
   {
     "Name": "Augustine of Hippo",
@@ -24,7 +41,15 @@
     "Image": "/saints/augustine-of-hippo/image.png",
     "Description": "Theologian and philosopher, author of 'Confessions' and 'City of God'.",
     "MarkdownPath": "/saints/augustine-of-hippo/markdown.md",
-    "Slug": "augustine-of-hippo"
+    "Title": "Doctor of Grace",
+    "FeastDay": "0001-08-28",
+    "PatronOf": "Theologians and Printers",
+    "ReligiousOrder": null,
+    "Slug": "augustine-of-hippo",
+    "Tags": [
+      { "Name": "Philosopher", "TagType": "Saint" },
+      { "Name": "Doctor of the Church", "TagType": "Saint" }
+    ]
   },
   {
     "Name": "Joan of Arc",
@@ -33,7 +58,15 @@
     "Image": "/saints/joan-of-arc/image.png",
     "Description": "French heroine and martyr who led troops during the Hundred Years' War.",
     "MarkdownPath": "/saints/joan-of-arc/markdown.md",
-    "Slug": "joan-of-arc"
+    "Title": "The Maid of Orléans",
+    "FeastDay": "0001-05-30",
+    "PatronOf": "France and Soldiers",
+    "ReligiousOrder": null,
+    "Slug": "joan-of-arc",
+    "Tags": [
+      { "Name": "Martyr", "TagType": "Saint" },
+      { "Name": "Heroine", "TagType": "Saint" }
+    ]
   },
   {
     "Name": "Padre Pio",
@@ -42,6 +75,14 @@
     "Image": "/saints/padre-pio/image.png",
     "Description": "Known for his piety, miracles, and bearing the stigmata.",
     "MarkdownPath": "/saints/padre-pio/markdown.md",
-    "Slug": "padre-pio"
+    "Title": null,
+    "FeastDay": "0001-09-23",
+    "PatronOf": "Spiritual Healing",
+    "ReligiousOrder": { "Name": "Capuchin Franciscan" },
+    "Slug": "padre-pio",
+    "Tags": [
+      { "Name": "Mystic", "TagType": "Saint" },
+      { "Name": "Stigmatist", "TagType": "Saint" }
+    ]
   }
 ]

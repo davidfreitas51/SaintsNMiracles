@@ -1,0 +1,11 @@
+[
+  { "Name": "Founder", "TagType": "Saint" },
+  { "Name": "Monk", "TagType": "Saint" },
+  { "Name": "Mystic", "TagType": "Saint" },
+  { "Name": "Doctor of the Church", "TagType": "Saint" },
+  { "Name": "Nun", "TagType": "Saint" },
+  { "Name": "Philosopher", "TagType": "Saint" },
+  { "Name": "Martyr", "TagType": "Saint" },
+  { "Name": "Heroine", "TagType": "Saint" },
+  { "Name": "Stigmatist", "TagType": "Saint" }
+]

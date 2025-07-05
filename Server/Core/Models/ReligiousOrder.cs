@@ -1,0 +1,7 @@
+namespace Core.Models;
+
+public class ReligiousOrder
+{
+    public int Id { get; set; }
+    public required string Name { get; set; }
+}

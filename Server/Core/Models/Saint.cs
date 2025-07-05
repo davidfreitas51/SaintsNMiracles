@@ -9,5 +9,10 @@ public class Saint
     public required string Image { get; set; }
     public required string Description { get; set; }
     public required string MarkdownPath { get; set; }
+    public string? Title { get; set; }
+    public DateOnly? FeastDay { get; set; }
+    public string? PatronOf { get; set; }
+    public ReligiousOrder? ReligiousOrder { get; set; }
     public required string Slug { get; set; }
+    public List<Tag> Tags { get; set; } = [];
 }

@@ -1,78 +1,126 @@
-<div class="min-h-screen flex flex-col">
+<div class="min-h-screen flex flex-col bg-white">
   <app-header></app-header>
 
   <main class="flex-grow">
     @if (saint) {
-    <div class="max-w-screen-xl mx-auto px-4 my-8 flex gap-8">
-      <!-- Left Sidebar -->
-      <aside class="w-1/4 flex mt-20 flex-col items-center gap-4">
-        <img
-          [src]="imageBaseUrl + saint.image"
-          [alt]="saint.name"
-          class="w-full rounded shadow-md"
-        />
-        <div class="text-sm text-gray-700 w-full text-center">
-          <div class="flex justify-center gap-6 mb-2">
-            <p><strong>Century:</strong> {{ saint.century | roman }}</p>
-            <p>
-              <strong>Country:</strong>
-              {{ saint.country }}
-              <img
-                *ngIf="saint.country | countryCode as code"
-                [src]="'https://flagcdn.com/w20/' + code + '.png'"
-                [alt]="saint.country + ' flag'"
-                class="inline-block w-4 h-4 mr-1 object-contain align-text-bottom"
-              />
+    <div
+      class="max-w-6xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-12 gap-10"
+    >
+      <!-- Main Content (left 10 cols) -->
+      <section class="md:col-span-10 space-y-10 pr-8 border-gray-200">
+        <div class="flex flex-col md:flex-row md:items-center gap-6">
+          <img
+            [src]="imageBaseUrl + saint.image"
+            [alt]="saint.name"
+            class="w-full md:w-60 rounded-xl shadow-md"
+          />
+          <div class="space-y-2 text-gray-800">
+            <!-- Nome -->
+            <h1 class="text-4xl font-bold">Saint {{ saint.name }}</h1>
+
+            <!-- Tags -->
+            <div class="flex flex-wrap gap-2 mt-1">
+              <span
+                class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm"
+                >Martyr</span
+              >
+              <span
+                class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm"
+                >Mystic</span
+              >
+              <span
+                class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm"
+                >Monk</span
+              >
+              <span
+                class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm"
+                >Founder</span
+              >
+              <span
+                class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm"
+                >Doctor of the Church</span
+              >
+            </div>
+
+            <!-- Contexto histórico e país -->
+            <div class="flex items-center text-sm text-gray-600 gap-4 mt-2">
+              <span><strong>Century:</strong> {{ saint.century | roman }}</span>
+              <span class="flex items-center">
+                <strong class="mr-1">Country:</strong> {{ saint.country }}
+                <img
+                  *ngIf="saint.country | countryCode as code"
+                  [src]="'https://flagcdn.com/w20/' + code + '.png'"
+                  [alt]="saint.country + ' flag'"
+                  class="ml-1 w-4 h-4 object-contain"
+                />
+              </span>
+            </div>
+
+            <!-- Festa -->
+            <p class="text-sm text-gray-600">
+              Title: <strong>The Confessor</strong>
+            </p>
+            <!-- Festa -->
+            <p class="text-sm text-gray-600">
+              Feast Day: <strong>October 4</strong>
+            </p>
+
+            <!-- Patrono -->
+            <p class="text-sm text-gray-600">
+              Patron of: <strong>Animals and Ecology</strong>
+            </p>
+
+            <!-- Ordem religiosa -->
+            <p class="text-sm text-gray-600">
+              Religious Order: <strong>Franciscan (OFM)</strong>
             </p>
           </div>
-          <p class="mt-2">{{ saint.description }}</p>
         </div>
-      </aside>
 
-      <!-- Main Content -->
-      <main class="w-2/4 prose prose-indigo max-w-none">
-        <h1 class="text-4xl font-extrabold mb-6 text-center">
-          Saint {{ saint.name }}
-        </h1>
+        <!-- Markdown Content -->
+        <div class="prose prose-lg max-w-none prose-indigo mt-4">
+          <div class="markdown-content" [innerHTML]="markdownContent"></div>
+        </div>
+      </section>
 
-        <div class="border-b border-gray-300 my-6"></div>
-
-        <div class="markdown-content mt-5" [innerHTML]="markdownContent"></div>
-      </main>
-
-      <!-- Right Sidebar -->
+      <!-- Sidebar (right 2 cols) -->
       <aside
-        class="w-full lg:w-64 border-l border-gray-200 mt-16 pl-4 sticky top-28 hidden lg:block"
+        class="md:col-span-2 sticky top-28 space-y-10 hidden md:block pl-4 border-l border-gray-200"
       >
-        <h3
-          class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2 mt-8"
-        >
-          Sections
-        </h3>
-        <ul class="list-disc list-outside space-y-2 text-sm">
-          @for (heading of headings; track $index) {
-          <li>
-            <a
-              (click)="scrollTo(heading.id)"
-              class="text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium"
-            >
-              {{ heading.text }}
-            </a>
-          </li>
-          }
-        </ul>
-        
-
-        <div class="mt-10">
-          <h3 class="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2">
-            Related Sections
+        <!-- Table of Contents -->
+        <div>
+          <h3
+            class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3"
+          >
+            Sections
           </h3>
-          <ul class="list-disc list-outside space-y-2 text-sm">
+          <ul class="space-y-2 pl-2">
+            @for (heading of headings; track $index) {
+            <li>
+              <a
+                (click)="scrollTo(heading.id)"
+                class="text-blue-600 hover:text-blue-800 hover:underline cursor-pointer text-sm"
+              >
+                {{ heading.text }}
+              </a>
+            </li>
+            }
+          </ul>
+        </div>
+
+        <!-- Related Content -->
+        <div>
+          <h3
+            class="text-sm font-semibold text-gray-500 uppercase tracking-wide mb-3"
+          >
+            Related Content
+          </h3>
+          <ul class="space-y-3 pl-2">
             <li>
               <a
                 [routerLink]="['/saints']"
                 [queryParams]="{ country: saint.country }"
-                class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+                class="text-blue-600 hover:text-blue-800 hover:underline block"
               >
                 Saints from {{ saint.country }}
               </a>
@@ -81,7 +129,7 @@
               <a
                 [routerLink]="['/saints']"
                 [queryParams]="{ century: saint.century }"
-                class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+                class="text-blue-600 hover:text-blue-800 hover:underline block"
               >
                 Saints from the {{ saint.century | roman }} century
               </a>
@@ -90,7 +138,7 @@
               <a
                 [routerLink]="['/miracles']"
                 [queryParams]="{ country: saint.country }"
-                class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+                class="text-blue-600 hover:text-blue-800 hover:underline block"
               >
                 Miracles from {{ saint.country }}
               </a>
@@ -99,7 +147,7 @@
               <a
                 [routerLink]="['/miracles']"
                 [queryParams]="{ century: saint.century }"
-                class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+                class="text-blue-600 hover:text-blue-800 hover:underline block"
               >
                 Miracles from the {{ saint.century | roman }} century
               </a>
@@ -107,7 +155,7 @@
             <li>
               <a
                 routerLink="/about"
-                class="block text-blue-700 hover:text-blue-900 hover:underline cursor-pointer font-medium break-normal whitespace-normal"
+                class="text-blue-600 hover:text-blue-800 hover:underline block"
               >
                 About Us
               </a>
@@ -117,7 +165,7 @@
       </aside>
     </div>
     } @else {
-    <div class="text-center text-lg py-20 text-gray-500">Carregando...</div>
+    <div class="text-center text-lg py-20 text-gray-400">Loadingvaa...</div>
     }
   </main>
 

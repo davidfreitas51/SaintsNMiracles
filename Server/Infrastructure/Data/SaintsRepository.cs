@@ -1,6 +1,3 @@
-using System.Globalization;
-using System.Text;
-using Core.DTOs;
 using Core.Interfaces;
 using Core.Models;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +43,7 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
         var totalCount = await query.CountAsync();
 
         var items = await query
+            .Include(s => s.Tags)
             .Skip((filters.PageNumber - 1) * filters.PageSize)
             .Take(filters.PageSize)
             .ToListAsync();
