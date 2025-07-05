@@ -20,27 +20,16 @@
 
             <!-- Tags -->
             <div class="flex flex-wrap gap-2 mt-1">
-              <span
-                class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm"
-                >Martyr</span
-              >
-              <span
-                class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm"
-                >Mystic</span
-              >
-              <span
-                class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm"
-                >Monk</span
-              >
-              <span
-                class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm"
-                >Founder</span
-              >
-              <span
-                class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm"
-                >Doctor of the Church</span
-              >
+              @for (tag of saint.tags; track $index) {
+                <span
+                  class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm"
+                >
+                  {{ tag.name }}
+                </span>
+              }
+              
             </div>
+            
 
             <!-- Contexto histórico e país -->
             <div class="flex items-center text-sm text-gray-600 gap-4 mt-2">
@@ -55,25 +44,31 @@
                 />
               </span>
             </div>
+            @if (saint.title) {
+              <p class="text-sm text-gray-600">
+                Title: <strong>{{ saint.title }}</strong>
+              </p>
+            }
+            
+            @if (saint.feastDay) {
+              <p class="text-sm text-gray-600">
+                Feast Day: <strong>{{ (saint.feastDay | date: 'MMMM d') }}</strong>
+              </p>
+            }
+            
+            @if (saint.patronOf) {
+              <p class="text-sm text-gray-600">
+                Patron of: <strong>{{ saint.patronOf }}</strong>
+              </p>
+            }
+            
+            @if (saint.religiousOrder && saint.religiousOrder.name) {
+              <p class="text-sm text-gray-600">
+                Religious Order: <strong>{{ saint.religiousOrder.name }}</strong>
+              </p>
+            }
+            
 
-            <!-- Festa -->
-            <p class="text-sm text-gray-600">
-              Title: <strong>The Confessor</strong>
-            </p>
-            <!-- Festa -->
-            <p class="text-sm text-gray-600">
-              Feast Day: <strong>October 4</strong>
-            </p>
-
-            <!-- Patrono -->
-            <p class="text-sm text-gray-600">
-              Patron of: <strong>Animals and Ecology</strong>
-            </p>
-
-            <!-- Ordem religiosa -->
-            <p class="text-sm text-gray-600">
-              Religious Order: <strong>Franciscan (OFM)</strong>
-            </p>
           </div>
         </div>
 

@@ -8,7 +8,10 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
 {
     public async Task<PagedResult<Saint>> GetAllAsync(SaintFilters filters)
     {
-        var query = context.Saints.AsQueryable();
+        var query = context.Saints
+            .Include(s => s.Tags)
+            .Include(s => s.ReligiousOrder)
+            .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filters.Country))
         {
@@ -43,7 +46,6 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
         var totalCount = await query.CountAsync();
 
         var items = await query
-            .Include(s => s.Tags)
             .Skip((filters.PageNumber - 1) * filters.PageSize)
             .Take(filters.PageSize)
             .ToListAsync();
@@ -55,6 +57,22 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
             PageNumber = filters.PageNumber,
             PageSize = filters.PageSize
         };
+    }
+
+    public async Task<Saint?> GetByIdAsync(int id)
+    {
+        return await context.Saints
+            .Include(s => s.Tags)
+            .Include(s => s.ReligiousOrder)
+            .FirstOrDefaultAsync(s => s.Id == id);
+    }
+
+    public async Task<Saint?> GetBySlugAsync(string slug)
+    {
+        return await context.Saints
+            .Include(s => s.Tags)
+            .Include(s => s.ReligiousOrder)
+            .FirstOrDefaultAsync(s => s.Slug == slug);
     }
 
     public async Task<bool> CreateAsync(Saint newSaint)
@@ -69,30 +87,26 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
         return await context.SaveChangesAsync() > 0;
     }
 
-
     public async Task DeleteAsync(int id)
     {
-        Saint? saint = await GetByIdAsync(id);
+        var saint = await context.Saints
+            .Include(s => s.Tags)
+            .Include(s => s.ReligiousOrder)
+            .FirstOrDefaultAsync(s => s.Id == id);
+
         if (saint is not null)
         {
             context.Remove(saint);
             await context.SaveChangesAsync();
         }
     }
-    public async Task<Saint?> GetBySlugAsync(string slug)
-    {
-        return await context.Saints
-            .FirstOrDefaultAsync(s => s.Slug == slug);
-    }
-
-    public async Task<Saint?> GetByIdAsync(int id)
-    {
-        return await context.Saints.FindAsync(id);
-    }
 
     public async Task<IReadOnlyList<string>> GetCountriesAsync()
     {
-        return await context.Saints.Select(s => s.Country).Distinct().ToListAsync();
+        return await context.Saints
+            .Select(s => s.Country)
+            .Distinct()
+            .ToListAsync();
     }
 
     public async Task<int> GetTotalSaintsAsync()
