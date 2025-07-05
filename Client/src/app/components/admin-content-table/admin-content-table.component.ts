@@ -1,23 +1,23 @@
 import {
-  ChangeDetectorRef,
   Component,
-  OnInit,
+  Input,
+  OnChanges,
+  SimpleChanges,
   ViewChild,
+  AfterViewInit,
   inject,
 } from '@angular/core';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { ActivatedRoute, Router } from '@angular/router';
-
-import { SaintsService } from '../../services/saints.service';
-import { MiraclesService } from '../../services/miracles.service';
-import { SnackbarService } from '../../services/snackbar.service';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { RomanPipe } from '../../pipes/roman.pipe';
+import { CommonModule } from '@angular/common';
+import { Router, ActivatedRoute } from '@angular/router';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
-import { combineLatest } from 'rxjs';
+import { SnackbarService } from '../../services/snackbar.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-admin-content-table',
@@ -26,48 +26,67 @@ import { combineLatest } from 'rxjs';
   standalone: true,
   imports: [
     MatPaginator,
-    MatIconModule,
-    MatCardModule,
     MatTableModule,
     MatSortModule,
+    MatIconModule,
+    MatCardModule,
     RomanPipe,
+    CommonModule,
   ],
 })
-export class AdminContentTableComponent implements OnInit {
-  private saintsService = inject(SaintsService);
-  private miraclesService = inject(MiraclesService);
-  private snackBarService = inject(SnackbarService);
-  private dialogService = inject(ConfirmDialogService);
-  private route = inject(ActivatedRoute);
-  private cdr = inject(ChangeDetectorRef);
+export class AdminContentTableComponent implements OnChanges, AfterViewInit {
+  @Input({ required: true }) data: any[] = [];
+  @Input() excludedColumns: string[] = [];
+  @Input() deleteFn!: (id: number) => Observable<any>;
+  @Input() loadData!: () => void;
 
-  public router = inject(Router);
-  public columns: string[] = [];
-  public displayedColumns: string[] = [];
-  public dataSource = new MatTableDataSource<any>([]);
-  public currentEntity = '';
-  totalCount: number = 0;
-
-  saintFilters = {
-    country: '',
-    century: '',
-    search: '',
-    pageNumber: 1,
-    pageSize: 25,
-    orderBy: 'name',
-  };
-
-  miracleFilters = {
-    country: '',
-    century: '',
-    search: '',
-    pageNumber: 1,
-    pageSize: 25,
-    orderBy: 'title',
-  };
+  columns: string[] = [];
+  displayedColumns: string[] = [];
+  dataSource = new MatTableDataSource<any>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
+
+  private snackBarService = inject(SnackbarService);
+  private dialogService = inject(ConfirmDialogService);
+  private router = inject(Router);
+  route = inject(ActivatedRoute);
+
+  entitySingular = '';
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['data'] && this.data.length) {
+      this.setColumns();
+      this.dataSource.data = this.data;
+    }
+  }
+
+  ngAfterViewInit(): void {
+    this.dataSource.paginator = this.paginator;
+    this.dataSource.sort = this.sort;
+    this.detectEntityFromRoute();
+  }
+
+  private detectEntityFromRoute(): void {
+    const url = this.router.url;
+    const match = url.match(/\/admin\/(\w+)/);
+    if (match && match[1]) {
+      const plural = match[1];
+      this.entitySingular = plural.endsWith('s') ? plural.slice(0, -1) : plural;
+    }
+  }
+
+  private setColumns(): void {
+    this.columns = Object.keys(this.data[0] || {}).filter(
+      (col) => !this.excludedColumns.includes(col)
+    );
+
+    if (!this.columns.includes('actions')) {
+      this.columns.push('actions');
+    }
+
+    this.displayedColumns = [...this.columns];
+  }
 
   humanizeColumn(col: string): string {
     if (!col) return '';
@@ -77,130 +96,44 @@ export class AdminContentTableComponent implements OnInit {
       .replace(/^./, (str) => str.toUpperCase());
   }
 
-  ngOnInit(): void {
-    combineLatest([this.route.paramMap, this.route.queryParams]).subscribe(
-      ([params, queryParams]) => {
-        const plural = params.get('object') || '';
-        this.currentEntity = this.getSingularName(plural.toLowerCase());
-        this.setColumnsByEntity();
-
-        // Atualizar filtros a partir dos query params
-        if (this.currentEntity === 'saint') {
-          this.saintFilters.country = queryParams['country'] || '';
-          this.saintFilters.century = queryParams['century'] || '';
-          this.saintFilters.search = queryParams['search'] || '';
-          this.saintFilters.pageNumber = 1;
-        } else if (this.currentEntity === 'miracle') {
-          this.miracleFilters.country = queryParams['country'] || '';
-          this.miracleFilters.century = queryParams['century'] || '';
-          this.miracleFilters.search = queryParams['search'] || '';
-          this.miracleFilters.pageNumber = 1;
-        }
-
-        this.loadData();
-      }
-    );
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-    this.dataSource.sort = this.sort;
-  }
-
-  private loadData(): void {
-    if (this.currentEntity === 'saint') {
-      this.saintsService.getSaints(this.saintFilters).subscribe((res: any) => {
-        this.dataSource.data = res.items;
-        this.totalCount = res.totalCount;
-        this.cdr.detectChanges();
-      });
-    } else if (this.currentEntity === 'miracle') {
-      this.miraclesService
-        .getMiracles(this.miracleFilters)
-        .subscribe((res: any) => {
-          this.dataSource.data = res.items;
-          this.totalCount = res.totalCount;
-          this.cdr.detectChanges();
-        });
-    }
-  }
-
   editObject(entity: any): void {
-    this.router.navigate([
-      '/admin',
-      this.currentEntity.toLowerCase() + 's',
-      entity.id,
-      'edit',
-    ]);
+    const id = entity?.id;
+    if (!id || !this.entitySingular) return;
+    this.router.navigate(['/admin', `${this.entitySingular}s`, id, 'edit']);
   }
 
   deleteObject(entity: any): void {
+    if (!this.deleteFn || !this.loadData) {
+      console.error('deleteFn or loadData not provided.');
+      return;
+    }
+
+    const name = entity.name || entity.title || 'this item';
+
     this.dialogService
       .confirm({
-        title: `Delete ${this.currentEntity}?`,
-        message: `You're about to permanently delete “${
-          entity.name || entity.title
-        }”. This action cannot be undone.`,
+        title: `Delete ${this.entitySingular}?`,
+        message: `You're about to permanently delete “${name}”. This action cannot be undone.`,
         confirmText: 'Yes, delete',
         cancelText: 'Cancel',
       })
       .subscribe((confirmed) => {
         if (!confirmed) return;
 
-        if (this.currentEntity === 'saint') {
-          this.saintsService.deleteSaint(entity.id).subscribe({
-            next: () => {
-              this.snackBarService.success(
-                `${this.currentEntity} successfully deleted`
-              );
-              this.loadData();
-            },
-            error: (err) => {
-              this.snackBarService.error(
-                `Failed to delete ${this.currentEntity.toLowerCase()}`
-              );
-              console.error(err);
-            },
-          });
-        } else if (this.currentEntity === 'miracle') {
-          this.miraclesService.deleteMiracle(entity.id).subscribe({
-            next: () => {
-              this.snackBarService.success(
-                `${this.currentEntity} successfully deleted`
-              );
-              this.loadData();
-            },
-            error: (err) => {
-              this.snackBarService.error(
-                `Failed to delete ${this.currentEntity.toLowerCase()}`
-              );
-              console.error(err);
-            },
-          });
-        }
+        this.deleteFn(entity.id).subscribe({
+          next: () => {
+            this.snackBarService.success(
+              `${this.entitySingular} successfully deleted`
+            );
+            this.loadData();
+          },
+          error: (err) => {
+            this.snackBarService.error(
+              `Failed to delete ${this.entitySingular}`
+            );
+            console.error(err);
+          },
+        });
       });
-  }
-
-  private getSingularName(plural: string): string {
-    const map: Record<string, string> = {
-      saints: 'saint',
-      miracles: 'miracle',
-    };
-    return map[plural] || this.capitalize(plural);
-  }
-
-  private capitalize(value: string): string {
-    return value.charAt(0).toUpperCase() + value.slice(1);
-  }
-
-  private setColumnsByEntity(): void {
-    if (this.currentEntity === 'saint') {
-      this.columns = ['name', 'country', 'century', 'actions'];
-    } else if (this.currentEntity === 'miracle') {
-      this.columns = ['title', 'country', 'century', 'actions'];
-    } else {
-      this.columns = ['id', 'actions'];
-    }
-    this.displayedColumns = [...this.columns];
   }
 }
