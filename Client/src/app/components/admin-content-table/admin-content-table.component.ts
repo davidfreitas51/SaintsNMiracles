@@ -33,8 +33,8 @@ import { FeastDayFormatPipe } from "../../pipes/feast-day-format.pipe";
     MatCardModule,
     RomanPipe,
     CommonModule,
-    FeastDayFormatPipe
-],
+    FeastDayFormatPipe,
+  ],
 })
 export class AdminContentTableComponent implements OnChanges, AfterViewInit {
   @Input({ required: true }) data: any[] = [];
@@ -60,6 +60,10 @@ export class AdminContentTableComponent implements OnChanges, AfterViewInit {
     if (changes['data'] && this.data.length) {
       this.setColumns();
       this.dataSource.data = this.data;
+
+
+      this.dataSource.paginator = this.paginator;
+      this.dataSource.sort = this.sort;
     }
   }
 

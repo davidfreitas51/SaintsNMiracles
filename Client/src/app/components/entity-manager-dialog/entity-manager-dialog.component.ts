@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { LowercasePipe } from '../../pipes/lowercase.pipe';
 import { Entity } from '../../interfaces/entity';
-import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
@@ -36,6 +36,8 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 })
 export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
   readonly dialogRef = inject(MatDialogRef<EntityManagerDialogComponent>);
   readonly data = inject<EntityDialogData>(MAT_DIALOG_DATA);
   dialogService = inject(ConfirmDialogService);
@@ -55,6 +57,7 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.dataSource.sort = this.sort;
+    this.dataSource.paginator = this.paginator;
   }
 
   loadEntities(): void {
