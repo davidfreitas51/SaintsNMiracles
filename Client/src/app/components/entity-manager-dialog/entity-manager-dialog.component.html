@@ -1,81 +1,110 @@
-<div class="flex flex-col h-full w-full p-4">
-  <!-- Header com título, busca e botão "Create New" -->
-  <div class="flex items-center justify-between mb-4 flex-shrink-0 gap-4">
-    <h1 class="text-2xl font-bold text-primary-app flex-grow">Manage {{ entityName }}</h1>
+<div class="flex flex-col h-full w-full p-6 gap-4 overflow-hidden">
+  <!-- Header com título sempre quebrando, busca à esquerda e botão à direita -->
+  <div class="flex flex-col gap-2">
+    <!-- Título com quebra de linha garantida -->
+    <h1 class="text-3xl font-semibold text-primary-app break-words w-full">
+      Manage {{ entityName }}
+    </h1>
 
-    <mat-form-field appearance="fill" class="w-64 flex-shrink-0">
-      <mat-label>Search {{ entityName | lowercase }}</mat-label>
-      <input
-        matInput
-        [(ngModel)]="search"
-        (ngModelChange)="loadEntities()"
-        placeholder="Type to search..."
-      />
-    </mat-form-field>
+    <!-- Linha com busca à esquerda e botão à direita -->
+    <div class="flex items-center justify-between flex-wrap gap-4 w-full">
+      <!-- Campo de busca -->
+      <div class="flex-grow min-w-0">
+        <div class="flex gap-2 items-center w-full sm:w-[250px] md:w-[300px] lg:w-[400px]">
+          <mat-form-field appearance="fill" class="w-full">
+            <mat-label>Search {{ entityName | lowercase }}</mat-label>
+            <input
+              matInput
+              #searchInput
+              type="text"
+              placeholder="Type to search..."
+              [(ngModel)]="search"
+              (keyup.enter)="loadEntities()"
+            />
+            <button
+              mat-icon-button
+              matSuffix
+              class="hover:text-blue-800 transition-colors duration-150"
+              (click)="loadEntities()"
+            >
+              <mat-icon>search</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
+      </div>
 
-    <button
-      mat-flat-button
-      color="primary"
-      (click)="createEntity()"
-      class="flex-shrink-0"
-    >
-      <mat-icon>add</mat-icon>
-      <span class="ml-1">Create New</span>
-    </button>
+      <!-- Botão "Create New" alinhado à direita -->
+      <div class="flex-shrink-0">
+        <button
+          mat-flat-button
+          color="primary"
+          (click)="createEntity()"
+          class="flex items-center gap-1"
+        >
+          <mat-icon>add</mat-icon>
+          <span>Create New</span>
+        </button>
+      </div>
+    </div>
   </div>
 
-  <!-- Tabela com scroll e paginação -->
-  <div class="flex-grow overflow-auto border rounded-lg">
-    <table mat-table [dataSource]="dataSource" class="min-w-full">
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          class="text-left px-3 py-2 bg-gray-100"
-        >
-          Name
-        </th>
-        <td mat-cell *matCellDef="let element" class="px-3 py-2">
-          <input
-            class="bg-transparent border border-gray-300 rounded px-2 py-1 w-full"
-            [(ngModel)]="element.name"
-            (blur)="updateEntity(element)"
-          />
-        </td>
-      </ng-container>
-
-      <!-- Actions Column -->
-      <ng-container matColumnDef="actions">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          class="px-3 py-2 bg-gray-100 text-center"
-        >
-          Actions
-        </th>
-        <td mat-cell *matCellDef="let element" class="text-center px-3 py-2">
-          <button
-            mat-icon-button
-            color="warn"
-            (click)="deleteEntity(element)"
-            aria-label="Delete"
+  <!-- Tabela com responsividade e feedback visual -->
+  <div class="flex-grow overflow-auto rounded-xl border border-gray-300">
+    <div class="overflow-x-auto">
+      <table mat-table [dataSource]="dataSource" class="min-w-[500px] w-full">
+        <!-- Name Column -->
+        <ng-container matColumnDef="name">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="text-left px-4 py-3 bg-gray-100 font-medium text-sm text-gray-700"
           >
-            <mat-icon>delete</mat-icon>
-          </button>
-        </td>
-      </ng-container>
+            Name
+          </th>
+          <td mat-cell *matCellDef="let element" class="px-4 py-2">
+            <input
+              class="bg-white border border-gray-300 rounded-md px-2 py-1 w-full focus:outline-none focus:ring-2 focus:ring-primary-app"
+              [(ngModel)]="element.name"
+              (blur)="updateEntity(element)"
+            />
+          </td>
+        </ng-container>
 
-      <tr mat-header-row *matHeaderRowDef="['name', 'actions']"></tr>
-      <tr mat-row *matRowDef="let row; columns: ['name', 'actions']"></tr>
-    </table>
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th
+            mat-header-cell
+            *matHeaderCellDef
+            class="px-4 py-3 bg-gray-100 text-center font-medium text-sm text-gray-700"
+          >
+            Actions
+          </th>
+          <td mat-cell *matCellDef="let element" class="text-center px-4 py-2">
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="deleteEntity(element)"
+              aria-label="Delete"
+              matTooltip="Delete"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="['name', 'actions']"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['name', 'actions']"></tr>
+      </table>
+    </div>
   </div>
 
-  <mat-paginator
-    [pageSizeOptions]="[5, 10, 20]"
-    showFirstLastButtons
-    aria-label="Pagination"
-    class="mt-2"
-  >
-  </mat-paginator>
+  <!-- Paginação -->
+  <div class="flex justify-end pt-2">
+    <mat-paginator
+      [pageSizeOptions]="[5, 10, 20]"
+      showFirstLastButtons
+      aria-label="Pagination"
+    >
+    </mat-paginator>
+  </div>
 </div>

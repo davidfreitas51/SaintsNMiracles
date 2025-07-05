@@ -159,6 +159,12 @@ button[disabled]:hover {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
+.entity-manager-dialog {
+  min-width: 0 !important;  
+  max-width: none !important;
+  width: 800px !important;
+}
+
 html {
   scroll-behavior: smooth;
 }

@@ -45,12 +45,10 @@ export class ManageSaintsPageComponent {
 
   manageEntities(entityName: string) {
     this.dialog.open(EntityManagerDialogComponent, {
-      width: '800px',
-      height: '600px',
-      panelClass: 'custom-dialog-container',
-      data: {
-        entityName,
-      },
+      height: '600px', 
+      panelClass: 'entity-manager-dialog',
+      data: { entityName },
     });
+    
   }
 }
