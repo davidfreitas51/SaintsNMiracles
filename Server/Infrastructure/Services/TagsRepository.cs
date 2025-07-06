@@ -7,7 +7,7 @@ namespace Infrastructure.Services;
 
 public class TagsRepository(DataContext context) : ITagsRepository
 {
-    public async Task<PagedResult<Tag>> GetAllAsync(TagFilters filters)
+    public async Task<PagedResult<Tag>> GetAllAsync(EntityFilters filters)
     {
         var query = context.Tags.AsQueryable();
 

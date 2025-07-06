@@ -10,7 +10,7 @@ namespace API.Controllers;
 public class TagsController(ITagsRepository tagsRepository) : ControllerBase
 {
     [HttpGet]
-    public async Task<IActionResult> GetAll([FromQuery] TagFilters filters)
+    public async Task<IActionResult> GetAll([FromQuery] EntityFilters filters)
     {
         var tags = await tagsRepository.GetAllAsync(filters);
         return Ok(tags);

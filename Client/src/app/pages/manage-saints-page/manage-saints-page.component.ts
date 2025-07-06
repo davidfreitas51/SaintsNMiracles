@@ -55,8 +55,7 @@ export class ManageSaintsPageComponent {
         entityName: 'Tag',
         getAllFn: (filters: EntityFilters) => this.tagsService.getTags(filters),
         createFn: (name: string) => this.tagsService.createTag(name),
-        updateFn: (entity: any) =>
-          this.tagsService.updateTag(entity),
+        updateFn: (entity: any) => this.tagsService.updateTag(entity),
         deleteFn: (id: number) => this.tagsService.deleteTag(id),
       },
     });
@@ -68,6 +67,13 @@ export class ManageSaintsPageComponent {
       panelClass: 'entity-manager-dialog',
       data: {
         entityName: 'Religious Order',
+        getAllFn: (filters: EntityFilters) =>
+          this.religiousOrdersService.getOrders(filters),
+        createFn: (name: string) =>
+          this.religiousOrdersService.createOrder(name),
+        updateFn: (entity: any) =>
+          this.religiousOrdersService.updateOrder(entity),
+        deleteFn: (id: number) => this.religiousOrdersService.deleteOrder(id),
       },
     });
   }
