@@ -28,6 +28,13 @@ import { CommonModule } from '@angular/common';
 import { CountryCodePipe } from '../../../../shared/pipes/country-code.pipe';
 import { MatDialog } from '@angular/material/dialog';
 import { CropDialogComponent } from '../../../../shared/components/crop-dialog/crop-dialog.component';
+import { ReligiousOrder } from '../../../../interfaces/religious-order';
+import { Tag } from '../../../../interfaces/tag';
+import { TagsService } from '../../../../core/services/tags.service';
+import { ReligiousOrdersService } from '../../../../core/services/religious-orders.service';
+import { EntityFilters } from '../../../../interfaces/entity-filters';
+import { MatMenuModule } from '@angular/material/menu';
+import { NgxMaskDirective } from 'ngx-mask';
 
 @Component({
   selector: 'app-saint-form-page',
@@ -45,16 +52,25 @@ import { CropDialogComponent } from '../../../../shared/components/crop-dialog/c
     RomanPipe,
     CommonModule,
     CountryCodePipe,
+    MatMenuModule,
+    NgxMaskDirective,
   ],
 })
 export class SaintFormPageComponent implements OnInit, AfterViewInit {
-  saintsService = inject(SaintsService);
-  snackBarService = inject(SnackbarService);
-  dialog = inject(MatDialog);
+  private saintsService = inject(SaintsService);
+  private tagsService = inject(TagsService);
+  private religiousOrdersService = inject(ReligiousOrdersService);
+  private snackBarService = inject(SnackbarService);
+  private dialog = inject(MatDialog);
 
   @ViewChild('descriptionTextarea')
   descriptionTextarea!: ElementRef<HTMLTextAreaElement>;
+
   imageBaseUrl = environment.assetsUrl;
+
+  religiousOrders: ReligiousOrder[] = [];
+  tagsList: Tag[] = [];
+  currentTags: string[] = [];
 
   croppedImage: string | null = null;
   form!: FormGroup;
@@ -72,6 +88,16 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
+    const filter = new EntityFilters();
+    filter.pageSize = 9999;
+
+    this.tagsService
+      .getTags(filter)
+      .subscribe((res) => (this.tagsList = res.items));
+    this.religiousOrdersService
+      .getOrders(filter)
+      .subscribe((res) => (this.religiousOrders = res.items));
+
     this.form = this.fb.group({
       name: ['', Validators.required],
       country: ['', Validators.required],
@@ -79,7 +105,17 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
       image: ['', Validators.required],
       description: ['', Validators.required],
       markdownContent: ['', Validators.required],
+      title: [''],
+      feastDay: [''],
+      patronOf: [''],
+      religiousOrder: [''],
     });
+
+    this.form
+      .get('description')
+      ?.valueChanges.subscribe(() =>
+        setTimeout(() => this.autoResizeOnLoad(), 0)
+      );
 
     this.route.paramMap.subscribe((params) => {
       this.saintId = params.get('id');
@@ -88,20 +124,28 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
       if (this.isEditMode && this.saintId) {
         this.saintsService.getSaintWithMarkdown(this.saintId).subscribe({
           next: ({ saint, markdown }) => {
+            this.currentTags = saint.tags.map((tag) => tag.name);
             this.form.patchValue({
               name: saint.name,
               country: saint.country,
-              century: saint.century.toString(),
+              century: saint.century,
               image: saint.image,
               description: saint.description,
               markdownContent: markdown,
-            });
-            setTimeout(() => {
-              this.autoResizeOnLoad();
+              title: saint.title,
+              patronOf: saint.patronOf,
+              feastDay: saint.feastDay ?? '',
+              religiousOrder: saint.religiousOrder?.id,
             });
             this.cdr.detectChanges();
+            setTimeout(
+              () =>
+                this.descriptionTextarea?.nativeElement &&
+                this.autoResizeOnLoad(),
+              100
+            );
           },
-          error: (err) => {
+          error: () => {
             this.snackBarService.error('Error loading saint for update');
             this.router.navigate(['admin/saints']);
           },
@@ -117,9 +161,7 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
   }
 
   onSubmit() {
-    if (this.imageLoading) {
-      return;
-    }
+    if (this.imageLoading) return;
 
     const saintData = {
       name: this.form.value.name,
@@ -128,37 +170,36 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
       image: this.form.value.image,
       description: this.form.value.description,
       markdownContent: this.form.value.markdownContent,
+      title: this.form.value.title || null,
+      feastDay: this.form.value.feastDay || null,
+      patronOf: this.form.value.patronOf || null,
+      religiousOrderId: this.form.value.religiousOrder || null,
+      tags: this.currentTags,
     };
 
-    if (this.isEditMode && this.saintId) {
-      this.saintsService.updateSaint(this.saintId, saintData).subscribe({
-        next: () => {
-          this.snackBarService.success('Saint successfully updated');
-          this.router.navigate(['admin/saints']);
-        },
-        error: (err) => {
-          console.error(err);
-          this.snackBarService.error('Error updating saint');
-        },
-      });
-    } else {
-      this.saintsService.createSaint(saintData).subscribe({
-        next: () => {
-          this.snackBarService.success('Saint successfully created');
-          this.router.navigate(['admin/saints']);
-        },
-        error: (err) => {
-          console.error(err);
+    const request$ =
+      this.isEditMode && this.saintId
+        ? this.saintsService.updateSaint(this.saintId, saintData)
+        : this.saintsService.createSaint(saintData);
 
-          const errorMessage =
-            typeof err.error === 'string'
-              ? err.error
-              : err.error?.message ?? 'Unexpected error.';
-
-          this.snackBarService.error('Error creating saint: ' + errorMessage);
-        },
-      });
-    }
+    request$.subscribe({
+      next: () => {
+        this.snackBarService.success(
+          `Saint successfully ${this.isEditMode ? 'updated' : 'created'}`
+        );
+        this.router.navigate(['admin/saints']);
+      },
+      error: (err) => {
+        console.error(err);
+        const msg =
+          typeof err.error === 'string'
+            ? err.error
+            : err.error?.message ?? 'Unexpected error.';
+        this.snackBarService.error(
+          `Error ${this.isEditMode ? 'updating' : 'creating'} saint: ${msg}`
+        );
+      },
+    });
   }
 
   onFileSelected(event: Event, input: HTMLInputElement): void {
@@ -169,7 +210,7 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result && typeof result === 'string') {
+      if (typeof result === 'string') {
         this.croppedImage = result;
         this.form.patchValue({ image: result });
         this.form.get('image')?.updateValueAndValidity();
@@ -181,7 +222,8 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
   }
 
   autoResizeOnLoad() {
-    const textarea = this.descriptionTextarea.nativeElement;
+    const textarea = this.descriptionTextarea?.nativeElement;
+    if (!textarea) return;
     textarea.style.height = 'auto';
     textarea.style.height = `${textarea.scrollHeight}px`;
   }
@@ -202,5 +244,19 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
     return img.startsWith('data:image') || img.startsWith('http')
       ? img
       : this.imageBaseUrl + img;
+  }
+
+  addTag(tag: string) {
+    if (
+      tag &&
+      this.currentTags.length < 5 &&
+      !this.currentTags.includes(tag.trim())
+    ) {
+      this.currentTags.push(tag.trim());
+    }
+  }
+
+  removeTag(tag: string) {
+    this.currentTags = this.currentTags.filter((t) => t !== tag);
   }
 }

@@ -5,65 +5,72 @@
     <div class="flex gap-6">
       <div class="w-1/2">
         <label for="imageInput" class="block mb-2 font-semibold">
-          Icon image
+          Icon image <span class="text-red-600">*</span>
         </label>
-
         <label
           for="imageInput"
           class="block aspect-square w-full border-2 border-dashed rounded grid place-items-center text-gray-500 cursor-pointer hover:border-blue-400 hover:text-blue-600 transition overflow-hidden"
         >
-          @if (form.get('image')?.value) {
-          <img
-            [src]="getImagePreview()"
-            alt="Selected image"
-            class="object-cover w-full h-full rounded"
-          />
-          } @else { @if(croppedImage){
-          <div class="flex items-center justify-center">
+          <ng-container *ngIf="form.get('image')?.value; else noImage">
             <img
-            [src]="croppedImage"
-            alt="Selected image"
-            class="object-cover w-full h-full rounded"
-          />
-          </div>
-          } @else {
-          <div class="flex items-center justify-center">
-            <mat-icon
-              class="!text-[330px] w-[330px] h-[330px] leading-none text-primary-app"
-              fontIcon="add_a_photo"
-            ></mat-icon>
-          </div>
-          } }
+              [src]="getImagePreview()"
+              alt="Selected image"
+              class="object-cover w-full h-full rounded"
+            />
+          </ng-container>
+          <ng-template #noImage>
+            <ng-container *ngIf="croppedImage; else showIcon">
+              <div class="flex items-center justify-center">
+                <img
+                  [src]="croppedImage"
+                  alt="Selected image"
+                  class="object-cover w-full h-full rounded"
+                />
+              </div>
+            </ng-container>
+            <ng-template #showIcon>
+              <div class="flex items-center justify-center">
+                <mat-icon
+                  class="!text-[330px] w-[330px] h-[330px] leading-none text-primary-app"
+                  fontIcon="add_a_photo"
+                ></mat-icon>
+              </div>
+            </ng-template>
+          </ng-template>
         </label>
-
         <input
           id="imageInput"
           #fileInput
           type="file"
           accept=".webp,.png,.jpg,.jpeg"
-          (change)="onFileSelected($event, fileInput)"
           class="hidden"
+          (change)="onFileSelected($event, fileInput)"
         />
       </div>
 
+      <!-- Name, Country, Century, Description -->
       <div class="flex-1 flex flex-col gap-4">
         <label class="block">
-          <span class="block pb-2 font-semibold">Name</span>
+          <span class="block pb-2 font-semibold"
+            >Name <span class="text-red-600">*</span></span
+          >
           <input
             type="text"
-            formControlName="name"
             placeholder="Saint's name"
             class="w-full border rounded px-3 py-2"
+            formControlName="name"
           />
         </label>
 
         <label class="block relative">
-          <span class="block pb-2 font-semibold">Country</span>
+          <span class="block pb-2 font-semibold"
+            >Country <span class="text-red-600">*</span></span
+          >
           <input
             type="text"
-            formControlName="country"
             placeholder="Saint's country"
             class="w-full border rounded px-3 py-2 pr-10"
+            formControlName="country"
           />
           <img
             *ngIf="form.get('country')?.value | countryCode as flagCode"
@@ -74,46 +81,151 @@
         </label>
 
         <label class="block">
-          <span class="block pb-2 font-semibold">Century</span>
+          <span class="block pb-2 font-semibold"
+            >Century <span class="text-red-600">*</span></span
+          >
           <mat-select
             formControlName="century"
             class="w-full border rounded px-4 py-2"
           >
-            @for (item of centuries; track $index) {
-            <mat-option value="{{ item }}">{{ item | roman }}</mat-option>
-            }
+            <mat-option *ngFor="let item of centuries" [value]="item">
+              {{ item | roman }}
+            </mat-option>
           </mat-select>
         </label>
 
         <label class="block">
-          <span class="block pb-2 font-semibold">Description</span>
+          <span class="block pb-2 font-semibold"
+            >Description <span class="text-red-600">*</span></span
+          >
           <textarea
             #descriptionTextarea
-            formControlName="description"
             rows="1"
             placeholder="Saint's brief description"
             class="w-full border rounded px-3 py-2 resize-none overflow-hidden min-h-[40px]"
+            formControlName="description"
             (input)="autoResize($event)"
           ></textarea>
+        </label>
+
+        <label class="block">
+          <span class="block pb-2 font-semibold">Tags (max 5)</span>
+          <div class="flex flex-wrap gap-2 items-center">
+            <span
+              *ngFor="let tag of currentTags"
+              class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm flex items-center gap-1"
+            >
+              {{ tag }}
+              <button
+                type="button"
+                (click)="removeTag(tag)"
+                class="ml-1 text-white hover:text-red-300"
+                aria-label="Remove tag"
+              >
+                &times;
+              </button>
+            </span>
+
+            @if(currentTags.length < 5){
+            <button
+              [matMenuTriggerFor]="tagsMenu"
+              type="button"
+              class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 text-gray-700 hover:bg-gray-400 transition"
+              aria-label="Add tag"
+            >
+              +
+            </button>
+            }
+
+            <mat-menu #tagsMenu="matMenu" class="w-48">
+              <button
+                mat-menu-item
+                *ngFor="let tag of tagsList"
+                [disabled]="currentTags.includes(tag.name)"
+                (click)="addTag(tag.name)"
+              >
+                {{ tag.name }}
+              </button>
+            </mat-menu>
+          </div>
         </label>
       </div>
     </div>
 
-    <div>
+    <!-- Markdown -->
+    <div class="mt-6">
       <label class="block flex flex-col">
-        <span class="font-semibold">Markdown</span>
+        <span class="font-semibold"
+          >Markdown <span class="text-red-600">*</span></span
+        >
         <md-editor
-          formControlName="markdownContent"
           [height]="'300px'"
+          [formControl]="markdownContent"
         ></md-editor>
       </label>
     </div>
 
+    <!-- Optional Fields -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+      <label class="block">
+        <span class="block pb-2 font-semibold"
+          >Title <span class="text-gray-400">(optional)</span></span
+        >
+        <input
+          type="text"
+          placeholder="Saint's title"
+          class="w-full border rounded px-3 py-2"
+          formControlName="title"
+        />
+      </label>
+
+      <label class="block">
+        <span class="block pb-2 font-semibold"
+          >Feast Day <span class="text-gray-400">(optional)</span></span
+        >
+        <input
+          type="text"
+          class="w-full border rounded px-3 py-2"
+          formControlName="feastDay"
+          mask="d0/M0"
+          placeholder="DD/MM"
+        />
+      </label>
+      
+
+      <label class="block">
+        <span class="block pb-2 font-semibold"
+          >Patron Of <span class="text-gray-400">(optional)</span></span
+        >
+        <input
+          type="text"
+          placeholder="Patron of..."
+          class="w-full border rounded px-3 py-2"
+          formControlName="patronOf"
+        />
+      </label>
+
+      <label class="block">
+        <span class="block pb-2 font-semibold"
+          >Religious Order <span class="text-gray-400">(optional)</span></span
+        >
+        <mat-select formControlName="religiousOrder" class="w-full border rounded px-3 py-2">
+          <mat-option [value]="null">None</mat-option>
+          <mat-option *ngFor="let order of religiousOrders" [value]="order.id">
+            {{ order.name }}
+          </mat-option>
+        </mat-select>
+        
+      </label>
+    </div>
+
+    <!-- Buttons -->
     <div class="flex justify-end pt-5">
       <button
         mat-flat-button
         [routerLink]="['/admin/saints']"
-        class="bg-red-600 hover:bg-00 text-white font-semibold mr-5 py-2 px-4 rounded inline-flex items-center gap-2"
+        class="bg-red-600 hover:bg-red-700 text-white font-semibold mr-5 py-2 px-4 rounded inline-flex items-center gap-2"
+        type="button"
       >
         <mat-icon class="text-white">undo</mat-icon>
         Cancel
@@ -131,5 +243,9 @@
         {{ isEditMode ? "Update Saint" : "Create Saint" }}
       </button>
     </div>
+
+    <p class="text-sm text-gray-500 text-end pt-2">
+      Fields marked with <span class="text-red-600">*</span> are required.
+    </p>
   </form>
 </div>

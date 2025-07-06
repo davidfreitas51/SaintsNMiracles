@@ -12,6 +12,7 @@ public class Saint
     public string? Title { get; set; }
     public DateOnly? FeastDay { get; set; }
     public string? PatronOf { get; set; }
+    public int? ReligiousOrderId { get; set; }
     public ReligiousOrder? ReligiousOrder { get; set; }
     public required string Slug { get; set; }
     public List<Tag> Tags { get; set; } = [];

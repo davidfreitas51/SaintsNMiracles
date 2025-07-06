@@ -30,10 +30,10 @@ public class TagsRepository(DataContext context) : ITagsRepository
             TotalCount = total
         };
     }
-
-    public async Task<Tag?> GetByIdAsync(int id)
+    
+    public async Task<List<Tag>> GetByIdsAsync(List<int> ids)
     {
-        return await context.Tags.FindAsync(id);
+        return await context.Tags.Where(t => ids.Contains(t.Id)).ToListAsync();
     }
 
     public async Task<bool> CreateAsync(Tag tag)
@@ -56,5 +56,10 @@ public class TagsRepository(DataContext context) : ITagsRepository
             context.Tags.Remove(tag);
             await context.SaveChangesAsync();
         }
+    }
+
+    public async Task<Tag?> GetByIdAsync(int id)
+    {
+        return await context.Tags.FindAsync(id);
     }
 }

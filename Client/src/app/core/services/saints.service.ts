@@ -40,6 +40,12 @@ export class SaintsService {
   }
 
   public createSaint(formValue: any): Observable<void> {
+    const feastDayIso = formValue.feastDay
+      ? this.formatFeastDayToIso(formValue.feastDay)
+      : null;
+
+    console.log('feast day', feastDayIso);
+
     const saintDto: NewSaintDto = {
       name: formValue.name,
       country: formValue.country,
@@ -47,6 +53,11 @@ export class SaintsService {
       image: formValue.image,
       description: formValue.description,
       markdownContent: formValue.markdownContent,
+      title: formValue.title || null,
+      feastDay: feastDayIso,
+      patronOf: formValue.patronOf || null,
+      religiousOrderId: formValue.religiousOrder || null,
+      tags: formValue.currentTags || [],
     };
     return this.http.post<void>(this.baseUrl + 'saints', saintDto);
   }
@@ -55,9 +66,20 @@ export class SaintsService {
     return this.http.delete<void>(this.baseUrl + 'saints/' + id);
   }
 
-  public updateSaint(id: string, formValue: NewSaintDto): Observable<void> {
-    console.log(formValue);
-    return this.http.put<void>(this.baseUrl + 'saints/' + id, formValue);
+  public updateSaint(
+    id: string,
+    formValue: NewSaintDto & { feastDay?: string }
+  ): Observable<void> {
+    const formattedFeastDay = formValue.feastDay
+      ? this.formatFeastDayToIso(formValue.feastDay)
+      : null;
+
+    const payload = {
+      ...formValue,
+      feastDay: formattedFeastDay,
+    };
+
+    return this.http.put<void>(`${this.baseUrl}saints/${id}`, payload);
   }
 
   public getSaintWithMarkdown(slug: string): Observable<SaintWithMarkdown> {
@@ -70,5 +92,14 @@ export class SaintsService {
           .pipe(map((rawMarkdown) => ({ saint, markdown: rawMarkdown })))
       )
     );
+  }
+
+  private formatFeastDayToIso(feastDay: string): string | null {
+    if (!feastDay || feastDay.length !== 4) return null;
+
+    const day = feastDay.slice(0, 2);
+    const month = feastDay.slice(2, 4);
+
+    return `0001-${month}-${day}`;
   }
 }

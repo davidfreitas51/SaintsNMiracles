@@ -5,4 +5,9 @@ export interface NewSaintDto {
   image: string;
   description: string;
   markdownContent: string;
+  title?: string | null;
+  feastDay?: string | null; 
+  patronOf?: string | null;
+  religiousOrderId?: number | null;
+  tags?: string[]; 
 }

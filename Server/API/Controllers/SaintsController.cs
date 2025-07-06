@@ -8,7 +8,7 @@ namespace API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class SaintsController(ISaintsRepository saintsRepository, ISaintsService saintsService) : ControllerBase
+public class SaintsController(ISaintsRepository saintsRepository, ISaintsService saintsService, IReligiousOrdersRepository religiousOrdersRepository, ITagsRepository tagsRepository) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllSaints([FromQuery] SaintFilters filters)
@@ -37,10 +37,22 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
         var exists = await saintsRepository.SlugExistsAsync(slug);
         if (exists)
         {
-            return Conflict($"A saint with the same name already exists.");
+            return Conflict("A saint with the same name already exists.");
         }
 
         var (markdownPath, imagePath) = await saintsService.SaveFilesAsync(newSaint, slug);
+
+        List<Tag> tags = new List<Tag>();
+        if (newSaint.TagIds != null && newSaint.TagIds.Any())
+        {
+            tags = await tagsRepository.GetByIdsAsync(newSaint.TagIds);
+        }
+
+        ReligiousOrder religiousOrder = null;
+        if (newSaint.ReligiousOrderId.HasValue)
+        {
+            religiousOrder = await religiousOrdersRepository.GetByIdAsync(newSaint.ReligiousOrderId.Value);
+        }
 
         var saint = new Saint
         {
@@ -50,7 +62,12 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
             Image = imagePath ?? "",
             Description = newSaint.Description,
             Slug = slug,
-            MarkdownPath = markdownPath
+            MarkdownPath = markdownPath,
+            Title = newSaint.Title,
+            FeastDay = newSaint.FeastDay,
+            PatronOf = newSaint.PatronOf,
+            ReligiousOrder = religiousOrder,
+            Tags = tags
         };
 
         var created = await saintsRepository.CreateAsync(saint);
@@ -84,7 +101,6 @@ public class SaintsController(ISaintsRepository saintsRepository, ISaintsService
         var updated = await saintsRepository.UpdateAsync(existingSaint);
         return updated ? NoContent() : BadRequest();
     }
-
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteSaint(int id)
