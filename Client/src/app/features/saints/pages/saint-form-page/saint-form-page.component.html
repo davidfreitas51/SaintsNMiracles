@@ -113,13 +113,13 @@
           <div class="flex flex-wrap gap-2 items-center">
             <span
               *ngFor="let tag of currentTags"
-              class="text-xs font-medium px-3 py-1 rounded-full bg-green-600 text-white shadow-sm flex items-center gap-1"
+              class="text-xs font-medium rounded-full bg-green-600 text-white shadow-sm flex items-center gap-2 px-3 py-1"
             >
-              {{ tag }}
+              <span class="select-none">{{ tag }}</span>
               <button
                 type="button"
                 (click)="removeTag(tag)"
-                class="ml-1 text-white hover:text-red-300"
+                class="text-white hover:text-red-300 p-0 w-5 h-5 flex items-center justify-center rounded-full cursor-pointer"
                 aria-label="Remove tag"
               >
                 &times;
@@ -191,7 +191,6 @@
           placeholder="DD/MM"
         />
       </label>
-      
 
       <label class="block">
         <span class="block pb-2 font-semibold"
@@ -209,13 +208,15 @@
         <span class="block pb-2 font-semibold"
           >Religious Order <span class="text-gray-400">(optional)</span></span
         >
-        <mat-select formControlName="religiousOrder" class="w-full border rounded px-3 py-2">
+        <mat-select
+          formControlName="religiousOrder"
+          class="w-full border rounded px-3 py-2"
+        >
           <mat-option [value]="null">None</mat-option>
           <mat-option *ngFor="let order of religiousOrders" [value]="order.id">
             {{ order.name }}
           </mat-option>
         </mat-select>
-        
       </label>
     </div>
 

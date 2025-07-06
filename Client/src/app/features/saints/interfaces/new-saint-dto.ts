@@ -9,5 +9,5 @@ export interface NewSaintDto {
   feastDay?: string | null; 
   patronOf?: string | null;
   religiousOrderId?: number | null;
-  tags?: string[]; 
+  tagIds: number[]; 
 }

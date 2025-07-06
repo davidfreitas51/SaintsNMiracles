@@ -44,7 +44,6 @@ export class SaintsService {
       ? this.formatFeastDayToIso(formValue.feastDay)
       : null;
 
-    console.log('feast day', feastDayIso);
 
     const saintDto: NewSaintDto = {
       name: formValue.name,
@@ -57,7 +56,7 @@ export class SaintsService {
       feastDay: feastDayIso,
       patronOf: formValue.patronOf || null,
       religiousOrderId: formValue.religiousOrder || null,
-      tags: formValue.currentTags || [],
+      tagIds: formValue.currentTags || [],
     };
     return this.http.post<void>(this.baseUrl + 'saints', saintDto);
   }

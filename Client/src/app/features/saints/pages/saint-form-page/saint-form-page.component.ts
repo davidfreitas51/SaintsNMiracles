@@ -35,6 +35,7 @@ import { ReligiousOrdersService } from '../../../../core/services/religious-orde
 import { EntityFilters } from '../../../../interfaces/entity-filters';
 import { MatMenuModule } from '@angular/material/menu';
 import { NgxMaskDirective } from 'ngx-mask';
+import { NewSaintDto } from '../../interfaces/new-saint-dto';
 
 @Component({
   selector: 'app-saint-form-page',
@@ -63,11 +64,9 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
   private snackBarService = inject(SnackbarService);
   private dialog = inject(MatDialog);
 
-  @ViewChild('descriptionTextarea')
-  descriptionTextarea!: ElementRef<HTMLTextAreaElement>;
+  @ViewChild('descriptionTextarea') descriptionTextarea!: ElementRef<HTMLTextAreaElement>;
 
   imageBaseUrl = environment.assetsUrl;
-
   religiousOrders: ReligiousOrder[] = [];
   tagsList: Tag[] = [];
   currentTags: string[] = [];
@@ -77,7 +76,6 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
   isEditMode = false;
   saintId: string | null = null;
   imageLoading = false;
-
   centuries = Array.from({ length: 20 }, (_, i) => i + 1);
 
   constructor(
@@ -91,12 +89,8 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
     const filter = new EntityFilters();
     filter.pageSize = 9999;
 
-    this.tagsService
-      .getTags(filter)
-      .subscribe((res) => (this.tagsList = res.items));
-    this.religiousOrdersService
-      .getOrders(filter)
-      .subscribe((res) => (this.religiousOrders = res.items));
+    this.tagsService.getTags(filter).subscribe(res => this.tagsList = res.items);
+    this.religiousOrdersService.getOrders(filter).subscribe(res => this.religiousOrders = res.items);
 
     this.form = this.fb.group({
       name: ['', Validators.required],
@@ -111,20 +105,16 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
       religiousOrder: [''],
     });
 
-    this.form
-      .get('description')
-      ?.valueChanges.subscribe(() =>
-        setTimeout(() => this.autoResizeOnLoad(), 0)
-      );
+    this.form.get('description')?.valueChanges.subscribe(() => setTimeout(() => this.autoResizeOnLoad(), 0));
 
-    this.route.paramMap.subscribe((params) => {
+    this.route.paramMap.subscribe(params => {
       this.saintId = params.get('id');
       this.isEditMode = !!this.saintId;
 
       if (this.isEditMode && this.saintId) {
         this.saintsService.getSaintWithMarkdown(this.saintId).subscribe({
           next: ({ saint, markdown }) => {
-            this.currentTags = saint.tags.map((tag) => tag.name);
+            this.currentTags = saint.tags.map(tag => tag.name);
             this.form.patchValue({
               name: saint.name,
               country: saint.country,
@@ -138,12 +128,7 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
               religiousOrder: saint.religiousOrder?.id,
             });
             this.cdr.detectChanges();
-            setTimeout(
-              () =>
-                this.descriptionTextarea?.nativeElement &&
-                this.autoResizeOnLoad(),
-              100
-            );
+            setTimeout(() => this.descriptionTextarea?.nativeElement && this.autoResizeOnLoad(), 100);
           },
           error: () => {
             this.snackBarService.error('Error loading saint for update');
@@ -155,12 +140,14 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
       }
     });
   }
+
   formatFeastDayToInput(isoDate: string | null): string {
     if (!isoDate) return '';
     const parts = isoDate.split('-');
     if (parts.length !== 3) return '';
     return `${parts[2]}/${parts[1]}`;
   }
+
   ngAfterViewInit() {
     this.autoResizeOnLoad();
   }
@@ -168,41 +155,47 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
   onSubmit() {
     if (this.imageLoading) return;
 
-    const saintData = {
+    const tagIds: number[] = this.currentTags
+      .map(tagName => this.tagsList.find(t => t.name === tagName))
+      .filter((t): t is Tag => !!t)
+      .map(t => t.id);
+
+    let formattedFeastDay: string | undefined;
+    const feastDayValue = this.form.value.feastDay;
+    if (feastDayValue) {
+      const [day, month] = feastDayValue.split('/');
+      if (day && month) {
+        formattedFeastDay = `0001-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+      }
+    }
+
+    const saintData: NewSaintDto & { feastDay?: string } = {
       name: this.form.value.name,
       country: this.form.value.country,
       century: +this.form.value.century,
       image: this.form.value.image,
       description: this.form.value.description,
       markdownContent: this.form.value.markdownContent,
-      title: this.form.value.title || null,
-      feastDay: this.form.value.feastDay || null,
-      patronOf: this.form.value.patronOf || null,
-      religiousOrderId: this.form.value.religiousOrder || null,
-      tags: this.currentTags,
+      title: this.form.value.title || undefined,
+      feastDay: formattedFeastDay,
+      patronOf: this.form.value.patronOf || undefined,
+      religiousOrderId: this.form.value.religiousOrder || undefined,
+      tagIds,
     };
 
-    const request$ =
-      this.isEditMode && this.saintId
-        ? this.saintsService.updateSaint(this.saintId, saintData)
-        : this.saintsService.createSaint(saintData);
+    const request$ = this.isEditMode && this.saintId
+      ? this.saintsService.updateSaint(this.saintId, saintData)
+      : this.saintsService.createSaint(saintData);
 
     request$.subscribe({
       next: () => {
-        this.snackBarService.success(
-          `Saint successfully ${this.isEditMode ? 'updated' : 'created'}`
-        );
+        this.snackBarService.success(`Saint successfully ${this.isEditMode ? 'updated' : 'created'}`);
         this.router.navigate(['admin/saints']);
       },
-      error: (err) => {
+      error: err => {
         console.error(err);
-        const msg =
-          typeof err.error === 'string'
-            ? err.error
-            : err.error?.message ?? 'Unexpected error.';
-        this.snackBarService.error(
-          `Error ${this.isEditMode ? 'updating' : 'creating'} saint: ${msg}`
-        );
+        const msg = typeof err.error === 'string' ? err.error : err.error?.message ?? 'Unexpected error.';
+        this.snackBarService.error(`Error ${this.isEditMode ? 'updating' : 'creating'} saint: ${msg}`);
       },
     });
   }
@@ -214,7 +207,7 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
       data: { imageChangedEvent: event },
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe(result => {
       if (typeof result === 'string') {
         this.croppedImage = result;
         this.form.patchValue({ image: result });
@@ -252,16 +245,13 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
   }
 
   addTag(tag: string) {
-    if (
-      tag &&
-      this.currentTags.length < 5 &&
-      !this.currentTags.includes(tag.trim())
-    ) {
-      this.currentTags.push(tag.trim());
+    const trimmed = tag.trim();
+    if (trimmed && this.currentTags.length < 5 && !this.currentTags.includes(trimmed)) {
+      this.currentTags.push(trimmed);
     }
   }
 
   removeTag(tag: string) {
-    this.currentTags = this.currentTags.filter((t) => t !== tag);
+    this.currentTags = this.currentTags.filter(t => t !== tag);
   }
 }
