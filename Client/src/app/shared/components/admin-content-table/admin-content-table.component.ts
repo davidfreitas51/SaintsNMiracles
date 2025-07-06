@@ -10,15 +10,15 @@ import {
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { CommonModule } from '@angular/common';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ConfirmDialogService } from '../../../core/services/confirm-dialog.service';
 import { SnackbarService } from '../../../core/services/snackbar.service';
 import { FeastDayFormatPipe } from '../../pipes/feast-day-format.pipe';
 import { RomanPipe } from '../../pipes/roman.pipe';
+import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-admin-content-table',
@@ -27,13 +27,13 @@ import { RomanPipe } from '../../pipes/roman.pipe';
   standalone: true,
   imports: [
     MatPaginator,
-    MatTableModule,
-    MatSortModule,
+    FeastDayFormatPipe,
+    RomanPipe,
     MatIconModule,
     MatCardModule,
-    RomanPipe,
-    CommonModule,
-    FeastDayFormatPipe,
+    MatSortModule,
+    MatTableModule,
+    CommonModule
   ],
 })
 export class AdminContentTableComponent implements OnChanges, AfterViewInit {
@@ -52,7 +52,7 @@ export class AdminContentTableComponent implements OnChanges, AfterViewInit {
   private snackBarService = inject(SnackbarService);
   private dialogService = inject(ConfirmDialogService);
   private router = inject(Router);
-  route = inject(ActivatedRoute);
+  private route = inject(ActivatedRoute);
 
   entitySingular = '';
 
@@ -60,9 +60,6 @@ export class AdminContentTableComponent implements OnChanges, AfterViewInit {
     if (changes['data'] && this.data.length) {
       this.setColumns();
       this.dataSource.data = this.data;
-
-      this.dataSource.paginator = this.paginator;
-      this.dataSource.sort = this.sort;
     }
   }
 
@@ -70,15 +67,11 @@ export class AdminContentTableComponent implements OnChanges, AfterViewInit {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
     this.detectEntityFromRoute();
+    this.configureFilterPredicate();
   }
 
-  private detectEntityFromRoute(): void {
-    const url = this.router.url;
-    const match = url.match(/\/admin\/(\w+)/);
-    if (match && match[1]) {
-      const plural = match[1];
-      this.entitySingular = plural.endsWith('s') ? plural.slice(0, -1) : plural;
-    }
+  applyFilter(filterValue: string): void {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
   }
 
   private setColumns(): void {
@@ -91,6 +84,28 @@ export class AdminContentTableComponent implements OnChanges, AfterViewInit {
     }
 
     this.displayedColumns = [...this.columns];
+  }
+
+  private detectEntityFromRoute(): void {
+    const url = this.router.url;
+    const match = url.match(/\/admin\/(\w+)/);
+    if (match && match[1]) {
+      const plural = match[1];
+      this.entitySingular = plural.endsWith('s') ? plural.slice(0, -1) : plural;
+    }
+  }
+
+  private configureFilterPredicate(): void {
+    this.dataSource.filterPredicate = (data: any, filter: string): boolean => {
+      const filterText = filter.trim().toLowerCase();
+      return this.displayedColumns.some((col) => {
+        if (col === 'actions') return false;
+        const value = data[col];
+        return (
+          value != null && value.toString().toLowerCase().includes(filterText)
+        );
+      });
+    };
   }
 
   humanizeColumn(col: string): string {
