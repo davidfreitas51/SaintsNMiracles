@@ -1,11 +1,8 @@
-using Core.DTOs;
-
-namespace Core.Interfaces;
-
 public interface ISaintsService
 {
-    Task<(string markdownPath, string? imagePath)> SaveFilesAsync(NewSaintDto newSaint, string slug);
+    Task<int?> CreateSaintAsync(NewSaintDto newSaint);
+    Task<bool> UpdateSaintAsync(int id, NewSaintDto updatedSaint);
     Task DeleteFilesAsync(string slug);
-    Task<(string markdownPath, string? imagePath)> UpdateFilesAsync(NewSaintDto updatedSaint, string slug);
+    Task<(string markdownPath, string? imagePath)> SaveFilesAsync(NewSaintDto saintDto, string slug);
+    Task<(string markdownPath, string? imagePath)> UpdateFilesAsync(NewSaintDto saintDto, string slug);
 }
-
