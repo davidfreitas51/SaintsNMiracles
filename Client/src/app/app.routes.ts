@@ -1,16 +1,16 @@
 import { Routes } from '@angular/router';
 import { AboutUsPageComponent } from './pages/about-us-page/about-us-page.component';
-import { AdminPageComponent } from './pages/admin-page/admin-page.component';
-import { DashboardPageComponent } from './pages/dashboard-page/dashboard-page.component';
+import { AdminPageComponent } from './features/admin/pages/admin-page/admin-page.component';
 import { LandingPageComponent } from './pages/landing-page/landing-page.component';
-import { MiracleDetailsPageComponent } from './pages/miracle-details-page/miracle-details-page.component';
-import { MiraclesPageComponent } from './pages/miracles-page/miracles-page.component';
-import { SaintDetailsPageComponent } from './pages/saint-details-page/saint-details-page.component';
-import { SaintsPageComponent } from './pages/saints-page/saints-page.component';
-import { SaintFormPageComponent } from './pages/saint-form-page/saint-form-page.component';
-import { MiracleFormPageComponent } from './pages/miracle-form-page/miracle-form-page.component';
-import { ManageMiraclesPageComponent } from './pages/manage-miracles-page/manage-miracles-page.component';
-import { ManageSaintsPageComponent } from './pages/manage-saints-page/manage-saints-page.component';
+import { MiracleDetailsPageComponent } from './features/miracles/pages/miracle-details-page/miracle-details-page.component';
+import { MiraclesPageComponent } from './features/miracles/pages/miracles-page/miracles-page.component';
+import { SaintDetailsPageComponent } from './features/saints/pages/saint-details-page/saint-details-page.component';
+import { SaintsPageComponent } from './features/saints/pages/saints-page/saints-page.component';
+import { SaintFormPageComponent } from './features/saints/pages/saint-form-page/saint-form-page.component';
+import { MiracleFormPageComponent } from './features/miracles/pages/miracle-form-page/miracle-form-page.component';
+import { ManageMiraclesPageComponent } from './features/admin/pages/manage-miracles-page/manage-miracles-page.component';
+import { ManageSaintsPageComponent } from './features/admin/pages/manage-saints-page/manage-saints-page.component';
+import { DashboardPageComponent } from './features/admin/pages/dashboard-page/dashboard-page.component';
 
 export const routes: Routes = [
   {
@@ -68,8 +68,7 @@ export const routes: Routes = [
       },
       {
         path: 'users',
-        children: [
-        ],
+        children: [],
       },
     ],
   },
