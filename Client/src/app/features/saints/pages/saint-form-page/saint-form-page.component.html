@@ -113,13 +113,13 @@
           <div class="flex flex-wrap gap-2 items-center">
             <span
               *ngFor="let tag of currentTags"
-              class="text-xs font-medium rounded-full bg-green-600 text-white shadow-sm flex items-center gap-2 px-3 py-1"
+              class="text-xs font-medium rounded-full bg-green-600 text-white shadow-sm flex items-center gap-2 px-3 py-1 select-none"
             >
-              <span class="select-none">{{ tag }}</span>
+              {{ tag }}
               <button
                 type="button"
                 (click)="removeTag(tag)"
-                class="text-white hover:text-red-300 p-0 w-5 h-5 flex items-center justify-center rounded-full cursor-pointer"
+                class="p-0 w-5 h-5 flex items-center justify-center rounded-full cursor-pointer bg-white text-green-700 shadow hover:bg-red-600 hover:text-white transition border border-transparent hover:border-red-700"
                 aria-label="Remove tag"
               >
                 &times;
