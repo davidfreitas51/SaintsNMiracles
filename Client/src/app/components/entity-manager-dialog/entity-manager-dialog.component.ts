@@ -5,7 +5,11 @@ import {
   ViewChild,
   inject,
 } from '@angular/core';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import {
+  MatDialogRef,
+  MAT_DIALOG_DATA,
+  MatDialog,
+} from '@angular/material/dialog';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { EntityDialogData } from '../../interfaces/entity-dialog-data';
 import { finalize } from 'rxjs/operators';
@@ -14,13 +18,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { FormsModule } from '@angular/forms';
 import { LowercasePipe } from '../../pipes/lowercase.pipe';
 import { Entity } from '../../interfaces/entity';
-import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { ConfirmDialogService } from '../../services/confirm-dialog.service';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { SnackbarService } from '../../services/snackbar.service';
+import { CreateEntityDialogComponent } from '../create-entity-dialog/create-entity-dialog.component';
+import { EntityFilters } from '../../interfaces/entity-filters';
 
 @Component({
   selector: 'app-entity-manager-dialog',
@@ -45,14 +51,16 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  readonly dialog = inject(MatDialog);
   readonly dialogRef = inject(MatDialogRef<EntityManagerDialogComponent>);
-  readonly snackbar = inject(SnackbarService)
+  readonly snackbar = inject(SnackbarService);
   readonly data = inject<EntityDialogData>(MAT_DIALOG_DATA);
   dialogService = inject(ConfirmDialogService);
 
+  filters = new EntityFilters();
+
   entityName = '';
   dataSource = new MatTableDataSource<Entity>([]);
-  search = '';
   newName = '';
   isLoading = false;
 
@@ -72,7 +80,7 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
   loadEntities(): void {
     this.isLoading = true;
     this.data
-      .getAllFn({ search: this.search })
+      .getAllFn(this.filters)
       .pipe(finalize(() => (this.isLoading = false)))
       .subscribe({
         next: (res) => {
@@ -87,7 +95,7 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
   updateEntity(entity: Entity): void {
     this.data.updateFn(entity).subscribe({
       next: () => {
-        this.snackbar.success(`${this.entityName} updated`)
+        this.snackbar.success(`${this.entityName} updated`);
       },
       error: () => {
         this.snackbar.error(`Failed to update ${this.entityName}`);
@@ -119,19 +127,22 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
   }
 
   createEntity(): void {
-    const trimmed = this.newName.trim();
-    if (!trimmed) return;
-
-    this.data.createFn(trimmed).subscribe({
-      next: () => {
-        console.log(`${this.entityName} created`);
-        this.newName = '';
-        this.loadEntities();
-      },
-      error: (err) => {
-        console.error(`Failed to create ${this.entityName}`, err);
-      },
-    });
+    this.dialog
+      .open(CreateEntityDialogComponent, {
+        height: '250px',
+        width: '300px',
+        data: {
+          entityName: this.entityName,
+          createFn: this.data.createFn,
+        },
+      })
+      .afterClosed()
+      .subscribe((created) => {
+        if (created) {
+          this.snackbar.success(`${this.entityName} successfully created`);
+          this.loadEntities();
+        }
+      });
   }
 
   startEdit(element: Entity): void {
@@ -152,5 +163,11 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
   cancelEdit(): void {
     this.editingElement = null;
     this.originalElement = null;
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.filters.page = event.pageIndex + 1;
+    this.filters.pageSize = event.pageSize;
+    this.loadEntities();
   }
 }

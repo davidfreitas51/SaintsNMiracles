@@ -11,9 +11,9 @@ public class TagsRepository(DataContext context) : ITagsRepository
     {
         var query = context.Tags.AsQueryable();
 
-        if (!string.IsNullOrWhiteSpace(filters.SearchTerm))
+        if (!string.IsNullOrWhiteSpace(filters.Search))
         {
-            query = query.Where(t => t.Name.Contains(filters.SearchTerm));
+            query = query.Where(t => t.Name.Contains(filters.Search));
         }
 
         var total = await query.CountAsync();

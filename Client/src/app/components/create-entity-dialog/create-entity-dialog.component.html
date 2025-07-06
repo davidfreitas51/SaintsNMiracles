@@ -1,0 +1,51 @@
+<!-- create-entity-dialog.component.html -->
+<div class="p-6 w-full max-w-sm">
+  <h2 class="text-xl font-semibold mb-4 text-primary-app">
+    Create {{ entityName }}
+  </h2>
+
+  <form class="flex flex-col gap-4" (ngSubmit)="create()" #form="ngForm">
+    <mat-form-field appearance="fill" class="w-full">
+      <mat-label>Enter {{ entityName | lowercase }} name</mat-label>
+      <input
+        matInput
+        [(ngModel)]="name"
+        name="name"
+        required
+        autocomplete="off"
+        #nameInput="ngModel"
+        #inputEl
+      />
+
+      <mat-error *ngIf="nameInput.invalid && nameInput.touched">
+        Name is required
+      </mat-error>
+    </mat-form-field>
+
+    <div class="flex justify-end gap-3 pt-2">
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="cancel()"
+        class="min-w-[100px]"
+      >
+        Cancel
+      </button>
+
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="form.invalid || loading"
+        class="min-w-[100px]"
+      >
+        <mat-spinner
+          *ngIf="loading"
+          diameter="20"
+          class="inline-block align-middle"
+        ></mat-spinner>
+        <span *ngIf="!loading">Create</span>
+      </button>
+    </div>
+  </form>
+</div>
