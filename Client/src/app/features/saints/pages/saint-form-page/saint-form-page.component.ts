@@ -134,7 +134,7 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
               markdownContent: markdown,
               title: saint.title,
               patronOf: saint.patronOf,
-              feastDay: saint.feastDay ?? '',
+              feastDay: this.formatFeastDayToInput(saint.feastDay || null),
               religiousOrder: saint.religiousOrder?.id,
             });
             this.cdr.detectChanges();
@@ -155,7 +155,12 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
       }
     });
   }
-
+  formatFeastDayToInput(isoDate: string | null): string {
+    if (!isoDate) return '';
+    const parts = isoDate.split('-');
+    if (parts.length !== 3) return '';
+    return `${parts[2]}/${parts[1]}`;
+  }
   ngAfterViewInit() {
     this.autoResizeOnLoad();
   }

@@ -30,7 +30,6 @@ import { SnackbarService } from '../../../core/services/snackbar.service';
 import { Entity } from '../../../interfaces/entity';
 import { EntityDialogData } from '../../../interfaces/entity-dialog-data';
 import { EntityFilters } from '../../../interfaces/entity-filters';
-import { LowercasePipe } from '../../pipes/lowercase.pipe';
 
 
 @Component({
@@ -45,7 +44,6 @@ import { LowercasePipe } from '../../pipes/lowercase.pipe';
     MatIconModule,
     MatInputModule,
     FormsModule,
-    LowercasePipe,
     MatTableModule,
     MatPaginatorModule,
     CommonModule,
