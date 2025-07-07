@@ -18,6 +18,8 @@ import { CountryCodePipe } from '../../../../shared/pipes/country-code.pipe';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { FooterComponent } from '../../../../shared/components/footer/footer.component';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
+import { MatDialog } from '@angular/material/dialog';
+import { AdvancedSearchSaintsDialogComponent } from '../../components/advanced-search-saints-dialog/advanced-search-saints-dialog.component';
 countries.registerLocale(enLocale);
 
 @Component({
@@ -45,9 +47,12 @@ export class SaintsPageComponent implements OnInit {
   private router = inject(Router);
   private saintsService = inject(SaintsService);
   private route = inject(ActivatedRoute);
+  private dialog = inject(MatDialog)
 
   countries: string[] = [];
   centuries: number[] = Array.from({ length: 21 }, (_, i) => i + 1);
+  months: string[] = []
+  religiousOrders: string[] = []
   public saints: Saint[] | null = null;
   totalCount: number = 0;
   imageBaseUrl = environment.assetsUrl;
@@ -110,5 +115,12 @@ export class SaintsPageComponent implements OnInit {
     this.saintFilters.pageNumber = event.pageIndex + 1;
     this.saintFilters.pageSize = event.pageSize;
     this.updateData();
+  }
+
+  handleAdvancedSearch() {
+    this.dialog.open(AdvancedSearchSaintsDialogComponent, {
+      height: '600px',
+      width: '600px'
+    })
   }
 }

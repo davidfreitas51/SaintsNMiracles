@@ -6,15 +6,16 @@
       <div
         class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 flex-wrap"
       >
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-wrap gap-3 items-center w-full md:w-auto">
+          <!-- Clear Filters Button: filled and at left -->
           <button
-            mat-icon-button
-            color="warn"
-            class="hover:text-blue-600 mt-2 mr-3"
+            mat-flat-button
+            class="hover:text-blue-600 bg-gray-500"
             (click)="clearFilters()"
             matTooltip="Clear all filters"
           >
-            <mat-icon>filter_alt_off</mat-icon>
+            <mat-icon class="mr-1">filter_alt_off</mat-icon>
+            Clear Filters
           </button>
 
           <!-- Order By -->
@@ -32,7 +33,7 @@
           </mat-form-field>
 
           <!-- Filter By Country -->
-          <mat-form-field appearance="fill" class="min-w-[150px] w-[200px]">
+          <mat-form-field appearance="fill" class="min-w-[130px] w-[150px]">
             <mat-label>Filter By Country</mat-label>
             <mat-select
               [(ngModel)]="saintFilters.country"
@@ -46,7 +47,7 @@
           </mat-form-field>
 
           <!-- Filter By Century -->
-          <mat-form-field appearance="fill" class="min-w-[150px] w-[200px]">
+          <mat-form-field appearance="fill" class="min-w-[130px] w-[150px]">
             <mat-label>Filter By Century</mat-label>
             <mat-select
               [(ngModel)]="saintFilters.century"
@@ -62,7 +63,7 @@
 
         <!-- Search -->
         <div
-          class="flex gap-2 items-center w-full sm:w-[250px] md:w-[300px] lg:w-[400px]"
+          class="flex gap-2 items-center w-full sm:w-[220px] md:w-[260px] lg:w-[350px]"
         >
           <mat-form-field appearance="fill" class="w-full">
             <mat-label>Search</mat-label>
@@ -83,6 +84,19 @@
               <mat-icon>search</mat-icon>
             </button>
           </mat-form-field>
+        </div>
+
+        <!-- Advanced Search Button: filled, at right end of filter group -->
+        <div class="flex items-center w-full md:w-auto justify-end mt-2 md:mt-0">
+          <button
+            mat-flat-button
+            matTooltip="Open advanced search"
+            class="bg-gray-500"
+            (click)="handleAdvancedSearch()"
+          >
+            Advanced Search
+            <mat-icon class="ml-1">filter_alt</mat-icon>
+          </button>
         </div>
       </div>
     </div>
@@ -146,8 +160,6 @@
         ></mat-paginator>
       </div>
     </div>
-    
-
   </main>
 
   <app-footer></app-footer>
