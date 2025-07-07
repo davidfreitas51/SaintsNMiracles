@@ -83,6 +83,10 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
   }
 
   onApplyFilters() {
-    this.dialogRef.close()
+    this.dialogRef.close({
+      tags: this.selectedTags,
+      month: this.selectedMonth,
+      order: this.selectedOrder,
+    });
   }
 }

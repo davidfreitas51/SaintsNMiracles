@@ -47,12 +47,12 @@ export class SaintsPageComponent implements OnInit {
   private router = inject(Router);
   private saintsService = inject(SaintsService);
   private route = inject(ActivatedRoute);
-  private dialog = inject(MatDialog)
+  private dialog = inject(MatDialog);
 
   countries: string[] = [];
   centuries: number[] = Array.from({ length: 21 }, (_, i) => i + 1);
-  months: string[] = []
-  religiousOrders: string[] = []
+  months: string[] = [];
+  religiousOrders: string[] = [];
   public saints: Saint[] | null = null;
   totalCount: number = 0;
   imageBaseUrl = environment.assetsUrl;
@@ -118,9 +118,20 @@ export class SaintsPageComponent implements OnInit {
   }
 
   handleAdvancedSearch() {
-    this.dialog.open(AdvancedSearchSaintsDialogComponent, {
+    const dialogRef = this.dialog.open(AdvancedSearchSaintsDialogComponent, {
       height: '600px',
-      width: '600px'
-    })
+      width: '600px',
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        console.log('Selected tags:', result.tags);
+        console.log('Selected month:', result.month);
+        console.log('Selected order:', result.order);
+
+        this.saintFilters.religiousOrder = result.order
+        this.updateData()
+      }
+    });
   }
 }

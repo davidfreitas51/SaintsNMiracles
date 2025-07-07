@@ -32,6 +32,28 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
                 EF.Functions.Like(s.Description.ToLower(), $"%{search}%"));
         }
 
+        if (!string.IsNullOrWhiteSpace(filters.FeastMonth))
+        {
+            if (int.TryParse(filters.FeastMonth, out var month))
+            {
+                query = query.Where(s => s.FeastDay.HasValue && s.FeastDay.Value.Month == month);
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(filters.ReligiousOrderId))
+        {
+            if (int.TryParse(filters.ReligiousOrderId, out var orderId))
+            {
+                query = query.Where(s => s.ReligiousOrderId == orderId);
+            }
+        }
+
+        if (filters.TagIds != null && filters.TagIds.Any())
+        {
+            var tagIds = filters.TagIds.Select(t => t.Id).ToList();
+            query = query.Where(s => s.Tags.Any(tag => tagIds.Contains(tag.Id)));
+        }
+
         query = string.IsNullOrWhiteSpace(filters.OrderBy)
             ? query.OrderBy(s => s.Name)
             : filters.OrderBy.ToLower() switch
@@ -58,6 +80,7 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
             PageSize = filters.PageSize
         };
     }
+
 
     public async Task<Saint?> GetByIdAsync(int id)
     {
