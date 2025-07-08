@@ -1,71 +1,38 @@
 <div class="min-h-screen flex flex-col">
   <app-header></app-header>
 
-  <main class="flex-grow">
+  <main class="flex-grow relative">
     <div class="p-4 pt-10 w-full max-w-screen-xl mx-auto">
       <div
-        class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 flex-wrap"
+        class="flex flex-col md:flex-row md:items-center md:justify-between gap-4"
       >
-        <div class="flex flex-wrap gap-3 items-center w-full md:w-auto">
-          <!-- Clear Filters Button: filled and at left -->
+        <!-- Group both buttons in a row -->
+        <div class="flex gap-2 w-full md:w-auto">
           <button
             mat-flat-button
-            class="bg-gray-500"
-            (click)="clearFilters()"
-            matTooltip="Clear all filters"
+            class="bg-gray-500 text-white"
+            (click)="handleAdvancedSearch()"
           >
-            <mat-icon class="mr-1">filter_alt_off</mat-icon>
-            Clear Filters
+            <mat-icon class="mr-1">tune</mat-icon>
+            Advanced Filters
           </button>
 
-          <!-- Order By -->
-          <mat-form-field appearance="fill" class="min-w-[150px] w-[200px]">
-            <mat-label>Order By</mat-label>
-            <mat-select
-              [(ngModel)]="saintFilters.orderBy"
-              (selectionChange)="handleFilterChange('orderBy', $event)"
-            >
-              <mat-option value="name">Name (A-Z)</mat-option>
-              <mat-option value="name_desc">Name (Z-A)</mat-option>
-              <mat-option value="century">Century (Asc)</mat-option>
-              <mat-option value="century_desc">Century (Desc)</mat-option>
-            </mat-select>
-          </mat-form-field>
-
-          <!-- Filter By Country -->
-          <mat-form-field appearance="fill" class="min-w-[130px] w-[150px]">
-            <mat-label>Filter By Country</mat-label>
-            <mat-select
-              [(ngModel)]="saintFilters.country"
-              (selectionChange)="handleFilterChange('country', $event)"
-            >
-              <mat-option value="">All</mat-option>
-              @for (c of countries; track $index) {
-              <mat-option [value]="c">{{ c }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
-
-          <!-- Filter By Century -->
-          <mat-form-field appearance="fill" class="min-w-[130px] w-[150px]">
-            <mat-label>Filter By Century</mat-label>
-            <mat-select
-              [(ngModel)]="saintFilters.century"
-              (selectionChange)="handleFilterChange('century', $event)"
-            >
-              <mat-option value="">All</mat-option>
-              @for (c of centuries; track $index) {
-              <mat-option [value]="c">{{ c | roman }}</mat-option>
-              }
-            </mat-select>
-          </mat-form-field>
+          <button
+            mat-flat-button
+            class="bg-gray-500 text-white"
+            (click)="clearFilters()"
+          >
+            <mat-icon class="mr-1">filter_alt_off</mat-icon>
+            Clear filters
+          </button>
         </div>
 
-        <!-- Search -->
+        <!-- Search + Order -->
         <div
-          class="flex gap-2 items-center w-full sm:w-[220px] md:w-[260px] lg:w-[350px]"
+          class="flex gap-2 items-center w-full sm:w-[220px] md:w-[260px] lg:w-[500px]"
         >
-          <mat-form-field appearance="fill" class="w-full">
+          <!-- Search Input -->
+          <mat-form-field appearance="fill" class="flex-1">
             <mat-label>Search</mat-label>
             <input
               matInput
@@ -84,19 +51,22 @@
               <mat-icon>search</mat-icon>
             </button>
           </mat-form-field>
-        </div>
 
-        <!-- Advanced Search Button: filled, at right end of filter group -->
-        <div class="flex items-center w-full md:w-auto justify-end mt-2 md:mt-0">
-          <button
-            mat-flat-button
-            matTooltip="Open advanced search"
-            class="bg-gray-500"
-            (click)="handleAdvancedSearch()"
-          >
-            Advanced Search
-            <mat-icon class="ml-1">filter_alt</mat-icon>
-          </button>
+          <!-- Order By -->
+          <mat-form-field appearance="fill" class="min-w-[150px] w-[180px]">
+            <mat-label>Order By</mat-label>
+            <mat-select
+              [(ngModel)]="saintFilters.orderBy"
+              (selectionChange)="handleFilterChange('orderBy', $event)"
+            >
+              <mat-option value="name">Name (A-Z)</mat-option>
+              <mat-option value="name_desc">Name (Z-A)</mat-option>
+              <mat-option value="century">Century (Asc)</mat-option>
+              <mat-option value="century_desc">Century (Desc)</mat-option>
+              <mat-option value="feastday">Feast Day (Asc)</mat-option>
+              <mat-option value="feastday_desc">Feast Day (Desc)</mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
       </div>
     </div>
@@ -148,6 +118,7 @@
       </ng-container>
       }
     </div>
+
     <div class="py-6 flex justify-center">
       <div class="rounded-xl overflow-hidden shadow-sm border">
         <mat-paginator

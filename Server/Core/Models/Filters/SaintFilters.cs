@@ -1,5 +1,3 @@
-using Core.Models;
-
 public class SaintFilters
 {
     public string OrderBy { get; set; } = "";
@@ -8,7 +6,7 @@ public class SaintFilters
     public string Search { get; set; } = "";
     public string FeastMonth { get; set; } = "";
     public string ReligiousOrderId { get; set; } = "";
-    public List<Tag> TagIds { get; set; } = [];
+    public List<int> TagIds { get; set; } = [];
     public int PageNumber { get; set; } = 1;
     public int PageSize { get; set; } = 25;
 }

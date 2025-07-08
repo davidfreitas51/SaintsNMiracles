@@ -48,11 +48,13 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
             }
         }
 
-        if (filters.TagIds != null && filters.TagIds.Any())
+        if (filters.TagIds is { Count: > 0 })
         {
-            var tagIds = filters.TagIds.Select(t => t.Id).ToList();
-            query = query.Where(s => s.Tags.Any(tag => tagIds.Contains(tag.Id)));
+            query = query.Where(s =>
+                filters.TagIds.All(requiredTagId =>
+                    s.Tags.Any(tag => tag.Id == requiredTagId)));
         }
+
 
         query = string.IsNullOrWhiteSpace(filters.OrderBy)
             ? query.OrderBy(s => s.Name)
@@ -62,8 +64,11 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
                 "name_desc" => query.OrderByDescending(s => s.Name),
                 "century" => query.OrderBy(s => s.Century),
                 "century_desc" => query.OrderByDescending(s => s.Century),
+                "feastday" => query.OrderBy(s => s.FeastDay.HasValue ? s.FeastDay.Value.Month * 100 + s.FeastDay.Value.Day : int.MaxValue),
+                "feastday_desc" => query.OrderByDescending(s => s.FeastDay.HasValue ? s.FeastDay.Value.Month * 100 + s.FeastDay.Value.Day : int.MinValue),
                 _ => query.OrderBy(s => s.Name)
             };
+
 
         var totalCount = await query.CountAsync();
 

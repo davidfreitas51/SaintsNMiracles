@@ -1,7 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
 import { TagsService } from '../../../../core/services/tags.service';
 import { ReligiousOrdersService } from '../../../../core/services/religious-orders.service';
@@ -9,6 +13,9 @@ import { EntityFilters } from '../../../../interfaces/entity-filters';
 import { Tag } from '../../../../interfaces/tag';
 import { ReligiousOrder } from '../../../../interfaces/religious-order';
 import { CommonModule } from '@angular/common';
+import { RomanPipe } from '../../../../shared/pipes/roman.pipe';
+import { SaintsService } from '../../../../core/services/saints.service';
+import { SaintFilters } from '../../interfaces/saint-filter';
 
 @Component({
   selector: 'app-advanced-search-saints-dialog',
@@ -21,6 +28,7 @@ import { CommonModule } from '@angular/common';
     FormsModule,
     MatButtonModule,
     CommonModule,
+    RomanPipe,
   ],
 })
 export class AdvancedSearchSaintsDialogComponent implements OnInit {
@@ -29,6 +37,8 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
   );
   readonly tagsService = inject(TagsService);
   readonly religiousOrdersService = inject(ReligiousOrdersService);
+  readonly saintsService = inject(SaintsService);
+  readonly data = inject(MAT_DIALOG_DATA) as SaintFilters;
 
   months = [
     { value: '1', label: 'January' },
@@ -48,17 +58,36 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
   tags: Tag[] = [];
   religiousOrders: ReligiousOrder[] = [];
 
+  countries: string[] = [];
+  centuries: number[] = Array.from({ length: 21 }, (_, i) => i + 1);
+
   selectedTags: Tag[] = [];
   selectedMonth: string = '';
+  selectedCentury: string = '';
+  selectedCountry: string = '';
   selectedOrder: string = '';
 
   ngOnInit(): void {
     this.tagsService.getTags(new EntityFilters()).subscribe({
       next: (res) => {
         this.tags = res.items;
+
+        if (this.data.tagIds?.length) {
+          const ids = this.data.tagIds.map((t) => t);
+          this.selectedTags = this.tags.filter((tag) => ids.includes(tag.id));
+        }
       },
       error: (err) => {
         console.error('Failed to load tags', err);
+      },
+    });
+
+    this.saintsService.getCountries().subscribe({
+      next: (res) => {
+        this.countries = res;
+      },
+      error: (err) => {
+        console.error('Failed to load countries', err);
       },
     });
 
@@ -70,6 +99,11 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
         console.error('Failed to load religious orders', err);
       },
     });
+
+    this.selectedMonth = this.data.feastMonth || '';
+    this.selectedOrder = this.data.religiousOrderId || '';
+    this.selectedCentury = this.data.century || '';
+    this.selectedCountry = this.data.country || '';
   }
 
   selectTag(tag: Tag) {
@@ -84,9 +118,11 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
 
   onApplyFilters() {
     this.dialogRef.close({
-      tags: this.selectedTags,
-      month: this.selectedMonth,
+      century: this.selectedCentury,
+      country: this.selectedCountry,
+      feastMonth: this.selectedMonth,
       order: this.selectedOrder,
+      tags: this.selectedTags,
     });
   }
 }

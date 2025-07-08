@@ -20,6 +20,7 @@ import { FooterComponent } from '../../../../shared/components/footer/footer.com
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { MatDialog } from '@angular/material/dialog';
 import { AdvancedSearchSaintsDialogComponent } from '../../components/advanced-search-saints-dialog/advanced-search-saints-dialog.component';
+import { Tag } from '../../../../interfaces/tag';
 countries.registerLocale(enLocale);
 
 @Component({
@@ -48,9 +49,8 @@ export class SaintsPageComponent implements OnInit {
   private saintsService = inject(SaintsService);
   private route = inject(ActivatedRoute);
   private dialog = inject(MatDialog);
+  advancedFiltersOpen = false;
 
-  countries: string[] = [];
-  centuries: number[] = Array.from({ length: 21 }, (_, i) => i + 1);
   months: string[] = [];
   religiousOrders: string[] = [];
   public saints: Saint[] | null = null;
@@ -71,11 +71,6 @@ export class SaintsPageComponent implements OnInit {
 
       this.updateData();
     });
-
-    this.saintsService.getCountries().subscribe({
-      next: (countries) => (this.countries = countries),
-      error: (err) => console.error(err),
-    });
   }
 
   redirectToSaintDetails(slug: string) {
@@ -83,6 +78,7 @@ export class SaintsPageComponent implements OnInit {
   }
 
   private updateData() {
+    console.log(this.saintFilters)
     this.saintsService.getSaints(this.saintFilters).subscribe({
       next: (res) => {
         this.saints = res.items;
@@ -121,16 +117,17 @@ export class SaintsPageComponent implements OnInit {
     const dialogRef = this.dialog.open(AdvancedSearchSaintsDialogComponent, {
       height: '600px',
       width: '600px',
+      data: this.saintFilters
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        console.log('Selected tags:', result.tags);
-        console.log('Selected month:', result.month);
-        console.log('Selected order:', result.order);
-
-        this.saintFilters.religiousOrder = result.order
-        this.updateData()
+        this.saintFilters.country = result.country
+        this.saintFilters.century = result.century
+        this.saintFilters.feastMonth = result.feastMonth
+        this.saintFilters.religiousOrderId = result.order;
+        this.saintFilters.tagIds = result.tags.map((t: Tag) => t.id);
+        this.updateData();
       }
     });
   }

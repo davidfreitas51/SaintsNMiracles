@@ -3,7 +3,9 @@ export class SaintFilters{
     country: string = ''
     century: string = ''
     search: string = ''
-    religiousOrder: string = ''
+    feastMonth: string = ''
+    religiousOrderId: string = ''
+    tagIds: number[] = []
     pageNumber: number = 1
     pageSize: number = 25
 }

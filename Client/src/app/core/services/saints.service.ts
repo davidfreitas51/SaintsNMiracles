@@ -20,8 +20,19 @@ export class SaintsService {
     let params = new HttpParams();
 
     Object.entries(saintFilters).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && value !== '') {
-        params = params.set(key, value.toString());
+      if (
+        value !== null &&
+        value !== undefined &&
+        value !== '' &&
+        !(Array.isArray(value) && value.length === 0)
+      ) {
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            params = params.append(key, val.toString());
+          });
+        } else {
+          params = params.set(key, value.toString());
+        }
       }
     });
 
@@ -43,7 +54,6 @@ export class SaintsService {
     const feastDayIso = formValue.feastDay
       ? this.formatFeastDayToIso(formValue.feastDay)
       : null;
-
 
     const saintDto: NewSaintDto = {
       name: formValue.name,
