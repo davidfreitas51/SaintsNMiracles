@@ -50,11 +50,8 @@ public class SaintsRepository(DataContext context) : ISaintsRepository
 
         if (filters.TagIds is { Count: > 0 })
         {
-            query = query.Where(s =>
-                filters.TagIds.All(requiredTagId =>
-                    s.Tags.Any(tag => tag.Id == requiredTagId)));
+            query = query.Where(s => s.Tags.Any(tag => filters.TagIds.Contains(tag.Id)));
         }
-
 
         query = string.IsNullOrWhiteSpace(filters.OrderBy)
             ? query.OrderBy(s => s.Name)

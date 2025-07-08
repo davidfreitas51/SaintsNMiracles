@@ -61,13 +61,27 @@ export class SaintsPageComponent implements OnInit {
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
-      const country = params['country'];
-      const century = params['century'];
-      const search = params['search'];
+      this.saintFilters = new SaintFilters();
 
-      if (country) this.saintFilters.country = country;
-      if (century) this.saintFilters.century = century;
-      if (search) this.saintFilters.search = search;
+      if (params['country']) this.saintFilters.country = params['country'];
+      if (params['century']) this.saintFilters.century = params['century'];
+      if (params['search']) this.saintFilters.search = params['search'];
+      if (params['feastMonth'])
+        this.saintFilters.feastMonth = params['feastMonth'];
+      if (params['religiousOrderId'])
+        this.saintFilters.religiousOrderId = params['religiousOrderId'];
+      if (params['orderBy']) this.saintFilters.orderBy = params['orderBy'];
+      if (params['pageNumber'])
+        this.saintFilters.pageNumber = +params['pageNumber'];
+      if (params['pageSize']) this.saintFilters.pageSize = +params['pageSize'];
+
+      if (params['tagIds']) {
+        const tagIds = (params['tagIds'] as string)
+          .split(',')
+          .map((id) => Number(id))
+          .filter((id) => !isNaN(id));
+        this.saintFilters.tagIds = tagIds;
+      }
 
       this.updateData();
     });
@@ -78,7 +92,32 @@ export class SaintsPageComponent implements OnInit {
   }
 
   private updateData() {
-    console.log(this.saintFilters)
+    const queryParams: any = {};
+
+    if (this.saintFilters.country)
+      queryParams.country = this.saintFilters.country;
+    if (this.saintFilters.century)
+      queryParams.century = this.saintFilters.century;
+    if (this.saintFilters.search) queryParams.search = this.saintFilters.search;
+    if (this.saintFilters.feastMonth)
+      queryParams.feastMonth = this.saintFilters.feastMonth;
+    if (this.saintFilters.religiousOrderId)
+      queryParams.religiousOrderId = this.saintFilters.religiousOrderId;
+    if (this.saintFilters.orderBy)
+      queryParams.orderBy = this.saintFilters.orderBy;
+    if (this.saintFilters.pageNumber)
+      queryParams.pageNumber = this.saintFilters.pageNumber;
+    if (this.saintFilters.pageSize)
+      queryParams.pageSize = this.saintFilters.pageSize;
+    if (this.saintFilters.tagIds && this.saintFilters.tagIds.length > 0) {
+      queryParams.tagIds = this.saintFilters.tagIds.join(',');
+    }
+
+    this.router.navigate([], {
+      queryParams,
+      replaceUrl: true,
+    });
+
     this.saintsService.getSaints(this.saintFilters).subscribe({
       next: (res) => {
         this.saints = res.items;
@@ -93,6 +132,7 @@ export class SaintsPageComponent implements OnInit {
     event: MatSelectChange
   ) {
     (this.saintFilters as any)[key] = event.value;
+    this.saintFilters.pageNumber = 1; // reset to first page on filter change
     this.updateData();
   }
 
@@ -117,16 +157,17 @@ export class SaintsPageComponent implements OnInit {
     const dialogRef = this.dialog.open(AdvancedSearchSaintsDialogComponent, {
       height: '600px',
       width: '600px',
-      data: this.saintFilters
+      data: this.saintFilters,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
-        this.saintFilters.country = result.country
-        this.saintFilters.century = result.century
-        this.saintFilters.feastMonth = result.feastMonth
+        this.saintFilters.country = result.country;
+        this.saintFilters.century = result.century;
+        this.saintFilters.feastMonth = result.feastMonth;
         this.saintFilters.religiousOrderId = result.order;
         this.saintFilters.tagIds = result.tags.map((t: Tag) => t.id);
+        this.saintFilters.pageNumber = 1; 
         this.updateData();
       }
     });
