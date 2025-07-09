@@ -15,7 +15,7 @@ import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import { CommonModule } from '@angular/common';
 import { CountryCodePipe } from '../../../../shared/pipes/country-code.pipe';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { FooterComponent } from '../../../../shared/components/footer/footer.component';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 
@@ -37,7 +37,7 @@ countries.registerLocale(enLocale);
     MatIconModule,
     CommonModule,
     CountryCodePipe,
-    MatPaginator,
+    MatPaginatorModule,
   ],
   templateUrl: './miracles-page.component.html',
   styleUrl: './miracles-page.component.scss',
@@ -47,30 +47,35 @@ export class MiraclesPageComponent implements OnInit {
   private miraclesService = inject(MiraclesService);
   private route = inject(ActivatedRoute);
 
-  countries: string[] = [];
-  centuries: number[] = Array.from({ length: 21 }, (_, i) => i + 1);
   public miracles: Miracle[] | null = null;
   totalCount: number = 0;
   imageBaseUrl = environment.assetsUrl;
+  countries: string[] = [];
+  centuries: number[] = [];
 
   miracleFilters: MiracleFilters = new MiracleFilters();
 
   ngOnInit() {
     this.route.queryParams.subscribe((params) => {
-      const country = params['country'];
-      const century = params['century'];
-      const search = params['search'];
+      this.miracleFilters = new MiracleFilters();
 
-      if (country) this.miracleFilters.country = country;
-      if (century) this.miracleFilters.century = century;
-      if (search) this.miracleFilters.search = search;
+      if (params['country']) this.miracleFilters.country = params['country'];
+      if (params['century']) this.miracleFilters.century = params['century'];
+      if (params['search']) this.miracleFilters.search = params['search'];
+      if (params['orderBy']) this.miracleFilters.orderBy = params['orderBy'];
+      if (params['pageNumber'])
+        this.miracleFilters.pageNumber = +params['pageNumber'];
+      if (params['pageSize'])
+        this.miracleFilters.pageSize = +params['pageSize'];
+      if (params['tagIds']) {
+        const tagIds = (params['tagIds'] as string)
+          .split(',')
+          .map((id) => Number(id))
+          .filter((id) => !isNaN(id));
+        this.miracleFilters.tagIds = tagIds;
+      }
 
       this.updateData();
-    });
-
-    this.miraclesService.getCountries().subscribe({
-      next: (countries) => (this.countries = countries),
-      error: (err) => console.error(err),
     });
   }
 
@@ -79,6 +84,29 @@ export class MiraclesPageComponent implements OnInit {
   }
 
   private updateData() {
+    const queryParams: any = {};
+
+    if (this.miracleFilters.country)
+      queryParams.country = this.miracleFilters.country;
+    if (this.miracleFilters.century)
+      queryParams.century = this.miracleFilters.century;
+    if (this.miracleFilters.search)
+      queryParams.search = this.miracleFilters.search;
+    if (this.miracleFilters.orderBy)
+      queryParams.orderBy = this.miracleFilters.orderBy;
+    if (this.miracleFilters.pageNumber)
+      queryParams.pageNumber = this.miracleFilters.pageNumber;
+    if (this.miracleFilters.pageSize)
+      queryParams.pageSize = this.miracleFilters.pageSize;
+    if (this.miracleFilters.tagIds && this.miracleFilters.tagIds.length > 0) {
+      queryParams.tagIds = this.miracleFilters.tagIds.join(',');
+    }
+
+    this.router.navigate([], {
+      queryParams,
+      replaceUrl: true,
+    });
+
     this.miraclesService.getMiracles(this.miracleFilters).subscribe({
       next: (res) => {
         this.miracles = res.items;
@@ -93,6 +121,7 @@ export class MiraclesPageComponent implements OnInit {
     event: MatSelectChange
   ) {
     (this.miracleFilters as any)[key] = event.value;
+    this.miracleFilters.pageNumber = 1;
     this.updateData();
   }
 

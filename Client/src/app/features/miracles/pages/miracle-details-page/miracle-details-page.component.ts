@@ -10,8 +10,8 @@ import { marked } from 'marked';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import { CommonModule } from '@angular/common';
 import { CountryCodePipe } from '../../../../shared/pipes/country-code.pipe';
-import { FooterComponent } from '../../../../shared/components/footer/footer.component';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
+import { FooterComponent } from '../../../../shared/components/footer/footer.component';
 countries.registerLocale(enLocale);
 
 @Component({

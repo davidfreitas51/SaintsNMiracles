@@ -1,10 +1,10 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
+import { Observable, switchMap, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Miracle } from '../../features/miracles/interfaces/miracle';
-import { Observable, switchMap, map } from 'rxjs';
-import { NewMiracleDto } from '../../features/miracles/interfaces/new-miracle-dto';
 import { MiracleFilters } from '../../features/miracles/interfaces/miracle-filter';
+import { NewMiracleDto } from '../../features/miracles/interfaces/new-miracle-dto';
 import { MiracleWithMarkdown } from '../../features/miracles/interfaces/miracle-with-markdown';
 
 @Injectable({
@@ -15,13 +15,24 @@ export class MiraclesService {
   public baseUrl = environment.apiUrl;
 
   getMiracles(
-    miracleFilters: MiracleFilters
+    filters: MiracleFilters
   ): Observable<{ items: Miracle[]; totalCount: number }> {
     let params = new HttpParams();
 
-    Object.entries(miracleFilters).forEach(([key, value]) => {
-      if (value !== null && value !== undefined && value !== '') {
-        params = params.set(key, value.toString());
+    Object.entries(filters).forEach(([key, value]) => {
+      if (
+        value !== null &&
+        value !== undefined &&
+        value !== '' &&
+        !(Array.isArray(value) && value.length === 0)
+      ) {
+        if (Array.isArray(value)) {
+          value.forEach((val) => {
+            params = params.append(key, val.toString());
+          });
+        } else {
+          params = params.set(key, value.toString());
+        }
       }
     });
 
@@ -31,8 +42,8 @@ export class MiraclesService {
     );
   }
 
-  public getMiracle(slug: string): Observable<Miracle> {
-    return this.http.get<Miracle>(this.baseUrl + 'miracles/' + slug);
+  public getMiracleBySlug(slug: string): Observable<Miracle> {
+    return this.http.get<Miracle>(`${this.baseUrl}miracles/${slug}`);
   }
 
   public getCountries(): Observable<string[]> {
@@ -47,27 +58,38 @@ export class MiraclesService {
       image: formValue.image,
       description: formValue.description,
       markdownContent: formValue.markdownContent,
+      date: formValue.date || null,
+      locationDetails: formValue.locationDetails || null,
+      saintId: formValue.saintId || null,
+      tagIds: formValue.currentTags || [],
     };
+
     return this.http.post<void>(this.baseUrl + 'miracles', miracleDto);
   }
 
   public deleteMiracle(id: number): Observable<void> {
-    return this.http.delete<void>(this.baseUrl + 'miracles/' + id);
+    return this.http.delete<void>(`${this.baseUrl}miracles/${id}`);
   }
 
   public updateMiracle(id: string, formValue: NewMiracleDto): Observable<void> {
-    return this.http.put<void>(this.baseUrl + 'miracles/' + id, formValue);
+    return this.http.put<void>(`${this.baseUrl}miracles/${id}`, formValue);
   }
 
   public getMiracleWithMarkdown(slug: string): Observable<MiracleWithMarkdown> {
-    return this.getMiracle(slug).pipe(
+    return this.getMiracleBySlug(slug).pipe(
       switchMap((miracle) =>
         this.http
           .get(environment.assetsUrl + miracle.markdownPath, {
             responseType: 'text',
           })
-          .pipe(map((rawMarkdown) => ({ miracle, markdown: rawMarkdown })))
+          .pipe(map((markdown) => ({ miracle, markdown })))
       )
     );
+  }
+
+  public getMarkdownContent(path: string): Observable<string> {
+    return this.http.get(environment.assetsUrl + path, {
+      responseType: 'text',
+    });
   }
 }

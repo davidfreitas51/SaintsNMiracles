@@ -5,4 +5,9 @@ export interface NewMiracleDto {
   image: string;
   description: string;
   markdownContent: string;
+
+  date?: string | null;
+  locationDetails?: string | null;
+  saintId?: number | null;
+  tagIds: number[];
 }

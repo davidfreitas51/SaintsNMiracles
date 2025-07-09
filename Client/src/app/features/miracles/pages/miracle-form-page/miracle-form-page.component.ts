@@ -120,6 +120,7 @@ export class MiracleFormPageComponent implements OnInit, AfterViewInit {
       image: this.form.value.image,
       description: this.form.value.description,
       markdownContent: this.form.value.markdownContent,
+      tagIds: this.form.value.tagIds || [], // adiciona tagIds aqui
     };
 
     if (this.isEditMode && this.miracleId) {
