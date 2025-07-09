@@ -6,7 +6,14 @@
     "Image": "/miracles/miracle-of-the-sun/image.png",
     "Description": "A crowd of over 70,000 witnessed the sun 'dance' in the sky in Fátima, 1917.",
     "MarkdownPath": "/miracles/miracle-of-the-sun/markdown.md",
-    "Slug": "miracle-of-the-sun"
+    "Slug": "miracle-of-the-sun",
+    "Date": "1917-10-13",
+    "LocationDetails": "Fátima",
+    "SaintId": null,
+    "Tags": [
+      { "Name": "Marian", "TagType": "Miracle" },
+      { "Name": "Apparition", "TagType": "Miracle" }
+    ]
   },
   {
     "Title": "The Eucharistic Miracle of Lanciano",
@@ -15,7 +22,11 @@
     "Image": "/miracles/lanciano/image.png",
     "Description": "A consecrated Host visibly turned into flesh and blood during Mass.",
     "MarkdownPath": "/miracles/lanciano/markdown.md",
-    "Slug": "lanciano"
+    "Slug": "lanciano",
+    "Date": null,
+    "LocationDetails": "Lanciano",
+    "SaintId": null,
+    "Tags": [{ "Name": "Eucharistic", "TagType": "Miracle" }]
   },
   {
     "Title": "Healing at Lourdes",
@@ -24,7 +35,14 @@
     "Image": "/miracles/lourdes/image.png",
     "Description": "Thousands have reported miraculous healings at the Marian shrine of Lourdes.",
     "MarkdownPath": "/miracles/lourdes/markdown.md",
-    "Slug": "lourdes"
+    "Slug": "lourdes",
+    "Date": "1858-02-11",
+    "LocationDetails": "Lourdes",
+    "SaintId": null,
+    "Tags": [
+      { "Name": "Healing", "TagType": "Miracle" },
+      { "Name": "Marian", "TagType": "Miracle" }
+    ]
   },
   {
     "Title": "The Miracle of Bolsena",
@@ -33,7 +51,11 @@
     "Image": "/miracles/bolsena/image.png",
     "Description": "A consecrated Host began to bleed during Mass, leading to the Feast of Corpus Christi.",
     "MarkdownPath": "/miracles/bolsena/markdown.md",
-    "Slug": "bolsena"
+    "Slug": "bolsena",
+    "Date": null,
+    "LocationDetails": "Bolsena",
+    "SaintId": null,
+    "Tags": [{ "Name": "Eucharistic", "TagType": "Miracle" }]
   },
   {
     "Title": "Our Lady of Guadalupe",
@@ -42,6 +64,13 @@
     "Image": "/miracles/guadalupe/image.png",
     "Description": "The miraculous image of the Virgin Mary appeared on the tilma of St. Juan Diego.",
     "MarkdownPath": "/miracles/guadalupe/markdown.md",
-    "Slug": "guadalupe"
+    "Slug": "guadalupe",
+    "Date": "1531-12-12",
+    "LocationDetails": "Tepeyac Hill, Mexico City",
+    "SaintId": null,
+    "Tags": [
+      { "Name": "Marian", "TagType": "Miracle" },
+      { "Name": "Apparition", "TagType": "Miracle" }
+    ]
   }
 ]

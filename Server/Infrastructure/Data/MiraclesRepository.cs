@@ -8,7 +8,9 @@ public class MiraclesRepository(DataContext context) : IMiraclesRepository
 {
     public async Task<PagedResult<Miracle>> GetAllAsync(MiracleFilters filters)
     {
-        var query = context.Miracles.AsQueryable();
+        var query = context.Miracles
+            .Include(m => m.Tags)
+            .AsQueryable();
 
         if (!string.IsNullOrWhiteSpace(filters.Country))
         {
@@ -23,10 +25,14 @@ public class MiraclesRepository(DataContext context) : IMiraclesRepository
         if (!string.IsNullOrWhiteSpace(filters.Search))
         {
             var search = filters.Search.ToLower();
-
             query = query.Where(m =>
                 EF.Functions.Like(m.Title.ToLower(), $"%{search}%") ||
                 EF.Functions.Like(m.Description.ToLower(), $"%{search}%"));
+        }
+
+        if (filters.TagIds is { Count: > 0 })
+        {
+            query = query.Where(m => m.Tags.Any(tag => filters.TagIds.Contains(tag.Id)));
         }
 
         query = string.IsNullOrWhiteSpace(filters.OrderBy)
@@ -37,6 +43,8 @@ public class MiraclesRepository(DataContext context) : IMiraclesRepository
                 "title_desc" => query.OrderByDescending(m => m.Title),
                 "century" => query.OrderBy(m => m.Century),
                 "century_desc" => query.OrderByDescending(m => m.Century),
+                "date" => query.OrderBy(m => m.Date),
+                "date_desc" => query.OrderByDescending(m => m.Date),
                 _ => query.OrderBy(m => m.Title)
             };
 
@@ -56,6 +64,20 @@ public class MiraclesRepository(DataContext context) : IMiraclesRepository
         };
     }
 
+    public async Task<Miracle?> GetByIdAsync(int id)
+    {
+        return await context.Miracles
+            .Include(m => m.Tags)
+            .FirstOrDefaultAsync(m => m.Id == id);
+    }
+
+    public async Task<Miracle?> GetBySlugAsync(string slug)
+    {
+        return await context.Miracles
+            .Include(m => m.Tags)
+            .FirstOrDefaultAsync(m => m.Slug == slug);
+    }
+
     public async Task<bool> CreateAsync(Miracle newMiracle)
     {
         await context.Miracles.AddAsync(newMiracle);
@@ -70,7 +92,10 @@ public class MiraclesRepository(DataContext context) : IMiraclesRepository
 
     public async Task DeleteAsync(int id)
     {
-        var miracle = await GetByIdAsync(id);
+        var miracle = await context.Miracles
+            .Include(m => m.Tags)
+            .FirstOrDefaultAsync(m => m.Id == id);
+
         if (miracle is not null)
         {
             context.Miracles.Remove(miracle);
@@ -78,19 +103,12 @@ public class MiraclesRepository(DataContext context) : IMiraclesRepository
         }
     }
 
-    public async Task<Miracle?> GetBySlugAsync(string slug)
-    {
-        return await context.Miracles.FirstOrDefaultAsync(m => m.Slug == slug);
-    }
-
-    public async Task<Miracle?> GetByIdAsync(int id)
-    {
-        return await context.Miracles.FindAsync(id);
-    }
-
     public async Task<IReadOnlyList<string>> GetCountriesAsync()
     {
-        return await context.Miracles.Select(m => m.Country).Distinct().ToListAsync();
+        return await context.Miracles
+            .Select(m => m.Country)
+            .Distinct()
+            .ToListAsync();
     }
 
     public async Task<int> GetTotalMiraclesAsync()

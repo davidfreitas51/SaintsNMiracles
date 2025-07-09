@@ -18,5 +18,11 @@ public class DataContext(DbContextOptions<DataContext> options) : DbContext(opti
             .HasMany(s => s.Tags)
             .WithMany(t => t.Saints)
             .UsingEntity(j => j.ToTable("SaintTags"));
+
+        modelBuilder.Entity<Miracle>()
+            .HasMany(m => m.Tags)
+            .WithMany(t => t.Miracles)
+            .UsingEntity(j => j.ToTable("MiracleTags"));
     }
+
 }

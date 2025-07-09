@@ -8,4 +8,9 @@ public class NewMiracleDto
     public string Image { get; set; } = default!;
     public string Description { get; set; } = default!;
     public string MarkdownContent { get; set; } = default!;
+
+    public DateOnly? Date { get; set; }
+    public string? Location { get; set; }
+    public int? SaintId { get; set; }
+    public List<int> TagIds { get; set; } = [];
 }

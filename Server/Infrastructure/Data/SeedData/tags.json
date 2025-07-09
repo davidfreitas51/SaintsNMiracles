@@ -7,5 +7,15 @@
   { "Name": "Philosopher", "TagType": "Saint" },
   { "Name": "Martyr", "TagType": "Saint" },
   { "Name": "Heroine", "TagType": "Saint" },
-  { "Name": "Stigmatist", "TagType": "Saint" }
+  { "Name": "Stigmatist", "TagType": "Saint" },
+
+  { "Name": "Healing", "TagType": "Miracle" },
+  { "Name": "Eucharistic", "TagType": "Miracle" },
+  { "Name": "Marian", "TagType": "Miracle" },
+  { "Name": "Apparition", "TagType": "Miracle" },
+  { "Name": "Resurrection", "TagType": "Miracle" },
+  { "Name": "Incorruptibility", "TagType": "Miracle" },
+  { "Name": "Bilocation", "TagType": "Miracle" },
+  { "Name": "Exorcism", "TagType": "Miracle" },
+  { "Name": "Levitation", "TagType": "Miracle" }
 ]

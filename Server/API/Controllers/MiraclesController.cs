@@ -1,4 +1,3 @@
-using System.Text.RegularExpressions;
 using Core.DTOs;
 using Core.Interfaces;
 using Core.Models;
@@ -8,7 +7,9 @@ namespace API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class MiraclesController(IMiraclesRepository miraclesRepository, IMiraclesService miraclesService) : ControllerBase
+public class MiraclesController(
+    IMiraclesRepository miraclesRepository,
+    IMiraclesService miraclesService) : ControllerBase
 {
     [HttpGet]
     public async Task<IActionResult> GetAllMiracles([FromQuery] MiracleFilters filters)
@@ -20,81 +21,44 @@ public class MiraclesController(IMiraclesRepository miraclesRepository, IMiracle
     [HttpGet("{id:int}")]
     public async Task<IActionResult> GetById(int id)
     {
-        return Ok(await miraclesRepository.GetByIdAsync(id));
+        var miracle = await miraclesRepository.GetByIdAsync(id);
+        return miracle is null ? NotFound() : Ok(miracle);
     }
 
     [HttpGet("{slug}")]
     public async Task<IActionResult> GetMiracleBySlug(string slug)
     {
-        return Ok(await miraclesRepository.GetBySlugAsync(slug));
+        var miracle = await miraclesRepository.GetBySlugAsync(slug);
+        return miracle is null ? NotFound() : Ok(miracle);
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateMiracle([FromBody] NewMiracleDto newMiracle)
     {
-        var slug = Regex.Replace(newMiracle.Title.ToLower(), @"[^a-z0-9]+", "-").Trim('-');
-
-        var exists = await miraclesRepository.SlugExistsAsync(slug);
-        if (exists)
-        {
-            return Conflict("A miracle with the same title already exists.");
-        }
-
-        var (markdownPath, imagePath) = await miraclesService.SaveFilesAsync(newMiracle, slug);
-
-        var miracle = new Miracle
-        {
-            Title = newMiracle.Title,
-            Country = newMiracle.Country,
-            Century = newMiracle.Century,
-            Image = imagePath ?? "",
-            Description = newMiracle.Description,
-            Slug = slug,
-            MarkdownPath = markdownPath
-        };
-
-        var created = await miraclesRepository.CreateAsync(miracle);
-
-        return created ? Created() : BadRequest();
+        var created = await miraclesService.CreateMiracleAsync(newMiracle);
+        if (!created.HasValue)
+            return Conflict("A miracle with the same name already exists.");
+        return CreatedAtAction(nameof(GetById), new { id = created.Value }, null);
     }
 
     [HttpPut("{id}")]
     public async Task<IActionResult> UpdateMiracle(int id, [FromBody] NewMiracleDto updatedMiracle)
     {
-        var existingMiracle = await miraclesRepository.GetByIdAsync(id);
-        if (existingMiracle == null)
+        var updated = await miraclesService.UpdateMiracleAsync(id, updatedMiracle);
+        if (!updated)
             return NotFound();
-
-        var slug = Regex.Replace(updatedMiracle.Title.ToLower(), @"[^a-z0-9]+", "-").Trim('-');
-
-        var (markdownPath, imagePath) = await miraclesService.UpdateFilesAsync(updatedMiracle, slug);
-
-        existingMiracle.Title = updatedMiracle.Title;
-        existingMiracle.Country = updatedMiracle.Country;
-        existingMiracle.Century = updatedMiracle.Century;
-        existingMiracle.Description = updatedMiracle.Description;
-        existingMiracle.Slug = slug;
-
-        if (!string.IsNullOrWhiteSpace(imagePath))
-            existingMiracle.Image = imagePath;
-
-        if (!string.IsNullOrWhiteSpace(markdownPath))
-            existingMiracle.MarkdownPath = markdownPath;
-
-        var updated = await miraclesRepository.UpdateAsync(existingMiracle);
-        return updated ? NoContent() : BadRequest();
+        return NoContent();
     }
 
     [HttpDelete("{id:int}")]
     public async Task<IActionResult> DeleteMiracle(int id)
     {
-        var miracleToDelete = await miraclesRepository.GetByIdAsync(id);
-        if (miracleToDelete is null)
+        var miracle = await miraclesRepository.GetByIdAsync(id);
+        if (miracle is null)
             return NotFound();
 
-        await miraclesService.DeleteFilesAsync(miracleToDelete.Slug);
+        await miraclesService.DeleteFilesAsync(miracle.Slug);
         await miraclesRepository.DeleteAsync(id);
-
         return Ok();
     }
 
