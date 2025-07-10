@@ -68,19 +68,21 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
   selectedOrder: string = '';
 
   ngOnInit(): void {
-    this.tagsService.getTags(new EntityFilters()).subscribe({
-      next: (res) => {
-        this.tags = res.items;
+    this.tagsService
+      .getTags(new EntityFilters({ tagType: 'Saint' }))
+      .subscribe({
+        next: (res) => {
+          this.tags = res.items;
 
-        if (this.data.tagIds?.length) {
-          const ids = this.data.tagIds.map((t) => t);
-          this.selectedTags = this.tags.filter((tag) => ids.includes(tag.id));
-        }
-      },
-      error: (err) => {
-        console.error('Failed to load tags', err);
-      },
-    });
+          if (this.data.tagIds?.length) {
+            const ids = this.data.tagIds.map((t) => t);
+            this.selectedTags = this.tags.filter((tag) => ids.includes(tag.id));
+          }
+        },
+        error: (err) => {
+          console.error('Failed to load tags', err);
+        },
+      });
 
     this.saintsService.getCountries().subscribe({
       next: (res) => {
@@ -91,14 +93,16 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
       },
     });
 
-    this.religiousOrdersService.getOrders(new EntityFilters()).subscribe({
-      next: (res) => {
-        this.religiousOrders = res.items;
-      },
-      error: (err) => {
-        console.error('Failed to load religious orders', err);
-      },
-    });
+    this.religiousOrdersService
+      .getOrders(new EntityFilters({ tagType: 'Orders' }))
+      .subscribe({
+        next: (res) => {
+          this.religiousOrders = res.items;
+        },
+        error: (err) => {
+          console.error('Failed to load religious orders', err);
+        },
+      });
 
     this.selectedMonth = this.data.feastMonth || '';
     this.selectedOrder = this.data.religiousOrderId || '';

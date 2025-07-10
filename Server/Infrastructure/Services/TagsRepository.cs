@@ -16,6 +16,11 @@ public class TagsRepository(DataContext context) : ITagsRepository
             query = query.Where(t => t.Name.Contains(filters.Search));
         }
 
+        if (!string.IsNullOrWhiteSpace(filters.TagType))
+        {
+            query = query.Where(t => t.TagType.ToString() == filters.TagType);
+        }
+
         var total = await query.CountAsync();
 
         var items = await query
