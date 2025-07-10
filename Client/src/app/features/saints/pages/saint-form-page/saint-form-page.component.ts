@@ -86,7 +86,7 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
   ) {}
 
   ngOnInit(): void {
-    const filter = new EntityFilters();
+    const filter = new EntityFilters({ tagType: 'Saint' });
     filter.pageSize = 9999;
 
     this.tagsService.getTags(filter).subscribe(res => this.tagsList = res.items);

@@ -2,6 +2,7 @@ using System.Reflection;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using Core.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
@@ -9,13 +10,33 @@ public class SeedData
 {
     public static async Task SeedAsync(DataContext context)
     {
-        var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location) ?? throw new InvalidOperationException("Base path is null");
+        var path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)
+                   ?? throw new InvalidOperationException("Base path is null");
 
         var jsonOptions = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
             Converters = { new JsonStringEnumConverter() }
         };
+
+        // Limpa duplicatas com base em Name + TagType (insensitive)
+        var allTags = await context.Tags.ToListAsync();
+
+        var normalizedGroups = allTags
+            .GroupBy(t => new
+            {
+                Name = t.Name.Trim().ToLowerInvariant(),
+                TagType = t.TagType.ToString().Trim().ToLowerInvariant()
+            })
+            .Where(g => g.Count() > 1)
+            .SelectMany(g => g.Skip(1))
+            .ToList();
+
+        if (normalizedGroups.Any())
+        {
+            context.Tags.RemoveRange(normalizedGroups);
+            await context.SaveChangesAsync();
+        }
 
         if (!context.ReligiousOrders.Any())
         {
@@ -29,50 +50,69 @@ public class SeedData
             }
         }
 
-        if (!context.Tags.Any())
-        {
-            var tagsData = await File.ReadAllTextAsync(Path.Combine(path, "Data/SeedData/tags.json"));
-            var tags = JsonSerializer.Deserialize<List<Tag>>(tagsData, jsonOptions);
+        // Adiciona tags únicas
+        var tagsData = await File.ReadAllTextAsync(Path.Combine(path, "Data/SeedData/tags.json"));
+        var tags = JsonSerializer.Deserialize<List<Tag>>(tagsData, jsonOptions);
 
-            if (tags is not null)
+        if (tags is not null)
+        {
+            var existingTags = await context.Tags.ToListAsync();
+
+            var uniqueTags = tags
+                .Where(tag =>
+                    !existingTags.Any(et =>
+                        et.Name.Trim().Equals(tag.Name.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                        et.TagType.ToString().Trim().Equals(tag.TagType.ToString().Trim(), StringComparison.OrdinalIgnoreCase)
+                    )
+                )
+                .ToList();
+
+            if (uniqueTags.Any())
             {
-                context.Tags.AddRange(tags);
+                context.Tags.AddRange(uniqueTags);
                 await context.SaveChangesAsync();
             }
         }
+
+        // Recarrega as tags atuais (únicas)
+        var currentTags = await context.Tags.ToListAsync();
 
         if (!context.Saints.Any())
         {
             var saintsData = await File.ReadAllTextAsync(Path.Combine(path, "Data/SeedData/saints.json"));
             var saints = JsonSerializer.Deserialize<List<Saint>>(saintsData, jsonOptions);
 
-            if (saints is null) return;
-
-            var allOrders = context.ReligiousOrders.ToList();
-            var allTags = context.Tags.ToList();
-
-            foreach (var saint in saints)
+            if (saints is not null)
             {
-                if (saint.ReligiousOrder != null)
-                {
-                    saint.ReligiousOrder = allOrders.FirstOrDefault(o => o.Name == saint.ReligiousOrder.Name);
-                }
+                var allOrders = await context.ReligiousOrders.ToListAsync();
 
-                if (saint.Tags?.Any() == true)
+                foreach (var saint in saints)
                 {
-                    var linkedTags = new List<Tag>();
-                    foreach (var tag in saint.Tags)
+                    if (saint.ReligiousOrder != null)
                     {
-                        var foundTag = allTags.FirstOrDefault(t => t.Name == tag.Name && t.TagType == tag.TagType);
-                        if (foundTag != null)
-                            linkedTags.Add(foundTag);
+                        saint.ReligiousOrder = allOrders.FirstOrDefault(o =>
+                            o.Name.Trim().Equals(saint.ReligiousOrder.Name.Trim(), StringComparison.OrdinalIgnoreCase));
                     }
-                    saint.Tags = linkedTags;
-                }
-            }
 
-            context.Saints.AddRange(saints);
-            await context.SaveChangesAsync();
+                    if (saint.Tags?.Any() == true)
+                    {
+                        var linkedTags = new List<Tag>();
+                        foreach (var tag in saint.Tags)
+                        {
+                            var foundTag = currentTags.FirstOrDefault(t =>
+                                t.Name.Trim().Equals(tag.Name.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                                t.TagType.ToString().Trim().Equals(tag.TagType.ToString().Trim(), StringComparison.OrdinalIgnoreCase));
+
+                            if (foundTag != null)
+                                linkedTags.Add(foundTag);
+                        }
+                        saint.Tags = linkedTags;
+                    }
+                }
+
+                context.Saints.AddRange(saints);
+                await context.SaveChangesAsync();
+            }
         }
 
         if (!context.Miracles.Any())
@@ -82,6 +122,25 @@ public class SeedData
 
             if (miracles is not null)
             {
+                foreach (var miracle in miracles)
+                {
+                    if (miracle.Tags?.Any() == true)
+                    {
+                        var linkedTags = new List<Tag>();
+                        foreach (var tag in miracle.Tags)
+                        {
+                            var foundTag = currentTags.FirstOrDefault(t =>
+                                t.Name.Trim().Equals(tag.Name.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                                t.TagType.ToString().Trim().Equals(tag.TagType.ToString().Trim(), StringComparison.OrdinalIgnoreCase));
+
+                            if (foundTag != null)
+                                linkedTags.Add(foundTag);
+                        }
+
+                        miracle.Tags = linkedTags;
+                    }
+                }
+
                 context.Miracles.AddRange(miracles);
                 await context.SaveChangesAsync();
             }
