@@ -9,7 +9,7 @@ import {
 import { MatSelectModule } from '@angular/material/select';
 import { TagsService } from '../../../../core/services/tags.service';
 import { ReligiousOrdersService } from '../../../../core/services/religious-orders.service';
-import { EntityFilters } from '../../../../interfaces/entity-filters';
+import { EntityFilters, TagType } from '../../../../interfaces/entity-filters';
 import { Tag } from '../../../../interfaces/tag';
 import { ReligiousOrder } from '../../../../interfaces/religious-order';
 import { CommonModule } from '@angular/common';
@@ -68,7 +68,10 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
   selectedOrder: string = '';
 
   ngOnInit(): void {
-    this.tagsService.getTags(new EntityFilters()).subscribe({
+    const filters = new EntityFilters();
+    filters.type = TagType.Saint;
+
+    this.tagsService.getTags(filters).subscribe({
       next: (res) => {
         this.tags = res.items;
 

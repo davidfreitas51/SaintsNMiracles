@@ -1,3 +1,4 @@
+using Core.Enums;
 using Core.Interfaces;
 using Core.Models;
 using Infrastructure.Data;
@@ -16,6 +17,13 @@ public class TagsRepository(DataContext context) : ITagsRepository
             query = query.Where(t => t.Name.Contains(filters.Search));
         }
 
+        if (filters.Type.HasValue)
+        {
+            var tagTypeEnum = (TagType)filters.Type.Value;
+            query = query.Where(t => t.TagType == tagTypeEnum);
+        }
+
+
         var total = await query.CountAsync();
 
         var items = await query
@@ -30,7 +38,8 @@ public class TagsRepository(DataContext context) : ITagsRepository
             TotalCount = total
         };
     }
-    
+
+
     public async Task<List<Tag>> GetByIdsAsync(List<int> ids)
     {
         return await context.Tags.Where(t => ids.Contains(t.Id)).ToListAsync();

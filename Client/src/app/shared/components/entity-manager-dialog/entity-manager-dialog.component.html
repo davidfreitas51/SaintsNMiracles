@@ -14,20 +14,15 @@
           <mat-form-field appearance="fill" class="w-full">
             <mat-label>Search {{ entityName | lowercase }}</mat-label>
             <input
-            matInput
-            type="text"
-            placeholder="Type to search..."
-            [(ngModel)]="filters.search"
-            (keyup.enter)="loadEntities()"
-          />
-          <button
-            mat-icon-button
-            matSuffix
-            (click)="loadEntities()"
-          >
-            <mat-icon>search</mat-icon>
-          </button>
-          
+              matInput
+              type="text"
+              placeholder="Type to search..."
+              [(ngModel)]="filters.search"
+              (keyup.enter)="loadEntities()"
+            />
+            <button mat-icon-button matSuffix (click)="loadEntities()">
+              <mat-icon>search</mat-icon>
+            </button>
           </mat-form-field>
         </div>
       </div>
@@ -150,11 +145,12 @@
 
   <div class="flex justify-end pt-2">
     <mat-paginator
-    [pageSizeOptions]="[5, 10, 20]"
-    [pageSize]="filters.pageSize"
-    showFirstLastButtons
-    (page)="onPageChange($event)"
-  >
-  </mat-paginator>  
+      [length]="paginator?.length || 0"
+      [pageSizeOptions]="[5, 10, 20]"
+      [pageSize]="filters.pageSize"
+      showFirstLastButtons
+      (page)="onPageChange($event)"
+    >
+    </mat-paginator>
   </div>
 </div>

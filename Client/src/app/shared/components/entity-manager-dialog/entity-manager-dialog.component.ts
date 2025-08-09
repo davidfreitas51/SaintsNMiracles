@@ -29,8 +29,8 @@ import { ConfirmDialogService } from '../../../core/services/confirm-dialog.serv
 import { SnackbarService } from '../../../core/services/snackbar.service';
 import { Entity } from '../../../interfaces/entity';
 import { EntityDialogData } from '../../../interfaces/entity-dialog-data';
-import { EntityFilters } from '../../../interfaces/entity-filters';
-
+import { Router } from '@angular/router';
+import { TagType } from '../../../interfaces/entity-filters';
 
 @Component({
   selector: 'app-entity-manager-dialog',
@@ -54,13 +54,19 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
   @ViewChild(MatSort) sort!: MatSort;
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  private router = inject(Router);
   readonly dialog = inject(MatDialog);
   readonly dialogRef = inject(MatDialogRef<EntityManagerDialogComponent>);
   readonly snackbar = inject(SnackbarService);
   readonly data = inject<EntityDialogData>(MAT_DIALOG_DATA);
   dialogService = inject(ConfirmDialogService);
 
-  filters = new EntityFilters();
+  filters: { search: string; page: number; pageSize: number; type?: number } = {
+    search: '',
+    page: 1,
+    pageSize: 10,
+    type: undefined,
+  };
 
   entityName = '';
   dataSource = new MatTableDataSource<Entity>([]);
@@ -72,6 +78,21 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
 
   ngOnInit(): void {
     this.entityName = this.data.entityName;
+
+    const urlSegments = this.router.url.split('/');
+    const lastSegment = urlSegments[urlSegments.length - 1].toLowerCase();
+
+    switch (lastSegment) {
+      case 'saints':
+        this.filters.type = TagType.Saint; 
+        break;
+      case 'miracles':
+        this.filters.type = TagType.Miracle; 
+        break;
+      default:
+        this.filters.type = undefined;
+    }
+
     this.loadEntities();
   }
 
@@ -88,6 +109,9 @@ export class EntityManagerDialogComponent implements OnInit, AfterViewInit {
       .subscribe({
         next: (res) => {
           this.dataSource.data = res.items;
+          if (this.paginator) {
+            this.paginator.length = res.totalCount;
+          }
         },
         error: (err) => {
           console.error(`Failed to load ${this.entityName}s`, err);

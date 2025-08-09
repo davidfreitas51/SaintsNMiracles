@@ -79,12 +79,29 @@ public class SeedData
         {
             var miraclesData = await File.ReadAllTextAsync(Path.Combine(path, "Data/SeedData/miracles.json"));
             var miracles = JsonSerializer.Deserialize<List<Miracle>>(miraclesData, jsonOptions);
-
             if (miracles is not null)
             {
+                var allTags = context.Tags.ToList();
+
+                foreach (var miracle in miracles)
+                {
+                    if (miracle.Tags?.Any() == true)
+                    {
+                        var linkedTags = new List<Tag>();
+                        foreach (var tag in miracle.Tags)
+                        {
+                            var foundTag = allTags.FirstOrDefault(t => t.Name == tag.Name && t.TagType == tag.TagType);
+                            if (foundTag != null)
+                                linkedTags.Add(foundTag);
+                        }
+                        miracle.Tags = linkedTags;
+                    }
+                }
+
                 context.Miracles.AddRange(miracles);
                 await context.SaveChangesAsync();
             }
+
         }
     }
 }
