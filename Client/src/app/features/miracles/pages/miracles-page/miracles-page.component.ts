@@ -18,6 +18,9 @@ import { CountryCodePipe } from '../../../../shared/pipes/country-code.pipe';
 import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { FooterComponent } from '../../../../shared/components/footer/footer.component';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
+import { MatDialog } from '@angular/material/dialog';
+import { AdvancedSearchMiraclesDialogComponent } from '../../components/advanced-search-miracles-dialog/advanced-search-miracles-dialog.component';
+import { Tag } from '../../../../interfaces/tag';
 
 countries.registerLocale(enLocale);
 
@@ -46,6 +49,7 @@ export class MiraclesPageComponent implements OnInit {
   private router = inject(Router);
   private miraclesService = inject(MiraclesService);
   private route = inject(ActivatedRoute);
+  private dialog = inject(MatDialog)
 
   public miracles: Miracle[] | null = null;
   totalCount: number = 0;
@@ -140,5 +144,23 @@ export class MiraclesPageComponent implements OnInit {
     this.miracleFilters.pageNumber = event.pageIndex + 1;
     this.miracleFilters.pageSize = event.pageSize;
     this.updateData();
+  }
+
+  handleAdvancedSearch() {
+    const dialogRef = this.dialog.open(AdvancedSearchMiraclesDialogComponent, {
+      height: '600px',
+      width: '600px',
+      data: this.miracleFilters,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.miracleFilters.country = result.country;
+        this.miracleFilters.century = result.century;
+        this.miracleFilters.tagIds = result.tags.map((t: Tag) => t.id);
+        this.miracleFilters.pageNumber = 1;
+        this.updateData();
+      }
+    });
   }
 }

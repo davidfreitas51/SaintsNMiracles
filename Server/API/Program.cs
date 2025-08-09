@@ -1,7 +1,5 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using Core.Interfaces;
-using Core.Models;
 using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;

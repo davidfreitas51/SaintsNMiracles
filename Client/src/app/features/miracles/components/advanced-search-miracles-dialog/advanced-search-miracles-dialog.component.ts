@@ -7,20 +7,20 @@ import {
   MatDialogRef,
 } from '@angular/material/dialog';
 import { MatSelectModule } from '@angular/material/select';
-import { TagsService } from '../../../../core/services/tags.service';
-import { ReligiousOrdersService } from '../../../../core/services/religious-orders.service';
-import { EntityFilters, TagType } from '../../../../interfaces/entity-filters';
-import { Tag } from '../../../../interfaces/tag';
-import { ReligiousOrder } from '../../../../interfaces/religious-order';
 import { CommonModule } from '@angular/common';
 import { RomanPipe } from '../../../../shared/pipes/roman.pipe';
+import { TagsService } from '../../../../core/services/tags.service';
 import { SaintsService } from '../../../../core/services/saints.service';
-import { SaintFilters } from '../../interfaces/saint-filter';
+import { EntityFilters } from '../../../../interfaces/entity-filters';
+import { Tag } from '../../../../interfaces/tag';
+import { MiracleFilters } from '../../interfaces/miracle-filter';
+import { Saint } from '../../../saints/interfaces/saint';
+import { MiraclesService } from '../../../../core/services/miracles.service';
 
 @Component({
-  selector: 'app-advanced-search-saints-dialog',
-  templateUrl: './advanced-search-saints-dialog.component.html',
-  styleUrl: './advanced-search-saints-dialog.component.scss',
+  selector: 'app-advanced-search-miracles-dialog',
+  templateUrl: './advanced-search-miracles-dialog.component.html',
+  styleUrl: './advanced-search-miracles-dialog.component.scss',
   standalone: true,
   imports: [
     MatDialogModule,
@@ -31,14 +31,14 @@ import { SaintFilters } from '../../interfaces/saint-filter';
     RomanPipe,
   ],
 })
-export class AdvancedSearchSaintsDialogComponent implements OnInit {
+export class AdvancedSearchMiraclesDialogComponent implements OnInit {
   readonly dialogRef = inject(
-    MatDialogRef<AdvancedSearchSaintsDialogComponent>
+    MatDialogRef<AdvancedSearchMiraclesDialogComponent>
   );
   readonly tagsService = inject(TagsService);
-  readonly religiousOrdersService = inject(ReligiousOrdersService);
   readonly saintsService = inject(SaintsService);
-  readonly data = inject(MAT_DIALOG_DATA) as SaintFilters;
+  readonly miraclesService = inject(MiraclesService)
+  readonly data = inject(MAT_DIALOG_DATA) as MiracleFilters;
 
   months = [
     { value: '1', label: 'January' },
@@ -56,7 +56,7 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
   ];
 
   tags: Tag[] = [];
-  religiousOrders: ReligiousOrder[] = [];
+  saints: Saint[] = [];
 
   countries: string[] = [];
   centuries: number[] = Array.from({ length: 21 }, (_, i) => i + 1);
@@ -65,15 +65,14 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
   selectedMonth: string = '';
   selectedCentury: string = '';
   selectedCountry: string = '';
-  selectedOrder: string = '';
+  selectedSaintId: string = '';
 
   ngOnInit(): void {
-    const filters = new EntityFilters();
-    filters.type = TagType.Saint;
-
-    this.tagsService.getTags(filters).subscribe({
-      next: (res) => {
-        this.tags = res.items;
+    this.tagsService
+      .getTags(new EntityFilters({ tagType: 'Miracle' }))
+      .subscribe({
+        next: (res) => {
+          this.tags = res.items;
 
           if (this.data.tagIds?.length) {
             const ids = this.data.tagIds.map((t) => t);
@@ -85,7 +84,7 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
         },
       });
 
-    this.saintsService.getCountries().subscribe({
+    this.miraclesService.getCountries().subscribe({
       next: (res) => {
         this.countries = res;
       },
@@ -94,20 +93,8 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
       },
     });
 
-    this.religiousOrdersService
-      .getOrders(new EntityFilters({ tagType: 'Orders' }))
-      .subscribe({
-        next: (res) => {
-          this.religiousOrders = res.items;
-        },
-        error: (err) => {
-          console.error('Failed to load religious orders', err);
-        },
-      });
 
-    this.selectedMonth = this.data.feastMonth || '';
-    this.selectedOrder = this.data.religiousOrderId || '';
-    this.selectedCentury = this.data.century || '';
+    this.selectedCentury = this.data.century?.toString() || '';
     this.selectedCountry = this.data.country || '';
   }
 
@@ -125,8 +112,8 @@ export class AdvancedSearchSaintsDialogComponent implements OnInit {
     this.dialogRef.close({
       century: this.selectedCentury,
       country: this.selectedCountry,
-      feastMonth: this.selectedMonth,
-      order: this.selectedOrder,
+      dateMonth: this.selectedMonth,
+      saintId: this.selectedSaintId,
       tags: this.selectedTags,
     });
   }
