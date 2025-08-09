@@ -121,7 +121,7 @@ public class SeedData
             var miracles = JsonSerializer.Deserialize<List<Miracle>>(miraclesData, jsonOptions);
             if (miracles is not null)
             {
-                var allTags = context.Tags.ToList();
+                var allTagsForMiracles = await context.Tags.ToListAsync();
 
                 foreach (var miracle in miracles)
                 {
@@ -130,7 +130,9 @@ public class SeedData
                         var linkedTags = new List<Tag>();
                         foreach (var tag in miracle.Tags)
                         {
-                            var foundTag = allTags.FirstOrDefault(t => t.Name == tag.Name && t.TagType == tag.TagType);
+                            var foundTag = allTagsForMiracles.FirstOrDefault(t =>
+                                t.Name.Trim().Equals(tag.Name.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                                t.TagType.ToString().Trim().Equals(tag.TagType.ToString().Trim(), StringComparison.OrdinalIgnoreCase));
                             if (foundTag != null)
                                 linkedTags.Add(foundTag);
                         }
