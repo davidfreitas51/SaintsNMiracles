@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
 import { RomanPipe } from '../../../../shared/pipes/roman.pipe';
 import { TagsService } from '../../../../core/services/tags.service';
 import { SaintsService } from '../../../../core/services/saints.service';
-import { EntityFilters } from '../../../../interfaces/entity-filters';
+import { EntityFilters, TagType } from '../../../../interfaces/entity-filters';
 import { Tag } from '../../../../interfaces/tag';
 import { MiracleFilters } from '../../interfaces/miracle-filter';
 import { Saint } from '../../../saints/interfaces/saint';
@@ -37,23 +37,8 @@ export class AdvancedSearchMiraclesDialogComponent implements OnInit {
   );
   readonly tagsService = inject(TagsService);
   readonly saintsService = inject(SaintsService);
-  readonly miraclesService = inject(MiraclesService)
+  readonly miraclesService = inject(MiraclesService);
   readonly data = inject(MAT_DIALOG_DATA) as MiracleFilters;
-
-  months = [
-    { value: '1', label: 'January' },
-    { value: '2', label: 'February' },
-    { value: '3', label: 'March' },
-    { value: '4', label: 'April' },
-    { value: '5', label: 'May' },
-    { value: '6', label: 'June' },
-    { value: '7', label: 'July' },
-    { value: '8', label: 'August' },
-    { value: '9', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' },
-  ];
 
   tags: Tag[] = [];
   saints: Saint[] = [];
@@ -62,14 +47,12 @@ export class AdvancedSearchMiraclesDialogComponent implements OnInit {
   centuries: number[] = Array.from({ length: 21 }, (_, i) => i + 1);
 
   selectedTags: Tag[] = [];
-  selectedMonth: string = '';
-  selectedCentury: string = '';
+  selectedCentury: number | '' = '';
   selectedCountry: string = '';
-  selectedSaintId: string = '';
 
   ngOnInit(): void {
     this.tagsService
-      .getTags(new EntityFilters({ tagType: 'Miracle' }))
+      .getTags(new EntityFilters({ type: TagType.Miracle }))
       .subscribe({
         next: (res) => {
           this.tags = res.items;
@@ -93,8 +76,7 @@ export class AdvancedSearchMiraclesDialogComponent implements OnInit {
       },
     });
 
-
-    this.selectedCentury = this.data.century?.toString() || '';
+    this.selectedCentury = this.data.century ? Number(this.data.century) : '';
     this.selectedCountry = this.data.country || '';
   }
 
@@ -112,8 +94,6 @@ export class AdvancedSearchMiraclesDialogComponent implements OnInit {
     this.dialogRef.close({
       century: this.selectedCentury,
       country: this.selectedCountry,
-      dateMonth: this.selectedMonth,
-      saintId: this.selectedSaintId,
       tags: this.selectedTags,
     });
   }

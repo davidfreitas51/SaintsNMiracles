@@ -15,7 +15,7 @@ import countries from 'i18n-iso-countries';
 import enLocale from 'i18n-iso-countries/langs/en.json';
 import { CommonModule } from '@angular/common';
 import { CountryCodePipe } from '../../../../shared/pipes/country-code.pipe';
-import { MatPaginator, MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { FooterComponent } from '../../../../shared/components/footer/footer.component';
 import { HeaderComponent } from '../../../../shared/components/header/header.component';
 import { MatDialog } from '@angular/material/dialog';
@@ -49,7 +49,7 @@ export class MiraclesPageComponent implements OnInit {
   private router = inject(Router);
   private miraclesService = inject(MiraclesService);
   private route = inject(ActivatedRoute);
-  private dialog = inject(MatDialog)
+  private dialog = inject(MatDialog);
 
   public miracles: Miracle[] | null = null;
   totalCount: number = 0;
@@ -120,10 +120,7 @@ export class MiraclesPageComponent implements OnInit {
     });
   }
 
-  handleFilterChange(
-    key: keyof typeof this.miracleFilters,
-    event: MatSelectChange
-  ) {
+  handleFilterChange(key: keyof MiracleFilters, event: MatSelectChange) {
     (this.miracleFilters as any)[key] = event.value;
     this.miracleFilters.pageNumber = 1;
     this.updateData();
@@ -134,7 +131,6 @@ export class MiraclesPageComponent implements OnInit {
     this.miracleFilters.search = query;
     this.updateData();
   }
-
   clearFilters() {
     this.miracleFilters = new MiracleFilters();
     this.updateData();
@@ -150,13 +146,15 @@ export class MiraclesPageComponent implements OnInit {
     const dialogRef = this.dialog.open(AdvancedSearchMiraclesDialogComponent, {
       height: '600px',
       width: '600px',
-      data: this.miracleFilters,
+      data: this.miracleFilters, 
     });
 
     dialogRef.afterClosed().subscribe((result) => {
       if (result) {
         this.miracleFilters.country = result.country;
-        this.miracleFilters.century = result.century;
+        this.miracleFilters.century = result.century
+          ? Number(result.century)
+          : '';
         this.miracleFilters.tagIds = result.tags.map((t: Tag) => t.id);
         this.miracleFilters.pageNumber = 1;
         this.updateData();
