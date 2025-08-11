@@ -38,7 +38,6 @@ public class MiraclesService(
             Date = newMiracle.Date,
             LocationDetails = newMiracle.Location,
             Tags = tags,
-            Saint = saint
         };
 
         var created = await miraclesRepository.CreateAsync(miracle);
@@ -67,11 +66,6 @@ public class MiraclesService(
 
         if (!string.IsNullOrWhiteSpace(markdownPath))
             existingMiracle.MarkdownPath = markdownPath;
-
-        if (updatedMiracle.SaintId.HasValue)
-            existingMiracle.Saint = await saintsRepository.GetByIdAsync(updatedMiracle.SaintId.Value);
-        else
-            existingMiracle.Saint = null;
 
         if (updatedMiracle.TagIds != null && updatedMiracle.TagIds.Any())
             existingMiracle.Tags = await tagsRepository.GetByIdsAsync(updatedMiracle.TagIds);

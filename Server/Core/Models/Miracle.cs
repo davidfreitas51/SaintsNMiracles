@@ -14,8 +14,5 @@ public class Miracle
     public DateOnly? Date { get; set; }
     public string? LocationDetails { get; set; }
 
-    public int? SaintId { get; set; }
-    public Saint? Saint { get; set; }
-
     public List<Tag> Tags { get; set; } = [];
 }

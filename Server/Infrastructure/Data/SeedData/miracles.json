@@ -9,7 +9,6 @@
     "Slug": "miracle-of-the-sun",
     "Date": "1917-10-13",
     "LocationDetails": "Fátima",
-    "SaintId": null,
     "Tags": [
       { "Name": "Marian", "TagType": "Miracle" },
       { "Name": "Apparition", "TagType": "Miracle" }
@@ -25,7 +24,6 @@
     "Slug": "lanciano",
     "Date": null,
     "LocationDetails": "Lanciano",
-    "SaintId": null,
     "Tags": [{ "Name": "Eucharistic", "TagType": "Miracle" }]
   },
   {
@@ -38,7 +36,6 @@
     "Slug": "lourdes",
     "Date": "1858-02-11",
     "LocationDetails": "Lourdes",
-    "SaintId": null,
     "Tags": [
       { "Name": "Healing", "TagType": "Miracle" },
       { "Name": "Marian", "TagType": "Miracle" }
@@ -54,7 +51,6 @@
     "Slug": "bolsena",
     "Date": null,
     "LocationDetails": "Bolsena",
-    "SaintId": null,
     "Tags": [{ "Name": "Eucharistic", "TagType": "Miracle" }]
   },
   {
@@ -67,7 +63,6 @@
     "Slug": "guadalupe",
     "Date": "1531-12-12",
     "LocationDetails": "Tepeyac Hill, Mexico City",
-    "SaintId": null,
     "Tags": [
       { "Name": "Marian", "TagType": "Miracle" },
       { "Name": "Apparition", "TagType": "Miracle" }
