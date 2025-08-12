@@ -169,3 +169,22 @@ html {
   scroll-behavior: smooth;
   overflow-y: scroll;
 }
+
+.prose ul {
+  list-style-type: disc;
+  padding-left: 1.25rem; 
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose ol {
+  list-style-type: decimal;
+  padding-left: 1.25rem;
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose li {
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
+}
