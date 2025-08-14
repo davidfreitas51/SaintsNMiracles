@@ -52,6 +52,7 @@ export class MiraclesService {
   }
 
   public createMiracle(formValue: any): Observable<void> {
+    console.log(formValue.locationDetails)
     const miracleDto: NewMiracleDto = {
       title: formValue.title,
       country: formValue.country,
@@ -60,12 +61,12 @@ export class MiraclesService {
       description: formValue.description,
       markdownContent: formValue.markdownContent,
       date: formValue.date || null,
-      location: formValue.locationDetails || null,
+      locationDetails: formValue.locationDetails || null,
       saintId: formValue.saintId || null,
       tagIds: formValue.tagIds || [],
     };
 
-    console.log('Tags:', miracleDto.tagIds);
+    console.log('location: ', miracleDto.locationDetails);
     return this.http.post<void>(this.baseUrl + 'miracles', miracleDto);
   }
 

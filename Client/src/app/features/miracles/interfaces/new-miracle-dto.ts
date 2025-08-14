@@ -7,7 +7,7 @@ export interface NewMiracleDto {
   markdownContent: string;
 
   date?: string | null;
-  location?: string | null;
+  locationDetails?: string | null;
   saintId?: number | null;
   tagIds: number[];
 }
