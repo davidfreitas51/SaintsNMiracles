@@ -12,7 +12,9 @@
           for="imageInput"
           class="block aspect-square w-full border-2 border-dashed rounded grid place-items-center text-gray-500 cursor-pointer hover:border-blue-400 hover:text-blue-600 transition overflow-hidden"
         >
-          <ng-container *ngIf="form.get('image')?.value; else croppedOrPlaceholder">
+          <ng-container
+            *ngIf="form.get('image')?.value; else croppedOrPlaceholder"
+          >
             <img
               [src]="getImagePreview()"
               alt="Selected image"
@@ -101,6 +103,42 @@
             (input)="autoResize($event)"
           ></textarea>
         </label>
+
+        <div class="block">
+          <p class="block font-semibold">Tags (max 5)</p>
+          <div class="flex flex-wrap items-center">
+            @for (tag of currentTags; track $index) {
+            <button
+              type="button"
+              (click)="removeTag(tag)"
+              class="text-xs font-medium rounded-full bg-green-600 text-white shadow-sm px-3 py-1 cursor-pointer transition hover:bg-red-600 hover:text-white focus:outline-none mr-2 mb-2"
+              aria-label="Remove tag"
+            >
+              {{ tag }}
+            </button>
+            } @if(currentTags.length < 5){
+            <button
+              [matMenuTriggerFor]="tagsMenu"
+              type="button"
+              class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 text-gray-700 hover:bg-gray-400 transition mr-2 mb-2"
+              aria-label="Add tag"
+            >
+              +
+            </button>
+            }
+
+            <mat-menu #tagsMenu="matMenu" class="w-48">
+              <button
+                mat-menu-item
+                *ngFor="let tag of tagsList"
+                [disabled]="currentTags.includes(tag.name)"
+                (click)="addTag(tag.name)"
+              >
+                {{ tag.name }}
+              </button>
+            </mat-menu>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -131,9 +169,9 @@
         class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded inline-flex items-center gap-2"
       >
         <mat-icon class="text-white">
-          {{ isEditMode ? 'edit' : 'add' }}
+          {{ isEditMode ? "edit" : "add" }}
         </mat-icon>
-        {{ isEditMode ? 'Update Miracle' : 'Create Miracle' }}
+        {{ isEditMode ? "Update Miracle" : "Create Miracle" }}
       </button>
     </div>
   </form>

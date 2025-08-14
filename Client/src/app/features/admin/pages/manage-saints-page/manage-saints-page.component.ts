@@ -9,7 +9,7 @@ import { SaintsService } from '../../../../core/services/saints.service';
 import { MatDialog } from '@angular/material/dialog';
 import { TagsService } from '../../../../core/services/tags.service';
 import { ReligiousOrdersService } from '../../../../core/services/religious-orders.service';
-import { EntityFilters } from '../../../../interfaces/entity-filters';
+import { EntityFilters, TagType } from '../../../../interfaces/entity-filters';
 import { EntityManagerDialogComponent } from '../../../../shared/components/entity-manager-dialog/entity-manager-dialog.component';
 
 @Component({
@@ -54,7 +54,7 @@ export class ManageSaintsPageComponent {
       data: {
         entityName: 'Tag',
         getAllFn: (filters: EntityFilters) => this.tagsService.getTags(filters),
-        createFn: (name: string) => this.tagsService.createTag(name),
+        createFn: (name: string) => this.tagsService.createTag(name, TagType.Saint),
         updateFn: (entity: any) => this.tagsService.updateTag(entity),
         deleteFn: (id: number) => this.tagsService.deleteTag(id),
       },

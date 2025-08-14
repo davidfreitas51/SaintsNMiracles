@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { environment } from '../../../environments/environment';
 import { Observable } from 'rxjs';
 import { Tag } from '../../interfaces/tag';
-import { EntityFilters } from '../../interfaces/entity-filters';
+import { EntityFilters, TagType } from '../../interfaces/entity-filters';
 import { NewTagDto } from '../../interfaces/new-tag-dto';
 
 @Injectable({
@@ -33,10 +33,10 @@ export class TagsService {
     return this.http.get<Tag>(`${this.baseUrl}/${id}`);
   }
 
-  createTag(name: string): Observable<void> {
+  createTag(name: string, tagType: TagType): Observable<void> {
     return this.http.post<void>(this.baseUrl, {
       name,
-      tagType: 0,
+      tagType: tagType,
     });
   }
 

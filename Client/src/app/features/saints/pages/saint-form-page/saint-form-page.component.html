@@ -112,27 +112,25 @@
           <p class="block font-semibold">Tags (max 5)</p>
           <div class="flex flex-wrap items-center">
             @for (tag of currentTags; track $index) {
-              <button
-                type="button"
-                (click)="removeTag(tag)"
-                class="text-xs font-medium rounded-full bg-green-600 text-white shadow-sm px-3 py-1 cursor-pointer transition hover:bg-red-600 hover:text-white focus:outline-none mr-2 mb-2"
-                aria-label="Remove tag"
-              >
-                {{ tag }}
-              </button>
+            <button
+              type="button"
+              (click)="removeTag(tag)"
+              class="text-xs font-medium rounded-full bg-green-600 text-white shadow-sm px-3 py-1 cursor-pointer transition hover:bg-red-600 hover:text-white focus:outline-none mr-2 mb-2"
+              aria-label="Remove tag"
+            >
+              {{ tag }}
+            </button>
+            } @if(currentTags.length < 5){
+            <button
+              [matMenuTriggerFor]="tagsMenu"
+              type="button"
+              class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 text-gray-700 hover:bg-gray-400 transition mr-2 mb-2"
+              aria-label="Add tag"
+            >
+              +
+            </button>
             }
-        
-            @if(currentTags.length < 5){
-              <button
-                [matMenuTriggerFor]="tagsMenu"
-                type="button"
-                class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 text-gray-700 hover:bg-gray-400 transition mr-2 mb-2"
-                aria-label="Add tag"
-              >
-                +
-              </button>
-            }
-        
+
             <mat-menu #tagsMenu="matMenu" class="w-48">
               <button
                 mat-menu-item
@@ -145,7 +143,6 @@
             </mat-menu>
           </div>
         </div>
-        
       </div>
     </div>
 

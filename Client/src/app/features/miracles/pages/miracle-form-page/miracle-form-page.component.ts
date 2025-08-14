@@ -22,12 +22,16 @@ import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatSelectModule } from '@angular/material/select';
 import { MiraclesService } from '../../../../core/services/miracles.service';
 import { SnackbarService } from '../../../../core/services/snackbar.service';
+import { TagsService } from '../../../../core/services/tags.service';
 import { RomanPipe } from '../../../../shared/pipes/roman.pipe';
 import { environment } from '../../../../../environments/environment';
 import { CommonModule } from '@angular/common';
 import { CountryCodePipe } from '../../../../shared/pipes/country-code.pipe';
 import { MatDialog } from '@angular/material/dialog';
 import { CropDialogComponent } from '../../../../shared/components/crop-dialog/crop-dialog.component';
+import { Tag } from '../../../../interfaces/tag';
+import { MatMenuModule } from '@angular/material/menu';
+import { EntityFilters, TagType } from '../../../../interfaces/entity-filters';
 
 @Component({
   selector: 'app-miracle-form-page',
@@ -35,6 +39,7 @@ import { CropDialogComponent } from '../../../../shared/components/crop-dialog/c
   styleUrls: ['./miracle-form-page.component.scss'],
   standalone: true,
   imports: [
+    MatMenuModule,
     ReactiveFormsModule,
     MatIconModule,
     MatButtonModule,
@@ -50,10 +55,14 @@ import { CropDialogComponent } from '../../../../shared/components/crop-dialog/c
 export class MiracleFormPageComponent implements OnInit, AfterViewInit {
   private miraclesService = inject(MiraclesService);
   private snackBarService = inject(SnackbarService);
+  private tagsService = inject(TagsService);
   private dialog = inject(MatDialog);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private cdr = inject(ChangeDetectorRef);
+
+  tagsList: Tag[] = [];
+  currentTags: string[] = [];
 
   @ViewChild('descriptionTextarea')
   descriptionTextarea!: ElementRef<HTMLTextAreaElement>;
@@ -68,6 +77,13 @@ export class MiracleFormPageComponent implements OnInit, AfterViewInit {
   centuries = Array.from({ length: 20 }, (_, i) => i + 1);
 
   ngOnInit(): void {
+    const filter = new EntityFilters({ type: TagType.Miracle });
+    filter.pageSize = 9999;
+    this.tagsService.getTags(filter).subscribe((res) => {
+      this.tagsList = res.items;
+      this.cdr.detectChanges();
+    });
+
     this.form = new FormBuilder().group({
       title: ['', Validators.required],
       country: ['', Validators.required],
@@ -84,6 +100,7 @@ export class MiracleFormPageComponent implements OnInit, AfterViewInit {
       if (this.isEditMode && this.miracleId) {
         this.miraclesService.getMiracleWithMarkdown(this.miracleId).subscribe({
           next: ({ miracle, markdown }) => {
+            this.currentTags = miracle.tags.map((tag) => tag.name);
             this.form.patchValue({
               title: miracle.title,
               country: miracle.country,
@@ -113,6 +130,11 @@ export class MiracleFormPageComponent implements OnInit, AfterViewInit {
   onSubmit() {
     if (this.imageLoading) return;
 
+    const tagIds: number[] = this.currentTags
+      .map((tagName) => this.tagsList.find((t) => t.name === tagName))
+      .filter((t): t is Tag => !!t)
+      .map((t) => t.id);
+
     const miracleData = {
       title: this.form.value.title,
       country: this.form.value.country,
@@ -120,7 +142,7 @@ export class MiracleFormPageComponent implements OnInit, AfterViewInit {
       image: this.form.value.image,
       description: this.form.value.description,
       markdownContent: this.form.value.markdownContent,
-      tagIds: this.form.value.tagIds || [], // adiciona tagIds aqui
+      tagIds,
     };
 
     if (this.isEditMode && this.miracleId) {
@@ -194,5 +216,20 @@ export class MiracleFormPageComponent implements OnInit, AfterViewInit {
     return img.startsWith('data:image') || img.startsWith('http')
       ? img
       : this.imageBaseUrl + img;
+  }
+
+  addTag(tag: string) {
+    const trimmed = tag.trim();
+    if (
+      trimmed &&
+      this.currentTags.length < 5 &&
+      !this.currentTags.includes(trimmed)
+    ) {
+      this.currentTags.push(trimmed);
+    }
+  }
+
+  removeTag(tag: string) {
+    this.currentTags = this.currentTags.filter((t) => t !== tag);
   }
 }

@@ -1,3 +1,5 @@
+import { Tag } from "../../../interfaces/tag";
+
 export interface Miracle {
   id: number;
   title: string;
@@ -7,4 +9,5 @@ export interface Miracle {
   description: string;
   markdownPath: string;
   slug: string;
+  tags: Tag[];
 }

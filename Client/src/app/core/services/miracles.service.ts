@@ -6,6 +6,7 @@ import { Miracle } from '../../features/miracles/interfaces/miracle';
 import { MiracleFilters } from '../../features/miracles/interfaces/miracle-filter';
 import { NewMiracleDto } from '../../features/miracles/interfaces/new-miracle-dto';
 import { MiracleWithMarkdown } from '../../features/miracles/interfaces/miracle-with-markdown';
+import { Tag } from '../../interfaces/tag';
 
 @Injectable({
   providedIn: 'root',
@@ -61,9 +62,10 @@ export class MiraclesService {
       date: formValue.date || null,
       locationDetails: formValue.locationDetails || null,
       saintId: formValue.saintId || null,
-      tagIds: formValue.currentTags || [],
+      tagIds: formValue.tagIds || [],
     };
 
+    console.log('Tags:', miracleDto.tagIds);
     return this.http.post<void>(this.baseUrl + 'miracles', miracleDto);
   }
 
