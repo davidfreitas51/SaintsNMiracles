@@ -22,10 +22,6 @@ public class MiraclesService(
         if (newMiracle.TagIds != null && newMiracle.TagIds.Any())
             tags = await tagsRepository.GetByIdsAsync(newMiracle.TagIds);
 
-        Saint? saint = null;
-        if (newMiracle.SaintId.HasValue)
-            saint = await saintsRepository.GetByIdAsync(newMiracle.SaintId.Value);
-
         var miracle = new Miracle
         {
             Title = newMiracle.Title,
@@ -36,7 +32,7 @@ public class MiraclesService(
             MarkdownPath = markdownPath,
             Slug = slug,
             Date = newMiracle.Date,
-            LocationDetails = newMiracle.Location,
+            LocationDetails = newMiracle.LocationDetails,
             Tags = tags,
         };
 
@@ -59,7 +55,7 @@ public class MiraclesService(
         existingMiracle.Description = updatedMiracle.Description;
         existingMiracle.Slug = slug;
         existingMiracle.Date = updatedMiracle.Date;
-        existingMiracle.LocationDetails = updatedMiracle.Location;
+        existingMiracle.LocationDetails = updatedMiracle.LocationDetails;
 
         if (!string.IsNullOrWhiteSpace(imagePath))
             existingMiracle.Image = imagePath;

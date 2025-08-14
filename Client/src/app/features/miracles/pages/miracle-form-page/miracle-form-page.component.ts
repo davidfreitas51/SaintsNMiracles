@@ -93,6 +93,8 @@ export class MiracleFormPageComponent implements OnInit, AfterViewInit {
       image: ['', Validators.required],
       description: ['', Validators.required],
       markdownContent: ['', Validators.required],
+      date: [''],
+      location: [''],
     });
 
     this.route.paramMap.subscribe((params) => {
@@ -106,10 +108,12 @@ export class MiracleFormPageComponent implements OnInit, AfterViewInit {
             this.form.patchValue({
               title: miracle.title,
               country: miracle.country,
-              century: miracle.century.toString(),
+              century: miracle.century,
               image: miracle.image,
               description: miracle.description,
               markdownContent: markdown,
+              date: miracle.date,
+              location: miracle.locationDetails, 
             });
             setTimeout(() => this.autoResizeOnLoad());
             this.cdr.detectChanges();
@@ -145,6 +149,8 @@ export class MiracleFormPageComponent implements OnInit, AfterViewInit {
       description: this.form.value.description,
       markdownContent: this.form.value.markdownContent,
       tagIds,
+      date: this.form.value.date,
+      locationDetails: this.form.value.location,
     };
 
     if (this.isEditMode && this.miracleId) {
@@ -235,9 +241,6 @@ export class MiracleFormPageComponent implements OnInit, AfterViewInit {
     this.currentTags = this.currentTags.filter((t) => t !== tag);
   }
 
-  /**
-   * Inserir markdown no editor (bold, italic, h2, list, ordered list, divider)
-   */
   insertMarkdown(start: string, end: string = ''): void {
     const control = this.form.get('markdownContent');
     if (!control) return;

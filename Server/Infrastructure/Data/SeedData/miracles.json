@@ -7,7 +7,7 @@
     "Description": "A crowd of over 70,000 witnessed the sun 'dance' in the sky in Fátima, 1917.",
     "MarkdownPath": "/miracles/miracle-of-the-sun/markdown.md",
     "Slug": "miracle-of-the-sun",
-    "Date": "1917-10-13",
+    "Date": "October 13, 1917",
     "LocationDetails": "Fátima",
     "Tags": [
       { "Name": "Marian", "TagType": "Miracle" },
@@ -22,7 +22,7 @@
     "Description": "A consecrated Host visibly turned into flesh and blood during Mass.",
     "MarkdownPath": "/miracles/lanciano/markdown.md",
     "Slug": "lanciano",
-    "Date": null,
+    "Date": "",
     "LocationDetails": "Lanciano",
     "Tags": [{ "Name": "Eucharistic", "TagType": "Miracle" }]
   },
@@ -34,7 +34,7 @@
     "Description": "Thousands have reported miraculous healings at the Marian shrine of Lourdes.",
     "MarkdownPath": "/miracles/lourdes/markdown.md",
     "Slug": "lourdes",
-    "Date": "1858-02-11",
+    "Date": "February 11, 1858",
     "LocationDetails": "Lourdes",
     "Tags": [
       { "Name": "Healing", "TagType": "Miracle" },
@@ -49,7 +49,7 @@
     "Description": "A consecrated Host began to bleed during Mass, leading to the Feast of Corpus Christi.",
     "MarkdownPath": "/miracles/bolsena/markdown.md",
     "Slug": "bolsena",
-    "Date": null,
+    "Date": "",
     "LocationDetails": "Bolsena",
     "Tags": [{ "Name": "Eucharistic", "TagType": "Miracle" }]
   },
@@ -61,7 +61,7 @@
     "Description": "The miraculous image of the Virgin Mary appeared on the tilma of St. Juan Diego.",
     "MarkdownPath": "/miracles/guadalupe/markdown.md",
     "Slug": "guadalupe",
-    "Date": "1531-12-12",
+    "Date": "December 12, 1531",
     "LocationDetails": "Tepeyac Hill, Mexico City",
     "Tags": [
       { "Name": "Marian", "TagType": "Miracle" },

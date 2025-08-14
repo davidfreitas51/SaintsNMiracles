@@ -19,7 +19,7 @@ export class MiraclesService {
     filters: MiracleFilters
   ): Observable<{ items: Miracle[]; totalCount: number }> {
     let params = new HttpParams();
-
+    
     Object.entries(filters).forEach(([key, value]) => {
       if (
         value !== null &&
@@ -60,7 +60,7 @@ export class MiraclesService {
       description: formValue.description,
       markdownContent: formValue.markdownContent,
       date: formValue.date || null,
-      locationDetails: formValue.locationDetails || null,
+      location: formValue.locationDetails || null,
       saintId: formValue.saintId || null,
       tagIds: formValue.tagIds || [],
     };

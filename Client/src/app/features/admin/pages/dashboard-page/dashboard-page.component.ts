@@ -15,6 +15,7 @@ export class DashboardPageComponent implements OnInit {
   summary = [
     { label: 'Total Saints', value: 0 },
     { label: 'Total Miracles', value: 0 },
+    { label: 'Total Prayers', value: 0 },
     { label: 'Total Users', value: 0 },
   ];
 

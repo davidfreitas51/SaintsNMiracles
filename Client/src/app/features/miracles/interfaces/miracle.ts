@@ -8,6 +8,8 @@ export interface Miracle {
   image: string;
   description: string;
   markdownPath: string;
+  date: string;
+  locationDetails: string;
   slug: string;
   tags: Tag[];
 }

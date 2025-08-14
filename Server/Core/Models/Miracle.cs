@@ -11,7 +11,7 @@ public class Miracle
     public required string MarkdownPath { get; set; }
     public required string Slug { get; set; }
 
-    public DateOnly? Date { get; set; }
+    public string? Date { get; set; }
     public string? LocationDetails { get; set; }
 
     public List<Tag> Tags { get; set; } = [];

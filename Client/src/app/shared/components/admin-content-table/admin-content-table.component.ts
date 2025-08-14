@@ -33,7 +33,7 @@ import { CommonModule } from '@angular/common';
     MatCardModule,
     MatSortModule,
     MatTableModule,
-    CommonModule
+    CommonModule,
   ],
 })
 export class AdminContentTableComponent implements OnChanges, AfterViewInit {
@@ -128,11 +128,13 @@ export class AdminContentTableComponent implements OnChanges, AfterViewInit {
       return;
     }
 
-    const name = entity.name || entity.title || 'this item';
+    const entityName =
+      this.entitySingular.charAt(0).toUpperCase() +
+      this.entitySingular.slice(1);
 
     this.dialogService
       .confirm({
-        title: `Delete ${this.entitySingular}?`,
+        title: `Delete ${entityName}?`,
         message: `You're about to permanently delete “${name}”. This action cannot be undone.`,
         confirmText: 'Yes, delete',
         cancelText: 'Cancel',
@@ -142,15 +144,11 @@ export class AdminContentTableComponent implements OnChanges, AfterViewInit {
 
         this.deleteFn(entity.id).subscribe({
           next: () => {
-            this.snackBarService.success(
-              `${this.entitySingular} successfully deleted`
-            );
+            this.snackBarService.success(`${entityName} successfully deleted`);
             this.loadData();
           },
           error: (err) => {
-            this.snackBarService.error(
-              `Failed to delete ${this.entitySingular}`
-            );
+            this.snackBarService.error(`Failed to delete ${entityName}`);
             console.error(err);
           },
         });
