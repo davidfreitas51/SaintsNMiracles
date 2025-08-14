@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 public class NewSaintDto
 {
     [Required]
+    [RegularExpression(@"^(?=.*[A-Za-z]).+$", ErrorMessage = "Name cannot be only numbers.")]
     public string Name { get; set; } = default!;
 
     [Required]

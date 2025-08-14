@@ -62,6 +62,15 @@
             placeholder="Miracle's title"
             class="w-full border rounded px-3 py-2"
           />
+          <div
+            *ngIf="
+              form.get('title')?.hasError('onlyNumbers') &&
+              form.get('title')?.touched
+            "
+            class="text-red-600 text-sm mt-1"
+          >
+            Title cannot contain only numbers.
+          </div>
         </label>
 
         <label class="block relative">
@@ -142,13 +151,74 @@
       </div>
     </div>
 
+    <!-- Markdown Editor -->
     <div>
       <label class="block flex flex-col">
         <span class="font-semibold">Markdown</span>
-        <md-editor
-          formControlName="markdownContent"
-          [height]="'300px'"
-        ></md-editor>
+
+        <div class="flex flex-col border rounded overflow-hidden h-[300px]">
+          <!-- Toolbar -->
+          <div class="flex gap-1 p-2 bg-gray-100 border-b">
+            <button
+              type="button"
+              class="px-3 py-1 border rounded hover:bg-gray-200 font-bold"
+              (click)="insertMarkdown('**', '**')"
+            >
+              Bold
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1 border rounded hover:bg-gray-200 italic"
+              (click)="insertMarkdown('*', '*')"
+            >
+              Italic
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1 border rounded hover:bg-gray-200"
+              (click)="insertMarkdown('## ', '')"
+            >
+              H2
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1 border rounded hover:bg-gray-200"
+              (click)="insertMarkdown('- ', '')"
+            >
+              List
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1 border rounded hover:bg-gray-200"
+              (click)="insertMarkdown('1. ', '')"
+            >
+              Ordered
+            </button>
+            <button
+              type="button"
+              class="px-3 py-1 border rounded hover:bg-gray-200"
+              (click)="insertMarkdown('---\n', '')"
+            >
+              Divider
+            </button>
+          </div>
+
+          <!-- Editor + Preview -->
+          <div class="flex flex-1 overflow-hidden">
+            <textarea
+              formControlName="markdownContent"
+              class="w-1/2 p-2 resize-none outline-none border-r border-gray-300"
+              placeholder="Digite seu Markdown aqui..."
+            ></textarea>
+
+            <div class="w-1/2 p-2 bg-white overflow-auto markdown-body">
+              <markdown
+                [data]="form.get('markdownContent')?.value"
+                ngPreserveWhitespaces
+              ></markdown>
+            </div>
+          </div>
+        </div>
       </label>
     </div>
 

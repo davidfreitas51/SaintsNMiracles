@@ -1,4 +1,3 @@
-import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import {
   Component,
   OnInit,
@@ -36,6 +35,8 @@ import { EntityFilters, TagType } from '../../../../interfaces/entity-filters';
 import { MatMenuModule } from '@angular/material/menu';
 import { NgxMaskDirective } from 'ngx-mask';
 import { NewSaintDto } from '../../interfaces/new-saint-dto';
+import { provideMarkdown, MarkdownComponent } from 'ngx-markdown';
+import { notOnlyNumbersValidator } from '../../../../shared/validators/notOnlyNumbersValidator';
 
 @Component({
   selector: 'app-saint-form-page',
@@ -47,7 +48,6 @@ import { NewSaintDto } from '../../interfaces/new-saint-dto';
     MatIconModule,
     MatButtonModule,
     FormsModule,
-    LMarkdownEditorModule,
     MatSelectModule,
     RouterModule,
     RomanPipe,
@@ -55,7 +55,9 @@ import { NewSaintDto } from '../../interfaces/new-saint-dto';
     CountryCodePipe,
     MatMenuModule,
     NgxMaskDirective,
+    MarkdownComponent,
   ],
+  providers: [provideMarkdown()],
 })
 export class SaintFormPageComponent implements OnInit, AfterViewInit {
   private saintsService = inject(SaintsService);
@@ -98,7 +100,7 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
       .subscribe((res) => (this.religiousOrders = res.items));
 
     this.form = this.fb.group({
-      name: ['', Validators.required],
+      name: ['', [Validators.required, notOnlyNumbersValidator()]],
       country: ['', Validators.required],
       century: [null, Validators.required],
       image: ['', Validators.required],
@@ -282,5 +284,34 @@ export class SaintFormPageComponent implements OnInit, AfterViewInit {
 
   removeTag(tag: string) {
     this.currentTags = this.currentTags.filter((t) => t !== tag);
+  }
+
+  insertMarkdown(start: string, end: string = ''): void {
+    const control = this.form.get('markdownContent');
+    if (!control) return;
+
+    const textarea = document.querySelector<HTMLTextAreaElement>(
+      'textarea[formControlName="markdownContent"]'
+    );
+    if (!textarea) return;
+
+    const { selectionStart, selectionEnd, value } = textarea;
+    const selectedText = value.substring(selectionStart, selectionEnd);
+
+    const newText = start + selectedText + end;
+
+    control.setValue(
+      value.substring(0, selectionStart) +
+        newText +
+        value.substring(selectionEnd)
+    );
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(
+        selectionStart + start.length,
+        selectionEnd + start.length
+      );
+    }, 0);
   }
 }

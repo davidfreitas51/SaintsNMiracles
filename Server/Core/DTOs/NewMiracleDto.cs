@@ -1,7 +1,10 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Core.DTOs;
 
 public class NewMiracleDto
 {
+    [RegularExpression(@"^(?=.*[A-Za-z]).+$", ErrorMessage = "Title cannot be only numbers.")]
     public string Title { get; set; } = default!;
     public string Country { get; set; } = default!;
     public int Century { get; set; }

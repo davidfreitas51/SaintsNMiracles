@@ -1,4 +1,3 @@
-import { LMarkdownEditorModule } from 'ngx-markdown-editor';
 import {
   Component,
   OnInit,
@@ -32,6 +31,8 @@ import { CropDialogComponent } from '../../../../shared/components/crop-dialog/c
 import { Tag } from '../../../../interfaces/tag';
 import { MatMenuModule } from '@angular/material/menu';
 import { EntityFilters, TagType } from '../../../../interfaces/entity-filters';
+import { MarkdownComponent, provideMarkdown } from 'ngx-markdown';
+import { notOnlyNumbersValidator } from '../../../../shared/validators/notOnlyNumbersValidator';
 
 @Component({
   selector: 'app-miracle-form-page',
@@ -44,13 +45,14 @@ import { EntityFilters, TagType } from '../../../../interfaces/entity-filters';
     MatIconModule,
     MatButtonModule,
     FormsModule,
-    LMarkdownEditorModule,
     MatSelectModule,
     RouterModule,
     RomanPipe,
     CommonModule,
     CountryCodePipe,
+    MarkdownComponent,
   ],
+  providers: [provideMarkdown()],
 })
 export class MiracleFormPageComponent implements OnInit, AfterViewInit {
   private miraclesService = inject(MiraclesService);
@@ -85,7 +87,7 @@ export class MiracleFormPageComponent implements OnInit, AfterViewInit {
     });
 
     this.form = new FormBuilder().group({
-      title: ['', Validators.required],
+      title: ['', [Validators.required, notOnlyNumbersValidator()]],
       country: ['', Validators.required],
       century: [null, Validators.required],
       image: ['', Validators.required],
@@ -231,5 +233,37 @@ export class MiracleFormPageComponent implements OnInit, AfterViewInit {
 
   removeTag(tag: string) {
     this.currentTags = this.currentTags.filter((t) => t !== tag);
+  }
+
+  /**
+   * Inserir markdown no editor (bold, italic, h2, list, ordered list, divider)
+   */
+  insertMarkdown(start: string, end: string = ''): void {
+    const control = this.form.get('markdownContent');
+    if (!control) return;
+
+    const textarea = document.querySelector<HTMLTextAreaElement>(
+      'textarea[formControlName="markdownContent"]'
+    );
+    if (!textarea) return;
+
+    const { selectionStart, selectionEnd, value } = textarea;
+    const selectedText = value.substring(selectionStart, selectionEnd);
+
+    const newText = start + selectedText + end;
+
+    control.setValue(
+      value.substring(0, selectionStart) +
+        newText +
+        value.substring(selectionEnd)
+    );
+
+    setTimeout(() => {
+      textarea.focus();
+      textarea.setSelectionRange(
+        selectionStart + start.length,
+        selectionEnd + start.length
+      );
+    }, 0);
   }
 }

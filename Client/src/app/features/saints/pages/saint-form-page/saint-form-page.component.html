@@ -3,6 +3,7 @@
 >
   <form [formGroup]="form" class="flex flex-col gap-6" (ngSubmit)="onSubmit()">
     <div class="flex gap-6">
+      <!-- Image Upload -->
       <div class="w-1/2">
         <label for="imageInput" class="block mb-2 font-semibold">
           Icon image <span class="text-red-600">*</span>
@@ -20,21 +21,17 @@
           </ng-container>
           <ng-template #noImage>
             <ng-container *ngIf="croppedImage; else showIcon">
-              <div class="flex items-center justify-center">
-                <img
-                  [src]="croppedImage"
-                  alt="Selected image"
-                  class="object-cover w-full h-full rounded"
-                />
-              </div>
+              <img
+                [src]="croppedImage"
+                alt="Selected image"
+                class="object-cover w-full h-full rounded"
+              />
             </ng-container>
             <ng-template #showIcon>
-              <div class="flex items-center justify-center">
-                <mat-icon
-                  class="!text-[330px] w-[330px] h-[330px] leading-none text-primary-app"
-                  fontIcon="add_a_photo"
-                ></mat-icon>
-              </div>
+              <mat-icon
+                class="!text-[330px] w-[330px] h-[330px] leading-none text-primary-app"
+                fontIcon="add_a_photo"
+              ></mat-icon>
             </ng-template>
           </ng-template>
         </label>
@@ -48,18 +45,27 @@
         />
       </div>
 
-      <!-- Name, Country, Century, Description -->
+      <!-- Basic Info -->
       <div class="flex-1 flex flex-col gap-4">
         <label class="block">
-          <span class="block pb-2 font-semibold"
-            >Name <span class="text-red-600">*</span></span
-          >
+          <span class="block pb-2 font-semibold">
+            Name <span class="text-red-600">*</span>
+          </span>
           <input
             type="text"
             placeholder="Saint's name"
             class="w-full border rounded px-3 py-2"
             formControlName="name"
           />
+          <div
+            *ngIf="
+              form.get('name')?.hasError('onlyNumbers') &&
+              form.get('name')?.touched
+            "
+            class="text-red-600 text-sm mt-1"
+          >
+            Name cannot contain only numbers.
+          </div>
         </label>
 
         <label class="block relative">
@@ -76,7 +82,7 @@
             *ngIf="form.get('country')?.value | countryCode as flagCode"
             [src]="'https://flagcdn.com/w20/' + flagCode + '.png'"
             [alt]="form.get('country')?.value + ' flag'"
-            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 mt-4 h-5 object-contain pointer-events-none"
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 object-contain pointer-events-none"
           />
         </label>
 
@@ -88,9 +94,9 @@
             formControlName="century"
             class="w-full border rounded px-4 py-2"
           >
-            <mat-option *ngFor="let item of centuries" [value]="item">
-              {{ item | roman }}
-            </mat-option>
+            <mat-option *ngFor="let item of centuries" [value]="item">{{
+              item | roman
+            }}</mat-option>
           </mat-select>
         </label>
 
@@ -108,6 +114,7 @@
           ></textarea>
         </label>
 
+        <!-- Tags -->
         <div class="block">
           <p class="block font-semibold">Tags (max 5)</p>
           <div class="flex flex-wrap items-center">
@@ -115,8 +122,7 @@
             <button
               type="button"
               (click)="removeTag(tag)"
-              class="text-xs font-medium rounded-full bg-green-600 text-white shadow-sm px-3 py-1 cursor-pointer transition hover:bg-red-600 hover:text-white focus:outline-none mr-2 mb-2"
-              aria-label="Remove tag"
+              class="text-xs font-medium rounded-full bg-green-600 text-white shadow-sm px-3 py-1 cursor-pointer transition hover:bg-red-600 mr-2 mb-2"
             >
               {{ tag }}
             </button>
@@ -124,14 +130,12 @@
             <button
               [matMenuTriggerFor]="tagsMenu"
               type="button"
-              class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 text-gray-700 hover:bg-gray-400 transition mr-2 mb-2"
-              aria-label="Add tag"
+              class="flex items-center justify-center w-6 h-6 rounded-full bg-gray-300 text-gray-700 hover:bg-gray-400 mr-2 mb-2"
             >
               +
             </button>
             }
-
-            <mat-menu #tagsMenu="matMenu" class="w-48">
+            <mat-menu #tagsMenu="matMenu">
               <button
                 mat-menu-item
                 *ngFor="let tag of tagsList"
@@ -146,17 +150,77 @@
       </div>
     </div>
 
-    <!-- Markdown -->
-    <div class="mt-6">
-      <label class="block flex flex-col">
-        <span class="font-semibold"
-          >Markdown <span class="text-red-600">*</span></span
-        >
-        <md-editor
-          [height]="'300px'"
-          [formControl]="markdownContent"
-        ></md-editor>
-      </label>
+    <!-- Markdown Editor -->
+    <div class="flex flex-col gap-2">
+      <label class="block font-semibold mb-2">Markdown</label>
+
+      <!-- Editor + Toolbar Wrapper -->
+      <div class="flex border rounded overflow-hidden h-[400px] flex-col">
+        <!-- Toolbar -->
+        <div class="flex gap-1 p-2 bg-gray-100 border-b">
+          <button
+            type="button"
+            class="px-2 py-1 border rounded hover:bg-gray-200 font-bold"
+            (click)="insertMarkdown('**', '**')"
+          >
+            Bold
+          </button>
+          <button
+            type="button"
+            class="px-2 py-1 border rounded hover:bg-gray-200 italic"
+            (click)="insertMarkdown('*', '*')"
+          >
+            Italic
+          </button>
+          <button
+            type="button"
+            class="px-2 py-1 border rounded hover:bg-gray-200 text-xl"
+            (click)="insertMarkdown('## ', '')"
+          >
+            H2
+          </button>
+          <button
+            type="button"
+            class="px-2 py-1 border rounded hover:bg-gray-200"
+            (click)="insertMarkdown('- ', '')"
+          >
+            List
+          </button>
+          <button
+            type="button"
+            class="px-2 py-1 border rounded hover:bg-gray-200"
+            (click)="insertMarkdown('1. ', '')"
+          >
+            Ordered List
+          </button>
+          <button
+            type="button"
+            class="px-2 py-1 border rounded hover:bg-gray-200"
+            (click)="insertMarkdown('---\n', '')"
+          >
+            Divider
+          </button>
+        </div>
+
+        <!-- Editor + Preview -->
+        <div class="flex flex-1 overflow-hidden">
+          <textarea
+            formControlName="markdownContent"
+            class="w-1/2 p-2 resize-none outline-none"
+            placeholder="Type your markdown here..."
+          ></textarea>
+
+          <!-- Divisória vertical -->
+          <div class="border-l border-gray-300"></div>
+
+          <div class="w-1/2 p-2 bg-white overflow-auto markdown-body">
+            <markdown
+              [data]="form.get('markdownContent')?.value"
+              ngPreserveWhitespaces
+            ></markdown>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Optional Fields -->
@@ -207,9 +271,11 @@
           class="w-full border rounded px-3 py-2"
         >
           <mat-option [value]="null">None</mat-option>
-          <mat-option *ngFor="let order of religiousOrders" [value]="order.id">
-            {{ order.name }}
-          </mat-option>
+          <mat-option
+            *ngFor="let order of religiousOrders"
+            [value]="order.id"
+            >{{ order.name }}</mat-option
+          >
         </mat-select>
       </label>
     </div>
@@ -222,19 +288,17 @@
         class="bg-red-600 hover:bg-red-700 text-white font-semibold mr-5 py-2 px-4 rounded inline-flex items-center gap-2"
         type="button"
       >
-        <mat-icon class="text-white">undo</mat-icon>
-        Cancel
+        <mat-icon class="text-white">undo</mat-icon> Cancel
       </button>
-
       <button
         mat-flat-button
         type="submit"
         [disabled]="form.invalid || imageLoading"
         class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded inline-flex items-center gap-2"
       >
-        <mat-icon class="text-white">
-          {{ isEditMode ? "edit" : "add" }}
-        </mat-icon>
+        <mat-icon class="text-white">{{
+          isEditMode ? "edit" : "add"
+        }}</mat-icon>
         {{ isEditMode ? "Update Saint" : "Create Saint" }}
       </button>
     </div>

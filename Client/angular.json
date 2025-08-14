@@ -36,15 +36,14 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/font-awesome/css/font-awesome.min.css",
               "@angular/material/prebuilt-themes/azure-blue.css",
-              "node_modules/ngx-markdown-editor/assets/highlight.js/agate.min.css",
               "src/styles.scss"
             ],
             "scripts": [
-              "node_modules/ngx-markdown-editor/assets/highlight.js/highlight.min.js",
-              "node_modules/ngx-markdown-editor/assets/marked.min.js",
               "node_modules/ace-builds/src-min/ace.js",
               "node_modules/ace-builds/src-min/mode-sql.js",
-              "node_modules/ace-builds/src-min/theme-twilight.js"
+              "node_modules/ace-builds/src-min/theme-twilight.js",
+              "node_modules/emoji-toolkit/lib/js/joypixels.min.js",
+              "node_modules/clipboard/dist/clipboard.min.js"
             ]
           },
           "configurations": {
