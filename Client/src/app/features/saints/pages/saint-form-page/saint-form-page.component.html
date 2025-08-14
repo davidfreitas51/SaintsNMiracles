@@ -82,7 +82,7 @@
             *ngIf="form.get('country')?.value | countryCode as flagCode"
             [src]="'https://flagcdn.com/w20/' + flagCode + '.png'"
             [alt]="form.get('country')?.value + ' flag'"
-            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 object-contain pointer-events-none"
+            class="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 mt-4 h-5 object-contain pointer-events-none"
           />
         </label>
 
@@ -152,7 +152,12 @@
 
     <!-- Markdown Editor -->
     <div class="flex flex-col gap-2">
-      <label class="block font-semibold mb-2">Markdown</label>
+      <label class="block font-semibold mb-2"
+        >Markdown
+        <ng-container *ngIf="form.get('description')">
+          <span class="text-red-600">*</span>
+        </ng-container>
+      </label>
 
       <!-- Editor + Toolbar Wrapper -->
       <div class="flex border rounded overflow-hidden h-[400px] flex-col">

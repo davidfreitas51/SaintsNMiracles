@@ -54,8 +54,14 @@
       </div>
 
       <div class="flex-1 flex flex-col gap-4">
+        <!-- Title -->
         <label class="block">
-          <span class="block pb-2 font-semibold">Title</span>
+          <span class="block pb-2 font-semibold">
+            Title
+            <ng-container *ngIf="form.get('title')">
+              <span class="text-red-600">*</span>
+            </ng-container>
+          </span>
           <input
             type="text"
             formControlName="title"
@@ -73,8 +79,14 @@
           </div>
         </label>
 
+        <!-- Country -->
         <label class="block relative">
-          <span class="block pb-2 font-semibold">Country</span>
+          <span class="block pb-2 font-semibold">
+            Country
+            <ng-container *ngIf="form.get('country')">
+              <span class="text-red-600">*</span>
+            </ng-container>
+          </span>
           <input
             type="text"
             formControlName="country"
@@ -89,8 +101,14 @@
           />
         </label>
 
+        <!-- Century -->
         <label class="block">
-          <span class="block pb-2 font-semibold">Century</span>
+          <span class="block pb-2 font-semibold">
+            Century
+            <ng-container *ngIf="form.get('century')">
+              <span class="text-red-600">*</span>
+            </ng-container>
+          </span>
           <mat-select
             formControlName="century"
             class="w-full border rounded px-4 py-2"
@@ -101,8 +119,14 @@
           </mat-select>
         </label>
 
+        <!-- Description -->
         <label class="block">
-          <span class="block pb-2 font-semibold">Description</span>
+          <span class="block pb-2 font-semibold">
+            Description
+            <ng-container *ngIf="form.get('description')">
+              <span class="text-red-600">*</span>
+            </ng-container>
+          </span>
           <textarea
             #descriptionTextarea
             formControlName="description"
@@ -113,6 +137,7 @@
           ></textarea>
         </label>
 
+        <!-- Tags -->
         <div class="block">
           <p class="block font-semibold">Tags (max 5)</p>
           <div class="flex flex-wrap items-center">
@@ -154,7 +179,12 @@
     <!-- Markdown Editor -->
     <div>
       <label class="block flex flex-col">
-        <span class="font-semibold">Markdown</span>
+        <span class="mb-5 font-semibold">
+          Markdown
+          <ng-container *ngIf="form.get('markdownContent')">
+            <span class="text-red-600">*</span>
+          </ng-container>
+        </span>
 
         <div class="flex flex-col border rounded overflow-hidden h-[300px]">
           <!-- Toolbar -->
@@ -236,19 +266,20 @@
         />
       </label>
 
-        <label class="block">
-          <span class="block pb-2 font-semibold">
-            Location Details <span class="text-gray-400">(optional)</span>
-          </span>
-          <input
-            type="text"
-            formControlName="location"
-            placeholder="Location details"
-            class="w-full border rounded px-3 py-2"
-          />
-        </label>
+      <label class="block">
+        <span class="block pb-2 font-semibold">
+          Location Details <span class="text-gray-400">(optional)</span>
+        </span>
+        <input
+          type="text"
+          formControlName="location"
+          placeholder="Location details"
+          class="w-full border rounded px-3 py-2"
+        />
+      </label>
     </div>
 
+    <!-- Actions -->
     <div class="flex justify-end pt-5">
       <button
         mat-flat-button
@@ -271,5 +302,8 @@
         {{ isEditMode ? "Update Miracle" : "Create Miracle" }}
       </button>
     </div>
+    <p class="text-sm text-gray-500 text-end pt-2">
+      Fields marked with <span class="text-red-600">*</span> are required.
+    </p>
   </form>
 </div>
