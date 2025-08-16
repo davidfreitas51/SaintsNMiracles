@@ -14,4 +14,11 @@
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot/prayers/hail-mary/" />
+    <Folder Include="wwwroot/prayers/memorare/" />
+    <Folder Include="wwwroot/prayers/our-father/" />
+    <Folder Include="wwwroot/prayers/prayer-to-st-michael/" />
+  </ItemGroup>
+
 </Project>

@@ -3,5 +3,6 @@ namespace Core.Enums;
 public enum TagType
 {
     Saint,
-    Miracle
+    Miracle,
+    Prayer
 }

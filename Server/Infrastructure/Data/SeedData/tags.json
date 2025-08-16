@@ -17,5 +17,15 @@
   { "Name": "Incorruptibility", "TagType": "Miracle" },
   { "Name": "Bilocation", "TagType": "Miracle" },
   { "Name": "Exorcism", "TagType": "Miracle" },
-  { "Name": "Levitation", "TagType": "Miracle" }
+  { "Name": "Levitation", "TagType": "Miracle" },
+
+  { "Name": "Marian", "TagType": "Prayer" },
+  { "Name": "Intercession", "TagType": "Prayer" },
+  { "Name": "Liturgical", "TagType": "Prayer" },
+  { "Name": "Jesus", "TagType": "Prayer" },
+  { "Name": "Protection", "TagType": "Prayer" },
+  { "Name": "Archangel", "TagType": "Prayer" },
+  { "Name": "Repentance", "TagType": "Prayer" },
+  { "Name": "Confession", "TagType": "Prayer" },
+  { "Name": "Trust", "TagType": "Prayer" }
 ]

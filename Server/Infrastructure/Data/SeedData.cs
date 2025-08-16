@@ -19,7 +19,6 @@ public class SeedData
             Converters = { new JsonStringEnumConverter() }
         };
 
-        // Limpa duplicatas com base em Name + TagType (insensitive)
         var allTags = await context.Tags.ToListAsync();
 
         var normalizedGroups = allTags
@@ -50,7 +49,6 @@ public class SeedData
             }
         }
 
-        // Adiciona tags únicas
         var tagsData = await File.ReadAllTextAsync(Path.Combine(path, "Data/SeedData/tags.json"));
         var tags = JsonSerializer.Deserialize<List<Tag>>(tagsData, jsonOptions);
 
@@ -74,7 +72,6 @@ public class SeedData
             }
         }
 
-        // Recarrega as tags atuais (únicas)
         var currentTags = await context.Tags.ToListAsync();
 
         if (!context.Saints.Any())
@@ -144,6 +141,34 @@ public class SeedData
                 await context.SaveChangesAsync();
             }
 
+            if (!context.Prayers.Any())
+            {
+                var prayersData = await File.ReadAllTextAsync(Path.Combine(path, "Data/SeedData/prayers.json"));
+                var prayers = JsonSerializer.Deserialize<List<Prayer>>(prayersData, jsonOptions);
+
+                if (prayers is not null)
+                {
+                    foreach (var prayer in prayers)
+                    {
+                        if (prayer.Tags?.Any() == true)
+                        {
+                            var linkedTags = new List<Tag>();
+                            foreach (var tag in prayer.Tags)
+                            {
+                                var foundTag = currentTags.FirstOrDefault(t =>
+                                    t.Name.Trim().Equals(tag.Name.Trim(), StringComparison.OrdinalIgnoreCase) &&
+                                    t.TagType.ToString().Trim().Equals(tag.TagType.ToString().Trim(), StringComparison.OrdinalIgnoreCase));
+                                if (foundTag != null)
+                                    linkedTags.Add(foundTag);
+                            }
+                            prayer.Tags = linkedTags;
+                        }
+                    }
+
+                    context.Prayers.AddRange(prayers);
+                    await context.SaveChangesAsync();
+                }
+            }
         }
     }
 }

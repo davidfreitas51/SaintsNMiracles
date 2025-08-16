@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Core.Interfaces;
+using Core.Interfaces.Services;
 using Core.Models;
 using Infrastructure.Data;
 using Infrastructure.Services;
@@ -29,6 +30,8 @@ builder.Services.AddScoped<ISaintsRepository, SaintsRepository>();
 builder.Services.AddScoped<ISaintsService, SaintsService>();
 builder.Services.AddScoped<IMiraclesRepository, MiraclesRepository>();
 builder.Services.AddScoped<IMiraclesService, MiraclesService>();
+builder.Services.AddScoped<IPrayersRepository, PrayersRepository>();
+builder.Services.AddScoped<IPrayersService, PrayersService>();
 builder.Services.AddScoped<IReligiousOrdersRepository, ReligiousOrdersRepository>();
 builder.Services.AddScoped<ITagsRepository, TagsRepository>();
 

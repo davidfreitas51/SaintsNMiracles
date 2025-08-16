@@ -7,8 +7,7 @@ using Microsoft.Extensions.Hosting;
 public class MiraclesService(
     IHostEnvironment env,
     IMiraclesRepository miraclesRepository,
-    ITagsRepository tagsRepository,
-    ISaintsRepository saintsRepository) : IMiraclesService
+    ITagsRepository tagsRepository) : IMiraclesService
 {
     public async Task<int?> CreateMiracleAsync(NewMiracleDto newMiracle)
     {
