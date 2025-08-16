@@ -1,9 +1,10 @@
 using Core.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Data;
 
-public class DataContext(DbContextOptions<DataContext> options) : DbContext(options)
+public class DataContext(DbContextOptions<DataContext> options) : IdentityDbContext<AppUser>(options)
 {
     public DbSet<Saint> Saints { get; set; }
     public DbSet<Miracle> Miracles { get; set; }

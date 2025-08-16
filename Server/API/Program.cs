@@ -1,25 +1,27 @@
 using System.Text.Json;
 using Core.Interfaces;
+using Core.Models;
 using Infrastructure.Data;
 using Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllers().AddJsonOptions(options =>
-{
-    options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
-    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
-});
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.PropertyNameCaseInsensitive = true;
+        options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    });
 
 builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyHeader();
-        policy.AllowAnyMethod();
-        policy.WithOrigins("http://localhost:4200");
-        policy.AllowCredentials();
+        policy.AllowAnyHeader()
+              .AllowAnyMethod()
+              .WithOrigins("http://localhost:4200")
+              .AllowCredentials();
     });
 });
 
@@ -35,26 +37,21 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"));
 });
 
+builder.Services.AddAuthorization();
+builder.Services.AddIdentityApiEndpoints<AppUser>().AddEntityFrameworkStores<DataContext>();
+
 var app = builder.Build();
 
-app.UseStaticFiles();
-
-app.MapControllers();
-
-try
+await using (var scope = app.Services.CreateAsyncScope())
 {
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<DataContext>();
-    context.Database.Migrate();
+    var context = scope.ServiceProvider.GetRequiredService<DataContext>();
     await context.Database.MigrateAsync();
     await SeedData.SeedAsync(context);
 }
-catch (Exception ex)
-{
-    Console.WriteLine(ex);
-    throw;
-}
+
 app.UseCors();
+app.UseStaticFiles();
+app.MapControllers();
+app.MapGroup("api").MapIdentityApi<AppUser>();
 
 app.Run();
